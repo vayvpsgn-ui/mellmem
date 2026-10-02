@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор хитбокса по текстуре персонажа</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f17;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    /* Neon glow effects matching gamedev debug aesthetics */
+    .glow-green {
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+    }
+    .text-glow-green {
+      text-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+    }
+    
+    /* Custom scrollbar for export panels */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111827;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+    
+    /* Grid background */
+    .grid-bg {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b0f17] text-slate-200">
+
+  <header class="border-b border-slate-800 bg-[#0f172a]/80 backdrop-blur px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 font-bold font-mono text-lg glow-green">
+        ⬡
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-white flex items-center gap-2">
+          Texture Hitbox Maker <span class="text-xs font-mono font-normal bg-green-500/20 text-green-400 px-2 py-0.5 rounded border border-green-500/30">2D Collider</span>
+        </h1>
+        <p class="text-xs text-slate-400">Генерация полигональных и композитных хитбоксов по альфа-каналу</p>
+      </div>
+    </div>
+
+    <!-- Quick action status pills -->
+    <div class="flex items-center gap-3 text-xs font-mono">
+      <div class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-700/60 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span class="text-slate-400">Точек:</span>
+        <span id="pointCountBadge" class="text-green-400 font-bold">0</span>
+      </div>
+      <label class="cursor-pointer px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition shadow flex items-center gap-2">
+        <span>📂 Загрузить PNG</span>
+        <input type="file" id="fileUpload" accept="image/*" class="hidden">
+      </label>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- Left Workspace: Canvas & Test Chamber (7 cols) -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
+      <div class="relative bg-[#070b12] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+        
+        <!-- Toolbar above canvas -->
+        <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 font-medium">Режим:</span>
+            <button id="modePolyBtn" class="px-2.5 py-1 rounded bg-green-500/20 border border-green-500 text-green-300 font-medium transition">
+              По контуру (Polygon)
+            </button>
+            <button id="modeCompositeBtn" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-400 hover:text-slate-200 transition">
+              Композитный (Круг + Уши)
+            </button>
+          </div>
+
+          <div class="flex items-center gap-3 font-mono">
+            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 hover:text-white">
+              <input type="checkbox" id="showTextureCheck" checked class="rounded border-slate-700 text-green-500 focus:ring-0">
+              Спрайт
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 hover:text-white">
+              <input type="checkbox" id="showHitboxCheck" checked class="rounded border-slate-700 text-green-500 focus:ring-0">
+              Хитбокс
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 hover:text-white">
+              <input type="checkbox" id="showGridCheck" checked class="rounded border-slate-700 text-green-500 focus:ring-0">
+              Сетка
+            </label>
+          </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="relative aspect-square w-full max-h-[620px] mx-auto flex items-center justify-center p-2 bg-[#090e17] grid-bg select-none" id="canvasContainer">
+          <canvas id="viewCanvas" width="600" height="600" class="max-w-full max-h-full rounded-lg shadow-inner cursor-crosshair"></canvas>
+          <div id="impactNotice" class="absolute top-6 left-6 pointer-events-none opacity-0 transition-opacity duration-200 px-3 py-1 rounded bg-rose-500/90 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg">
+            ⚡ Collision Hit!
+          </div>
+        </div>
+
+        <!-- Testing Physics Bar -->
+        <div class="p-3.5 bg-slate-900 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 font-medium">🧪 Физический тест:</span>
+            <button id="spawnBallsBtn" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium flex items-center gap-1.5 shadow transition">
+              <span>Запустить шары (снаряды)</span>
+            </button>
+            <button id="clearBallsBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+              Очистить
+            </button>
+          </div>
+          <span class="text-slate-400 italic">Нажмите или водите курсором по холсту для теста лазера!</span>
+        </div>
+      </div>
+
+      <!-- Quick Explainer Card -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 leading-relaxed flex items-start gap-3">
+        <span class="text-xl">💡</span>
+        <div>
+          <strong class="text-slate-200 block mb-1">Как работает контурный хитбокс:</strong>
+          Алгоритм обходит пиксели спрайта по альфа-прозрачности (Marching Squares / Moore-Neighbor) и соединяет границу в единый многоугольник. Ползунок «Упрощение (Ramer-Douglas-Peucker)» отсекает лишние точки на прямых участках, обеспечивая идеальный FPS без тормозов физического движка.
+        </div>
+      </div>
+    </section>
+
+    <section class="lg:col-span-5 flex flex-col gap-5">
+      
+      <!-- Collider Parameters card -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-green-400 mb-4 flex items-center gap-2">
+          <span>⚙️ Настройки контура</span>
+        </h2>
+
+        <div class="space-y-4 text-xs font-mono">
+          <!-- Alpha threshold -->
+          <div>
+            <div class="flex justify-between text-slate-300 mb-1.5">
+              <span>Порог альфа-канала (Alpha):</span>
+              <span id="alphaVal" class="text-green-400 font-bold">25</span>
+            </div>
+            <input id="alphaSlider" type="range" min="1" max="254" value="25" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+            <span class="text-[10px] text-slate-500 mt-1 block">Игнорирует полупрозрачные пиксели/пух</span>
+          </div>
+
+          <!-- Simplification Tolerance -->
+          <div>
+            <div class="flex justify-between text-slate-300 mb-1.5">
+              <span>Сглаживание / Упрощение точек (Tolerance):</span>
+              <span id="toleranceVal" class="text-green-400 font-bold">3.5 px</span>
+            </div>
+            <input id="toleranceSlider" type="range" min="0.5" max="15" step="0.5" value="3.5" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+            <span class="text-[10px] text-slate-500 mt-1 block">Меньше значение = точнее форма, больше = меньше полигонов</span>
+          </div>
+
+          <!-- Vertex padding / Margin -->
+          <div>
+            <div class="flex justify-between text-slate-300 mb-1.5">
+              <span>Отступ контура (Offset/Padding):</span>
+              <span id="offsetVal" class="text-green-400 font-bold">0 px</span>
+            </div>
+            <input id="offsetSlider" type="range" min="-10" max="10" step="1" value="0" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+            <span class="text-[10px] text-slate-500 mt-1 block">Сузить или расширить хитбокс относительно спрайта</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Code Output card -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col flex-1">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-green-400 flex items-center gap-2">
+            <span>💾 Экспорт кода</span>
+          </h2>
+          <button id="copyBtn" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-200 transition font-mono flex items-center gap-1">
+            <span>📋 Копировать</span>
+          </button>
+        </div>
+
+        <!-- Format tabs -->
+        <div class="flex border-b border-slate-800 mb-3 text-xs font-mono overflow-x-auto pb-1 gap-1">
+          <button class="export-tab px-3 py-1 rounded bg-green-500/20 text-green-300 border border-green-500/40" data-format="unity">Unity (C#)</button>
+          <button class="export-tab px-3 py-1 rounded bg-slate-800 text-slate-400 hover:text-white" data-format="godot">Godot</button>
+          <button class="export-tab px-3 py-1 rounded bg-slate-800 text-slate-400 hover:text-white" data-format="json">JSON Points</button>
+          <button class="export-tab px-3 py-1 rounded bg-slate-800 text-slate-400 hover:text-white" data-format="svg">SVG Path</button>
+          <button class="export-tab px-3 py-1 rounded bg-slate-800 text-slate-400 hover:text-white" data-format="css">CSS Clip</button>
+        </div>
+
+        <!-- Code preview container -->
+        <div class="relative flex-1 min-h-[220px]">
+          <pre id="codeOutput" class="w-full h-full p-3.5 bg-black/60 border border-slate-800/80 rounded-lg text-xs font-mono text-emerald-400 overflow-auto whitespace-pre leading-relaxed select-all"></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Hidden working canvases for offscreen pixel analysis -->
+  <canvas id="offscreenCanvas" class="hidden"></canvas>
+
+  <script>
+    // State management
+    const state = {
+      mode: 'polygon', // 'polygon' | 'composite'
+      alphaThreshold: 25,
+      tolerance: 3.5,
+      offset: 0,
+      showTexture: true,
+      showHitbox: true,
+      showGrid: true,
+      exportFormat: 'unity',
+      polygonPoints: [], // Normalized [0, 1] {x, y}
+      compositeShapes: [],
+      particles: [],
+      projectiles: [],
+      mousePos: { x: -100, y: -100, active: false }
+    };
+
+    const canvas = document.getElementById('viewCanvas');
+    const ctx = canvas.getContext('2d');
+    const offscreen = document.getElementById('offscreenCanvas');
+    const offCtx = offscreen.getContext('2d');
+
+    // Default Bunny Character Sprite generator (Vector art faithful to the round bunny meme)
+    let currentImage = new Image();
+
+    function createProceduralBunnyDataURL() {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 512;
+      const g = c.getContext('2d');
+
+      g.clearRect(0, 0, 512, 512);
+
+      // Shadow base
+      g.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      g.beginPath();
+      g.ellipse(256, 445, 140, 24, 0, 0, Math.PI * 2);
+      g.fill();
+
+      // Left Ear
+      g.save();
+      g.translate(210, 140);
+      g.rotate(-0.16);
+      g.fillStyle = '#f5f5f7';
+      g.beginPath();
+      g.ellipse(0, 0, 32, 95, 0, 0, Math.PI * 2);
+      g.fill();
+      // Inner Ear Pink
+      g.fillStyle = '#fca5a5';
+      g.beginPath();
+      g.ellipse(0, 0, 16, 75, 0, 0, Math.PI * 2);
+      g.fill();
+      g.restore();
+
+      // Right Ear
+      g.save();
+      g.translate(302, 140);
+      g.rotate(0.16);
+      g.fillStyle = '#f5f5f7';
+      g.beginPath();
+      g.ellipse(0, 0, 32, 95, 0, 0, Math.PI * 2);
+      g.fill();
+      // Inner Ear Pink
+      g.fillStyle = '#fca5a5';
+      g.beginPath();
+      g.ellipse(0, 0, 16, 75, 0, 0, Math.PI * 2);
+      g.fill();
+      g.restore();
+
+      // Huge round body
+      const bodyGrad = g.createRadialGradient(230, 290, 50, 256, 310, 190);
+      bodyGrad.addColorStop(0, '#ffffff');
+      bodyGrad.addColorStop(0.7, '#f1f5f9');
+      bodyGrad.addColorStop(1, '#cbd5e1');
+
+      g.fillStyle = bodyGrad;
+      g.beginPath();
+      // Asymmetric mega-round shape matching the meme
+      g.ellipse(256, 320, 162, 150, 0, 0, Math.PI * 2);
+      g.fill();
+
+      // Paws at bottom
+      g.fillStyle = '#e2e8f0';
+      g.beginPath();
+      g.ellipse(190, 428, 22, 14, 0, 0, Math.PI * 2);
+      g.ellipse(322, 428, 22, 14, 0, 0, Math.PI * 2);
+      g.fill();
+
+      // Face area (subtle skin tone circle)
+      const faceGrad = g.createRadialGradient(256, 215, 5, 256, 215, 45);
+      faceGrad.addColorStop(0, '#fbd5c3');
+      faceGrad.addColorStop(0.8, '#f3bca2');
+      faceGrad.addColorStop(1, 'rgba(243, 188, 162, 0)');
+      g.fillStyle = faceGrad;
+      g.beginPath();
+      g.arc(256, 215, 46, 0, Math.PI * 2);
+      g.fill();
+
+      // Eyes & funny meme grin
+      g.fillStyle = '#261b17';
+      g.beginPath();
+      g.arc(240, 208, 3.5, 0, Math.PI * 2); // left eye
+      g.arc(272, 208, 3.5, 0, Math.PI * 2); // right eye
+      g.fill();
+
+      // Smug smile
+      g.strokeStyle = '#613b2c';
+      g.lineWidth = 2.5;
+      g.lineCap = 'round';
+      g.beginPath();
+      g.arc(256, 224, 18, 0.15 * Math.PI, 0.85 * Math.PI);
+      g.stroke();
+
+      return c.toDataURL('image/png');
+    }
+
+    function traceContour(image, alphaThreshold) {
+      offscreen.width = image.naturalWidth || image.width;
+      offscreen.height = image.naturalHeight || image.height;
+      offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
+      offCtx.drawImage(image, 0, 0);
+
+      const w = offscreen.width;
+      const h = offscreen.height;
+      const imgData = offCtx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      // Helper function to check solid pixel
+      const isSolid = (x, y) => {
+        if (x < 0 || x >= w || y < 0 || y >= h) return false;
+        return data[(y * w + x) * 4 + 3] >= alphaThreshold;
+      };
+
+      // 1. Find starting boundary pixel
+      let startX = -1, startY = -1;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          if (isSolid(x, y)) {
+            startX = x;
+            startY = y;
+            break;
+          }
+        }
+        if (startX !== -1) break;
+      }
+
+      if (startX === -1) return [];
+
+      // 2. Moore-Neighbor Boundary Tracing
+      const directions = [
+        { x: 0, y: -1 }, // N
+        { x: 1, y: -1 }, // NE
+        { x: 1, y: 0 },  // E
+        { x: 1, y: 1 },  // SE
+        { x: 0, y: 1 },  // S
+        { x: -1, y: 1 }, // SW
+        { x: -1, y: 0 }, // W
+        { x: -1, y: -1 } // NW
+      ];
+
+      const contour = [];
+      let currentX = startX;
+      let currentY = startY;
+      let checkDir = 7; // Start checking from NW of current pixel
+
+      contour.push({ x: currentX, y: currentY });
+
+      let maxSteps = w * h;
+      let steps = 0;
+
+      while (steps < maxSteps) {
+        steps++;
+        let foundNext = false;
+
+        for (let i = 0; i < 8; i++) {
+          const dirIdx = (checkDir + i) % 8;
+          const nx = currentX + directions[dirIdx].x;
+          const ny = currentY + directions[dirIdx].y;
+
+          if (isSolid(nx, ny)) {
+            currentX = nx;
+            currentY = ny;
+            contour.push({ x: currentX, y: currentY });
+            // Backtrack 2 steps clockwise
+            checkDir = (dirIdx + 5) % 8;
+            foundNext = true;
+            break;
+          }
+        }
+
+        if (!foundNext) break;
+        if (currentX === startX && currentY === startY && contour.length > 3) {
+          break;
+        }
+      }
+
+      return contour;
+    }
+
+    function perpendicularDistance(point, lineStart, lineEnd) {
+      const dx = lineEnd.x - lineStart.x;
+      const dy = lineEnd.y - lineStart.y;
+      const mag = Math.hypot(dx, dy);
+      if (mag === 0) return Math.hypot(point.x - lineStart.x, point.y - lineStart.y);
+      return Math.abs(dy * point.x - dx * point.y + lineEnd.x * lineStart.y - lineEnd.y * lineStart.x) / mag;
+    }
+
+    function simplifyRDP(points, epsilon) {
+      if (points.length <= 2) return points;
+
+      let maxDist = 0;
+      let maxIndex = 0;
+      const lastIndex = points.length - 1;
+
+      for (let i = 1; i < lastIndex; i++) {
+        const d = perpendicularDistance(points[i], points[0], points[lastIndex]);
+        if (d > maxDist) {
+          maxDist = d;
+          maxIndex = i;
+        }
+      }
+
+      if (maxDist > epsilon) {
+        const left = simplifyRDP(points.slice(0, maxIndex + 1), epsilon);
+        const right = simplifyRDP(points.slice(maxIndex), epsilon);
+        return left.slice(0, left.length - 1).concat(right);
+      } else {
+        return [points[0], points[lastIndex]];
+      }
+    }
+
+    // Apply offset/margin to polygon vertices along normal
+    function applyPolygonOffset(points, offsetAmount, cx, cy) {
+      if (offsetAmount === 0) return points;
+      return points.map(pt => {
+        const angle = Math.atan2(pt.y - cy, pt.x - cx);
+        return {
+          x: pt.x + Math.cos(angle) * offsetAmount,
+          y: pt.y + Math.sin(angle) * offsetAmount
+        };
+      });
+    }
+
+    function updateCompositeColliders(w, h) {
+      // Custom crafted composite representation for round bunny
+      state.compositeShapes = [
+        { type: 'circle', x: w * 0.5, y: h * 0.62, radius: w * 0.31, label: 'Main Body' },
+        { type: 'capsule', x: w * 0.41, y: h * 0.28, length: h * 0.3, radius: w * 0.065, rotation: -0.15, label: 'Left Ear' },
+        { type: 'capsule', x: w * 0.59, y: h * 0.28, length: h * 0.3, radius: w * 0.065, rotation: 0.15, label: 'Right Ear' },
+        { type: 'box', x: w * 0.5, y: h * 0.84, width: w * 0.45, height: h * 0.12, label: 'Feet Base' }
+      ];
+    }
+
+    // Regenerate hitboxes
+    function computeHitbox() {
+      if (!currentImage.complete || currentImage.width === 0) return;
+      const rawContour = traceContour(currentImage, state.alphaThreshold);
+      if (rawContour.length === 0) {
+        state.polygonPoints = [];
+        updateUI();
+        return;
+      }
+
+      // Step simplification
+      const simplified = simplifyRDP(rawContour, state.tolerance);
+
+      // Centroid for offset
+      const cx = currentImage.width / 2;
+      const cy = currentImage.height / 2;
+      const offsetted = applyPolygonOffset(simplified, state.offset, cx, cy);
+
+      // Store normalized coordinates [0, 1]
+      state.polygonPoints = offsetted.map(pt => ({
+        x: pt.x / currentImage.width,
+        y: pt.y / currentImage.height
+      }));
+
+      updateCompositeColliders(currentImage.width, currentImage.height);
+      updateUI();
+    }
+
+    function triggerHitFeedback() {
+      const banner = document.getElementById('impactNotice');
+      banner.classList.remove('opacity-0');
+      clearTimeout(banner.timer);
+      banner.timer = setTimeout(() => banner.classList.add('opacity-0'), 250);
+    }
+
+    function createSparks(x, y, color = '#22c55e') {
+      for (let i = 0; i < 7; i++) {
+        state.particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8 - 2,
+          radius: Math.random() * 3 + 1.5,
+          color,
+          alpha: 1,
+          life: 25
+        });
+      }
+    }
+
+    // Raycast/point in polygon
+    function isPointInPolygon(px, py, poly) {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const xi = poly[i].x, yi = poly[i].y;
+        const xj = poly[j].x, yj = poly[j].y;
+        const intersect = ((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function spawnProjectiles() {
+      const w = canvas.width;
+      for (let i = 0; i < 15; i++) {
+        state.projectiles.push({
+          x: Math.random() * w,
+          y: -20 - (i * 30),
+          vx: (Math.random() - 0.5) * 3,
+          vy: Math.random() * 4 + 4,
+          radius: 6,
+          color: '#38bdf8'
+        });
+      }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Draw Grid
+      if (state.showGrid) {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        const step = 30;
+        for (let x = 0; x < w; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      }
+
+      // Draw Sprite
+      if (state.showTexture && currentImage.complete) {
+        ctx.drawImage(currentImage, 0, 0, w, h);
+      }
+
+      // Draw Hitbox Overlay
+      if (state.showHitbox) {
+        if (state.mode === 'polygon' && state.polygonPoints.length > 2) {
+          // Semi-transparent fill
+          ctx.fillStyle = 'rgba(34, 197, 94, 0.15)';
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 2.5;
+
+          ctx.beginPath();
+          state.polygonPoints.forEach((pt, i) => {
+            const px = pt.x * w;
+            const py = pt.y * h;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          });
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Render vertices
+          ctx.fillStyle = '#4ade80';
+          ctx.strokeStyle = '#052e16';
+          ctx.lineWidth = 1.5;
+          state.polygonPoints.forEach((pt) => {
+            ctx.beginPath();
+            ctx.arc(pt.x * w, pt.y * h, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+          });
+        } 
+        else if (state.mode === 'composite') {
+          // Render composite primitive colliders
+          const scaleX = w / (currentImage.width || 512);
+          const scaleY = h / (currentImage.height || 512);
+
+          state.compositeShapes.forEach(shape => {
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+
+            if (shape.type === 'circle') {
+              ctx.beginPath();
+              ctx.arc(shape.x * scaleX, shape.y * scaleY, shape.radius * scaleX, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.stroke();
+            } else if (shape.type === 'capsule') {
+              ctx.save();
+              ctx.translate(shape.x * scaleX, shape.y * scaleY);
+              ctx.rotate(shape.rotation);
+              ctx.beginPath();
+              ctx.roundRect(-shape.radius * scaleX, -shape.length * 0.5 * scaleY, shape.radius * 2 * scaleX, shape.length * scaleY, shape.radius * scaleX);
+              ctx.fill();
+              ctx.stroke();
+              ctx.restore();
+            } else if (shape.type === 'box') {
+              ctx.beginPath();
+              ctx.rect((shape.x - shape.width/2) * scaleX, (shape.y - shape.height/2) * scaleY, shape.width * scaleX, shape.height * scaleY);
+              ctx.fill();
+              ctx.stroke();
+            }
+          });
+        }
+      }
+
+      // Physics balls update & render
+      const polyScreen = state.polygonPoints.map(p => ({ x: p.x * w, y: p.y * h }));
+
+      for (let i = state.projectiles.length - 1; i >= 0; i--) {
+        const p = state.projectiles[i];
+        p.vy += 0.25; // gravity
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Collision check against polygon
+        if (state.polygonPoints.length > 2 && isPointInPolygon(p.x, p.y + p.radius, polyScreen)) {
+          triggerHitFeedback();
+          createSparks(p.x, p.y, '#4ade80');
+          p.vy = -Math.abs(p.vy) * 0.72; // bounce upwards
+          p.vx += (Math.random() - 0.5) * 4;
+          p.y -= 3;
+        }
+
+        // Floor collision
+        if (p.y > h - p.radius) {
+          p.y = h - p.radius;
+          p.vy = -p.vy * 0.6;
+          p.vx *= 0.9;
+        }
+
+        // Draw projectile
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Expire
+        if (p.y > h + 50 || (Math.abs(p.vy) < 0.2 && Math.abs(p.vx) < 0.2 && p.y > h - 10)) {
+          state.projectiles.splice(i, 1);
+        }
+      }
+
+      // Mouse laser test
+      if (state.mousePos.active) {
+        const mx = state.mousePos.x;
+        const my = state.mousePos.y;
+        const isHit = isPointInPolygon(mx, my, polyScreen);
+
+        ctx.strokeStyle = isHit ? 'rgba(239, 68, 68, 0.8)' : 'rgba(59, 130, 246, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(mx, 0); ctx.lineTo(mx, h);
+        ctx.moveTo(0, my); ctx.lineTo(w, my);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Pointer target circle
+        ctx.fillStyle = isHit ? '#ef4444' : '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(mx, my, isHit ? 7 : 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (isHit && Math.random() < 0.3) {
+          createSparks(mx, my, '#f43f5e');
+          triggerHitFeedback();
+        }
+      }
+
+      // Draw Sparks
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const sp = state.particles[i];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.alpha -= 1 / sp.life;
+
+        ctx.fillStyle = sp.color;
+        ctx.globalAlpha = Math.max(0, sp.alpha);
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        if (sp.alpha <= 0) state.particles.splice(i, 1);
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    function generateExportCode() {
+      const pts = state.polygonPoints;
+      const count = pts.length;
+
+      if (count === 0) return '// Нет контура. Загрузите изображение или уменьшите порог Alpha.';
+
+      switch (state.exportFormat) {
+        case 'unity':
+          return `// Unity C# 2D Collider Setup
+using UnityEngine;
+
+[RequireComponent(typeof(PolygonCollider2D))]
+public class SetupBunnyCollider : MonoBehaviour {
+    void Start() {
+        PolygonCollider2D poly = GetComponent<PolygonCollider2D>();
+        Vector2[] points = new Vector2[${count}] {
+${pts.map(p => `            new Vector2(${(p.x - 0.5).toFixed(4)}f, ${(0.5 - p.y).toFixed(4)}f)`).join(',\n')}
+        };
+        poly.points = points;
+    }
+}`;
+
+        case 'godot':
+          return `# Godot 4 CollisionPolygon2D
+extends CollisionPolygon2D
+
+func _ready():
+    var pts = PackedVector2Array([
+${pts.map(p => `        Vector2(${(p.x * 512).toFixed(1)}, ${(p.y * 512).toFixed(1)})`).join(',\n')}
+    ])
+    polygon = pts
+`;
+
+        case 'json':
+          return JSON.stringify(
+            {
+              vertexCount: count,
+              normalizedCoordinates: pts.map(p => ({ x: Number(p.x.toFixed(4)), y: Number(p.y.toFixed(4)) })),
+              pixelCoordinates512: pts.map(p => ({ x: Math.round(p.x * 512), y: Math.round(p.y * 512) }))
+            },
+            null,
+            2
+          );
+
+        case 'svg':
+          const svgPath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${(p.x * 512).toFixed(1)} ${(p.y * 512).toFixed(1)}`).join(' ') + ' Z';
+          return `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generated Hitbox Path -->
+  <path d="${svgPath}" 
+        fill="rgba(34, 197, 94, 0.3)" 
+        stroke="#22c55e" 
+        stroke-width="2" />
+</svg>`;
+
+        case 'css':
+          const polyCss = pts.map(p => `${(p.x * 100).toFixed(2)}% ${(p.y * 100).toFixed(2)}%`).join(', ');
+          return `/* CSS Polygon Hitbox / Clip-Path */
+.character-hitbox {
+  width: 512px;
+  height: 512px;
+  clip-path: polygon(
+    ${polyCss}
+  );
+}`;
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('pointCountBadge').textContent = state.polygonPoints.length;
+      document.getElementById('codeOutput').textContent = generateExportCode();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Sliders
+      const alphaSlider = document.getElementById('alphaSlider');
+      const toleranceSlider = document.getElementById('toleranceSlider');
+      const offsetSlider = document.getElementById('offsetSlider');
+
+      alphaSlider.addEventListener('input', (e) => {
+        state.alphaThreshold = parseInt(e.target.value);
+        document.getElementById('alphaVal').textContent = state.alphaThreshold;
+        computeHitbox();
+      });
+
+      toleranceSlider.addEventListener('input', (e) => {
+        state.tolerance = parseFloat(e.target.value);
+        document.getElementById('toleranceVal').textContent = state.tolerance + ' px';
+        computeHitbox();
+      });
+
+      offsetSlider.addEventListener('input', (e) => {
+        state.offset = parseInt(e.target.value);
+        document.getElementById('offsetVal').textContent = (state.offset > 0 ? '+' : '') + state.offset + ' px';
+        computeHitbox();
+      });
+
+      // Checkboxes
+      document.getElementById('showTextureCheck').addEventListener('change', (e) => state.showTexture = e.target.checked);
+      document.getElementById('showHitboxCheck').addEventListener('change', (e) => state.showHitbox = e.target.checked);
+      document.getElementById('showGridCheck').addEventListener('change', (e) => state.showGrid = e.target.checked);
+
+      // Mode switch
+      const modePolyBtn = document.getElementById('modePolyBtn');
+      const modeCompositeBtn = document.getElementById('modeCompositeBtn');
+
+      modePolyBtn.addEventListener('click', () => {
+        state.mode = 'polygon';
+        modePolyBtn.className = 'px-2.5 py-1 rounded bg-green-500/20 border border-green-500 text-green-300 font-medium transition';
+        modeCompositeBtn.className = 'px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-400 hover:text-slate-200 transition';
+        updateUI();
+      });
+
+      modeCompositeBtn.addEventListener('click', () => {
+        state.mode = 'composite';
+        modeCompositeBtn.className = 'px-2.5 py-1 rounded bg-sky-500/20 border border-sky-500 text-sky-300 font-medium transition';
+        modePolyBtn.className = 'px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-400 hover:text-slate-200 transition';
+        updateUI();
+      });
+
+      // Export tabs
+      document.querySelectorAll('.export-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.export-tab').forEach(t => {
+            t.className = 'export-tab px-3 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition';
+          });
+          tab.className = 'export-tab px-3 py-1 rounded bg-green-500/20 text-green-300 border border-green-500/40 transition';
+          state.exportFormat = tab.dataset.format;
+          updateUI();
+        });
+      });
+
+      // Copy Button
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const text = document.getElementById('codeOutput').textContent;
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        
+        const btn = document.getElementById('copyBtn');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span>✅ Скопировано!</span>';
+        setTimeout(() => btn.innerHTML = original, 1800);
+      });
+
+      // File upload & Drag/drop
+      const fileInput = document.getElementById('fileUpload');
+      const loadFile = (file) => {
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          currentImage = new Image();
+          currentImage.onload = () => {
+            computeHitbox();
+          };
+          currentImage.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+
+      fileInput.addEventListener('change', (e) => loadFile(e.target.files[0]));
+
+      const dropArea = document.getElementById('canvasContainer');
+      dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('border-green-500'); });
+      dropArea.addEventListener('dragleave', () => dropArea.classList.remove('border-green-500'));
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('border-green-500');
+        if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+      });
+
+      // Canvas interactive physics test
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        state.mousePos.x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        state.mousePos.y = (e.clientY - rect.top) * (canvas.height / rect.height);
+        state.mousePos.active = true;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        state.mousePos.active = false;
+      });
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+        createSparks(mx, my, '#38bdf8');
+        for (let i = 0; i < 4; i++) {
+          state.projectiles.push({
+            x: mx,
+            y: my,
+            vx: (Math.random() - 0.5) * 6,
+            vy: -Math.random() * 5 - 2,
+            radius: 5,
+            color: '#a855f7'
+          });
+        }
+      });
+
+      // Spawn projectiles button
+      document.getElementById('spawnBallsBtn').addEventListener('click', spawnProjectiles);
+      document.getElementById('clearBallsBtn').addEventListener('click', () => {
+        state.projectiles = [];
+        state.particles = [];
+      });
+
+      // Initial procedural bunny load
+      currentImage.onload = () => {
+        computeHitbox();
+      };
+      currentImage.src = createProceduralBunnyDataURL();
+
+      // Start main game loop
+      requestAnimationFrame(render);
+    });
+  </script>
+</body>
+</html>
