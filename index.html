@@ -1718,7 +1718,54 @@
         }
         .bunny-skins-screen { padding-right: 14px; overscroll-behavior: contain; }
         .minigame-modal-card { overflow: hidden; }
-    </style>
+    
+        /* ===== v4 — фикс переполнения текста на мобильных + рулетка Меллов ===== */
+        .tab-content, .bunny-skins-screen, .modal-card, .info-list, .achievements-list { overflow-x: hidden; }
+        .upgrade-card { gap: 8px; max-width: 100%; box-sizing: border-box; }
+        .upgrade-left-wrap { flex: 1 1 auto; min-width: 0; }
+        .upgrade-info { min-width: 0; flex: 1 1 auto; }
+        .upgrade-title, .upgrade-effect, .item-count-sub, .upgrade-lvl, .modal-title, .info-row, .achievement-card, .bunny-skin-card, .story-level-card {
+            overflow-wrap: anywhere; word-break: break-word; }
+        .upgrade-icon-img { flex-shrink: 0; }
+        .upgrade-cost { flex-shrink: 0; flex-wrap: wrap; justify-content: center; text-align: center; max-width: 46%; box-sizing: border-box; }
+        .skin-action-btn { flex-shrink: 0; white-space: normal; text-align: center; line-height: 1.2; max-width: 46%; box-sizing: border-box; }
+        .bunny-skin-card { gap: 8px; }
+        .bunny-skin-card > div { min-width: 0; }
+        @media (max-width: 480px) {
+            .upgrade-card { padding: 9px 10px 9px 9px; }
+            .upgrade-left-wrap { gap: 9px; }
+            .upgrade-icon-img { width: 40px; height: 40px; border-radius: 12px; font-size: 19px; }
+            .upgrade-title { font-size: 12.5px; }
+            .upgrade-effect { font-size: 11px; }
+            .upgrade-cost { padding: 6px 9px; font-size: 11.5px; max-width: 42%; }
+            .skin-action-btn { padding: 6px 10px; font-size: 11px; max-width: 40%; }
+        }
+
+        .coin-balance { color: #ffb347; text-shadow: 0 0 10px rgba(255, 179, 71, 0.45); }
+        .mell-roulette { width: 100%; box-sizing: border-box; min-width: 0; }
+        .mell-roulette .mr-head { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .mr-title { font-size: 15px; font-weight: 900; color: #ffd700; }
+        .mr-coins { font-size: 13px; font-weight: 800; color: #ffb347; background: rgba(255,179,71,.1); border: 1px solid rgba(255,179,71,.3); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+        .mr-buttons { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .mr-buttons .spin-btn { flex: 1 1 88px; min-width: 0; padding: 10px 6px; font-size: 13px; }
+        .spin-btn.pay-dia { background: linear-gradient(135deg, #0096c7, #00e5ff); color: #00131a; }
+        .spin-btn.pay-teeth { background: linear-gradient(135deg, #ff3366, #ff7733); color: #fff; }
+        .spin-btn.pay-coin { background: linear-gradient(135deg, #ffb347, #ffd700); color: #1a1000; }
+        .spin-btn.dim { filter: grayscale(.7) brightness(.8); }
+        .mr-label { font-size: 11px; color: #a3b8b0; font-weight: 700; }
+        .mr-hint { font-size: 11px; color: #7a8a84; text-align: center; line-height: 1.35; overflow-wrap: anywhere; }
+        .mell-roulette .roulette-item-card .skin-card-name { font-size: 9.5px; line-height: 1.1; max-width: 82px; overflow-wrap: anywhere; }
+        .mell-wardrobe-title { font-size: 13px; font-weight: 800; color: #ffd700; margin: 2px 2px 0; display: flex; justify-content: space-between; gap: 8px; }
+        .mell-wardrobe { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+        .mw-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 14px;
+            border: 1px solid var(--rc, #23302a); background: rgba(255,255,255,.04); cursor: pointer; min-width: 0; text-align: center; }
+        .mw-tile img { width: 48px; height: 48px; object-fit: contain; }
+        .mw-tile .mw-name { font-size: 10px; font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; color: var(--rc, #fff); }
+        .mw-tile .mw-state { font-size: 9.5px; color: #7a8a84; font-weight: 700; }
+        .mw-tile.locked { opacity: .4; filter: grayscale(.8); cursor: default; }
+        .mw-tile.active { background: rgba(61,255,160,.14); box-shadow: 0 0 0 1px #3dffa0 inset; }
+        .mw-tile.active .mw-state { color: #3dffa0; }
+</style>
 </head>
 <body>
 <div class="game-wrapper">
@@ -1796,6 +1843,7 @@
                     <div>🚀 Открытие <b>11–20 элитных уровней</b>!</div>
                     <div>👑 Эксклюзивный скин <b>«Султан Всея Интернета»</b>!</div>
                     <div>💎 <b>+50 Алмазов</b> бонусом прямо сейчас!</div>
+                    <div>🪙 <b>Меллкоин</b> за каждый уровень с 11-го — для рулетки скинов!</div>
                 </div>
                 <button class="prestige-btn" id="doPrestigeBtn">Сделать Престиж (Сброс до 1 уровня)</button>
                 <button class="jump-cancel-btn" id="cancelPrestigeBtn">Пока не хочу</button>
@@ -1991,6 +2039,7 @@
                         <div class="diamond-balance">💎 <span id="diamonds">0</span></div>
                         <div class="tooth-balance">🦷 <span id="teeth">0</span></div>
                         <div class="ticket-balance">🎫 <span id="tickets">0</span> шт.</div>
+                        <div class="coin-balance" id="coinBalanceWrap" style="display:none;">🪙 <span id="mellCoins">0</span></div>
                     </div>
                     <div class="cps-indicator">+<span id="cps">0</span>$ / сек</div>
                 </div>
@@ -2260,6 +2309,25 @@
                 </div>
 
                 <div class="tab-content" id="tab-skins">
+                    <div class="roulette-box mell-roulette" id="mellRouletteBox">
+                        <div class="mr-head">
+                            <div class="mr-title">🎰 Рулетка Меллов</div>
+                            <div class="mr-coins">🪙 Меллкоины: <span id="mellCoinsRoul">0</span></div>
+                        </div>
+                        <div class="roulette-display">
+                            <div class="roulette-indicator"></div>
+                            <div class="roulette-track" id="mellRouletteTrack"></div>
+                        </div>
+                        <div class="mr-label">Крутить за:</div>
+                        <div class="mr-buttons">
+                            <button class="spin-btn pay-dia" id="mellSpinDia">50 💎</button>
+                            <button class="spin-btn pay-teeth" id="mellSpinTeeth">100 🦷</button>
+                            <button class="spin-btn pay-coin" id="mellSpinCoin">1 🪙</button>
+                        </div>
+                        <div class="mr-hint">🪙 Меллкоины дают за каждый уровень с 11-го после престижа.<br>Повторный скин даёт 10 💎.</div>
+                    </div>
+                    <div class="mell-wardrobe-title"><span>Скины рулетки</span><span id="mellWardrobeCount">0/19</span></div>
+                    <div class="mell-wardrobe" id="mellWardrobe"></div>
                     <div id="skinsListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
                 </div>
             </div>
@@ -2659,6 +2727,41 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         let activeSpecialSkin = null;
 
+        // ===== Рулетка Меллов: скины и валюта «Меллкоин» =====
+        const MELL_COIN_START_LEVEL = 11;   // с какого уровня (после престижа) дают монету
+        const MELL_COINS_PER_LEVEL = 1;
+        const MELL_SPIN_COST = { diamonds: 50, teeth: 100, coins: 1 };
+        let mellCoins = 0;
+        let coinLevelsClaimed = [];
+        let isSpinningMell = false;
+        // Все скины равновероятны, без редкостей. Повтор = MELL_DUP_DIAMONDS алмазов
+        const MELL_DUP_DIAMONDS = 10;
+        const MELL_SKIN_COLOR = '#ffd700';
+        const MELL_ROULETTE_SKINS = [
+            ['rul1', 'Меллуто Узумаки'],
+            ['rul2', 'Мелл Поттер'],
+            ['rul3', 'Шейх Бурмалда'],
+            ['rul4', 'Мелл-Диспетчер'],
+            ['rul5', 'Мелл Райден'],
+            ['rul6', 'Мелл на Чиле'],
+            ['rul7', 'Призрак Лудки'],
+            ['rul8', 'Мелл-Единорог'],
+            ['rul9', 'Побег из Стрима'],
+            ['rul10', 'Мелл Лайт'],
+            ['rul11', 'Король Тигров'],
+            ['rul12', 'Месье де Мелль'],
+            ['rul13', 'Меллкрафт'],
+            ['rul14', 'Мелл-Шрек'],
+            ['rul15', 'Меллстронавт'],
+            ['rul16', 'Капитан Занос'],
+            ['rul17', 'Тёмный Рыцарь'],
+            ['rul18', 'Фермер Хайпа'],
+            ['rul19', 'Меллске Учиха']
+        ];
+        MELL_ROULETTE_SKINS.forEach(([id, name]) => {
+            specialSkins[id] = { unlocked: false, roulette: true, name, color: MELL_SKIN_COLOR, weight: 1, dupReward: MELL_DUP_DIAMONDS, img: id + '.png' };
+        });
+
         let totalTeethEarned = 0;
         let totalTeethSpent = 0;
         let maxHeight = 0;
@@ -2913,7 +3016,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         // Уровни 11–20 требуют на 60% больше заработка
         levels.forEach((l, i) => { if (i >= 10) l.threshold = Math.round(l.threshold * 1.6); });
 
-        const SKIN_UNLOCK_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20];
+        const SKIN_UNLOCK_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; // скины за уровни после 10-го убраны
         const skins = SKIN_UNLOCK_LEVELS.map(l => ({
             unlockLevel: l,
             name: levels[l - 1].name,
@@ -3060,6 +3163,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             cpcMultiplier = 1;
             upgrades = JSON.parse(JSON.stringify(defaultUpgrades));
             claimedLevelBonuses = [];
+            coinLevelsClaimed = [];
             currentLevel = 1;
             selectedSkinIndex = 0;
             activeSpecialSkin = 'skinpres';
@@ -3081,7 +3185,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 prestigeSound.play().catch(() => playJackpotSound());
             }
 
-            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все 15 скинов доступны!`, 'ПЕРЕРОЖДЕНИЕ');
+            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все 10 скинов доступны!\n🪙 Теперь за каждый уровень с 11-го ты получаешь Меллкоин для рулетки скинов!`, 'ПЕРЕРОЖДЕНИЕ');
             
             updateUI();
             saveGame();
@@ -4341,7 +4445,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         function saveGame() {
             const gameData = {
-                balance, diamonds, teeth, tickets, rebirths, rebirthSkinUnlocked, donSkin3Unlocked, activeSpecialSkin, specialSkins,
+                balance, diamonds, teeth, tickets, mellCoins, coinLevelsClaimed, rebirths, rebirthSkinUnlocked, donSkin3Unlocked, activeSpecialSkin, specialSkins,
                 noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, storyProgress,
                 lastFreeTicketTime, totalDiamondsEarned, totalDiamondsSpent, totalEarned, totalSpent, totalClicks,
                 selectedBunnySkinId, bossKillsCount, mellTiltCooldown, nextBossScheduledTime, nextDrunScheduledTime, survivedDrunInvasionsCount, perfectDrunInvasionsCount,
@@ -4371,6 +4475,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 balance = data.balance || 0;
                 diamonds = data.diamonds || 0;
                 teeth = data.teeth || 0;
+                mellCoins = data.mellCoins || 0;
+                coinLevelsClaimed = Array.isArray(data.coinLevelsClaimed) ? data.coinLevelsClaimed : [];
                 tickets = data.tickets !== undefined ? data.tickets : 3;
                 rebirths = data.rebirths || 0;
                 rebirthSkinUnlocked = data.rebirthSkinUnlocked || false;
@@ -4596,6 +4702,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             const newLevelNum = activeLvlIdx + 1;
             currentLevel = newLevelNum;
+            if (rebirths > 0) {
+                let gainedCoins = 0;
+                for (let lv = MELL_COIN_START_LEVEL; lv <= newLevelNum; lv++) {
+                    if (!coinLevelsClaimed.includes(lv)) { coinLevelsClaimed.push(lv); gainedCoins += MELL_COINS_PER_LEVEL; }
+                }
+                if (gainedCoins > 0) {
+                    mellCoins += gainedCoins;
+                    try {
+                        const stageRect = clickStage.getBoundingClientRect();
+                        showFloatingTextExplicit(`+${gainedCoins} 🪙 Меллкоин`, stageRect.width / 2 - 50, stageRect.height / 2 - 60, false, false, true);
+                    } catch (e) {}
+                    if (activeTabId !== 'tab-skins') skinNotifDot.style.display = 'block';
+                    saveGame();
+                }
+            }
             const lvlData = levels[activeLvlIdx];
             levelBg.style.backgroundImage = `url('${lvlData.bg}')`;
 
@@ -4681,6 +4802,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             for (let k in specialSkins) {
                 const sk = specialSkins[k];
+                if (sk.roulette) continue;
                 const card = document.createElement('div');
                 card.className = 'upgrade-card';
                 const isSelected = activeSpecialSkin === k;
@@ -4732,7 +4854,140 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 `;
                 skinsListContainer.appendChild(card);
             }
+            renderMellWardrobe();
         }
+
+        // ===== Рулетка Меллов =====
+        const mellCoinsEl = document.getElementById('mellCoins');
+        const mellCoinBalanceWrap = document.getElementById('coinBalanceWrap');
+        const mellCoinsRoulEl = document.getElementById('mellCoinsRoul');
+        const mellRouletteTrack = document.getElementById('mellRouletteTrack');
+        const mellWardrobeEl = document.getElementById('mellWardrobe');
+        const mellWardrobeCountEl = document.getElementById('mellWardrobeCount');
+        const mellSpinBtns = {
+            diamonds: document.getElementById('mellSpinDia'),
+            teeth: document.getElementById('mellSpinTeeth'),
+            coins: document.getElementById('mellSpinCoin')
+        };
+
+        function getMellRouletteSkins() {
+            return Object.keys(specialSkins).filter(k => specialSkins[k].roulette).map(k => Object.assign({ key: k }, specialSkins[k]));
+        }
+
+        function updateMellCoinsUI() {
+            if (!mellCoinsEl) return;
+            mellCoinsEl.textContent = mellCoins.toLocaleString();
+            mellCoinBalanceWrap.style.display = (mellCoins > 0 || rebirths > 0) ? '' : 'none';
+            mellCoinsRoulEl.textContent = mellCoins.toLocaleString();
+            mellSpinBtns.diamonds.classList.toggle('dim', diamonds < MELL_SPIN_COST.diamonds);
+            mellSpinBtns.teeth.classList.toggle('dim', teeth < MELL_SPIN_COST.teeth);
+            mellSpinBtns.coins.classList.toggle('dim', mellCoins < MELL_SPIN_COST.coins);
+        }
+
+        function renderMellWardrobe() {
+            const list = getMellRouletteSkins();
+            mellWardrobeEl.innerHTML = '';
+            mellWardrobeCountEl.textContent = `${list.filter(s => s.unlocked).length}/${list.length}`;
+            list.forEach(sk => {
+                const tile = document.createElement('div');
+                const isActive = activeSpecialSkin === sk.key;
+                tile.className = 'mw-tile' + (sk.unlocked ? '' : ' locked') + (isActive ? ' active' : '');
+                tile.style.setProperty('--rc', sk.color);
+                tile.innerHTML = `
+                    <img src="${sk.img}" alt="" onerror="this.style.opacity=.25">
+                    <div class="mw-name">${sk.name}</div>
+                    <div class="mw-state">${isActive ? 'Активен' : (sk.unlocked ? 'Выбрать' : 'Закрыт')}</div>
+                `;
+                if (sk.unlocked && !isActive) tile.addEventListener('click', () => buySpecialSkin(sk.key));
+                mellWardrobeEl.appendChild(tile);
+            });
+            updateMellCoinsUI();
+        }
+
+        function initMellTrackVisual() {
+            const list = getMellRouletteSkins();
+            mellRouletteTrack.style.transition = 'none';
+            mellRouletteTrack.style.transform = 'translateX(0px)';
+            mellRouletteTrack.innerHTML = '';
+            for (let i = 0; i < 15; i++) mellRouletteTrack.appendChild(createRouletteCardEl(list[i % list.length]));
+        }
+        initMellTrackVisual();
+
+        async function spinMellRoulette(pay) {
+            if (isSpinningMell) return;
+            const cost = MELL_SPIN_COST[pay];
+            if (pay === 'diamonds' && diamonds < cost) { await alert(`Не хватает алмазов 💎! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
+            if (pay === 'teeth' && teeth < cost) { await alert(`Не хватает зубов 🦷! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
+            if (pay === 'coins' && mellCoins < cost) { await alert('Не хватает Меллкоинов 🪙! Их дают за каждый уровень с 11-го после престижа.', 'РУЛЕТКА'); return; }
+
+            if (pay === 'diamonds') { diamonds -= cost; totalDiamondsSpent += cost; }
+            else if (pay === 'teeth') { teeth -= cost; totalTeethSpent += cost; }
+            else { mellCoins -= cost; }
+            updateUI();
+            saveGame();
+
+            isSpinningMell = true;
+            Object.values(mellSpinBtns).forEach(b => b.classList.add('disabled'));
+
+            spinSound.volume = sfxVolume;
+            spinSound.currentTime = 0;
+            spinSound.play().catch(() => {});
+
+            const pool = getMellRouletteSkins();
+            const totalWeight = pool.reduce((a, c) => a + c.weight, 0);
+            let randVal = Math.random() * totalWeight;
+            let winningSkin = pool[0];
+            for (const sk of pool) {
+                if (randVal < sk.weight) { winningSkin = sk; break; }
+                randVal -= sk.weight;
+            }
+
+            mellRouletteTrack.style.transition = 'none';
+            mellRouletteTrack.style.transform = 'translateX(0px)';
+            mellRouletteTrack.innerHTML = '';
+
+            const winIndex = 38;
+            for (let i = 0; i < 45; i++) {
+                const cardSkin = (i === winIndex) ? winningSkin : pool[Math.floor(Math.random() * pool.length)];
+                mellRouletteTrack.appendChild(createRouletteCardEl(cardSkin));
+            }
+            mellRouletteTrack.offsetHeight;
+
+            const winCard = mellRouletteTrack.children[winIndex];
+            const displayEl = mellRouletteTrack.parentElement;
+            const pointerX = displayEl.clientWidth / 2;
+            const frac = 0.1 + Math.random() * 0.8;
+            const targetX = winCard.offsetLeft + winCard.offsetWidth * frac - pointerX;
+
+            mellRouletteTrack.style.transition = 'transform 4.8s cubic-bezier(0.12, 0.8, 0.25, 1)';
+            mellRouletteTrack.style.transform = `translateX(-${targetX}px)`;
+
+            setTimeout(async () => {
+                spinSound.pause();
+                spinSound.currentTime = 0;
+                playJackpotSound();
+
+                const real = specialSkins[winningSkin.key];
+                if (real.unlocked) {
+                    const rewardDiamonds = MELL_DUP_DIAMONDS;
+                    diamonds += rewardDiamonds;
+                    totalDiamondsEarned += rewardDiamonds;
+                    await alert(`Повторный скин: ${real.name}!\nВам начислено +${rewardDiamonds} 💎 алмазов компенсации!`, 'ДУБЛИКАТ');
+                } else {
+                    real.unlocked = true;
+                    await alert(`🎉 НОВЫЙ СКИН: ${real.name}!\nВыбрать его можно в списке ниже.`, 'НОВЫЙ СКИН');
+                }
+
+                isSpinningMell = false;
+                Object.values(mellSpinBtns).forEach(b => b.classList.remove('disabled'));
+                renderMellWardrobe();
+                updateUI();
+                saveGame();
+            }, 5000);
+        }
+        mellSpinBtns.diamonds.addEventListener('click', () => spinMellRoulette('diamonds'));
+        mellSpinBtns.teeth.addEventListener('click', () => spinMellRoulette('teeth'));
+        mellSpinBtns.coins.addEventListener('click', () => spinMellRoulette('coins'));
 
         window.selectSkin = function(index) {
             selectedSkinIndex = index;
@@ -4835,6 +5090,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             diamondsEl.textContent = diamonds.toLocaleString();
             teethEl.textContent = teeth.toLocaleString();
             ticketsEl.textContent = tickets.toLocaleString();
+            updateMellCoinsUI();
 
             infoTotalEarned.textContent = '$' + formatCompactNumber(totalEarned);
             infoTotalSpent.textContent = '$' + formatCompactNumber(totalSpent);
