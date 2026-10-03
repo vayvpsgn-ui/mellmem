@@ -114,7 +114,6 @@
             border-radius: 14px;
             border: 1px solid rgba(255, 80, 120, 0.4);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(6px);
         }
 
         .fog-boss-label {
@@ -219,7 +218,6 @@
             font-size: 12px;
             font-weight: 700;
             z-index: 25;
-            backdrop-filter: blur(5px);
             pointer-events: none;
         }
 
@@ -256,7 +254,6 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
             touch-action: none;
             pointer-events: auto;
         }
@@ -467,7 +464,8 @@
         }
         function _unlockMusic() {
             startMusic();
-            if (!bgMusic.paused) {
+            _resumeAudio();
+            if (!bgMusic.paused && (!_actx || _actx.state === 'running')) {
                 ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(ev => window.removeEventListener(ev, _unlockMusic, true));
             }
         }
@@ -476,12 +474,43 @@
         // пауза при сворачивании вкладки / приложения
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) bgMusic.pause();
-            else startMusic();
+            else { startMusic(); _resumeAudio(); }
         });
 
-        // Пул звуков: не создаём новый Audio на каждый выстрел/прыжок
+        // ===== ЗВУКОВЫЕ ЭФФЕКТЫ =====
+        // Основной путь — Web Audio: звуки декодируются заранее, выстрел = один createBufferSource без загрузки и декодирования.
+        // (HTMLAudio на iOS при первом play() грузит/декодирует файл в основном потоке и дёргает аудио-сессию рядом с музыкой — отсюда фриз.)
+        // Запасной путь — пул <audio>, если Web Audio/fetch недоступны (например, открыто с file://).
+        const SFX_FILES = ['zvuknorm.mp3', 'zvukpr.mp3', 'Pres.mp3', 'lose.mp3'];
+        let _actx = null, _sfxGain = null, _sfxActive = 0;
+        const _sfxBuf = {}, _sfxLoading = {}, _sfxFailed = {};
+        function _getActx() {
+            if (_actx) return _actx;
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            try { _actx = new AC({ latencyHint: 'interactive' }); } catch (e) { try { _actx = new AC(); } catch (e2) { return null; } }
+            _sfxGain = _actx.createGain(); _sfxGain.gain.value = 0.65; _sfxGain.connect(_actx.destination);
+            return _actx;
+        }
+        function _loadSfx(file) {
+            if (_sfxBuf[file] || _sfxLoading[file] || _sfxFailed[file]) return;
+            const a = _getActx();
+            if (!a || !window.fetch) { _sfxFailed[file] = true; return; }
+            _sfxLoading[file] = true;
+            fetch(file).then(r => { if (!r.ok) throw new Error('http'); return r.arrayBuffer(); })
+                .then(ab => new Promise((res, rej) => { const p = a.decodeAudioData(ab, res, rej); if (p && p.catch) p.catch(rej); }))
+                .then(buf => { _sfxBuf[file] = buf; })
+                .catch(() => { _sfxFailed[file] = true; })
+                .then(() => { _sfxLoading[file] = false; });
+        }
+        function preloadSfx() { SFX_FILES.forEach(_loadSfx); }
+        function _resumeAudio() {
+            const a = _getActx();
+            if (a && a.state !== 'running' && a.resume) { const p = a.resume(); if (p && p.catch) p.catch(() => {}); }
+        }
+
         const _sfxPool = {};
-        function playSfx(file) {
+        function _playSfxFallback(file) {
             try {
                 let pool = _sfxPool[file];
                 if (!pool) {
@@ -493,6 +522,23 @@
                 a.play().catch(() => {});
             } catch (e) {}
         }
+        function playSfx(file) {
+            const a = _actx, buf = _sfxBuf[file];
+            if (a && buf) {
+                if (a.state !== 'running') _resumeAudio();
+                if (_sfxActive >= 8) return; // не заваливаем аудио-поток одновременными голосами
+                try {
+                    const src = a.createBufferSource();
+                    src.buffer = buf; src.connect(_sfxGain); _sfxActive++;
+                    src.onended = () => { _sfxActive--; };
+                    src.start(0);
+                } catch (e) {}
+                return;
+            }
+            if (_sfxFailed[file] || !a) _playSfxFallback(file);
+            else _loadSfx(file); // ещё грузится — лучше пропустить звук, чем фризить кадр
+        }
+        preloadSfx();
 
         // Кэш уменьшенных спрайтов: большие PNG не масштабируются заново каждый кадр
         let _spriteUid = 0;
@@ -510,6 +556,29 @@
             }
             c.drawImage(spr, x, y, w, h);
         }
+
+        // Прогрев спрайтов: заранее декодируем PNG и готовим уменьшенные копии нужных размеров.
+        // На iPhone картинка декодируется лениво при первой отрисовке — это и давало фриз на первом выстреле/появлении дрона.
+        function primeSprite(img, w, h) {
+            if (!img.complete || !img.naturalWidth || img.naturalWidth < w * 1.6) return;
+            if (img._scSrc !== img.src) { img._sc = new Map(); img._scSrc = img.src; }
+            const tw = Math.ceil(w), th = Math.ceil(h), key = tw + 'x' + th;
+            if (img._sc.has(key)) return;
+            const spr = document.createElement('canvas'); spr.width = tw; spr.height = th;
+            spr.getContext('2d').drawImage(img, 0, 0, tw, th);
+            img._sc.set(key, spr);
+        }
+        function warmSprite(img, sizes) {
+            const go = () => { try { sizes.forEach(s => primeSprite(img, s[0], s[1])); } catch (e) {} };
+            const run = () => { if (img.decode) img.decode().then(go, go); else go(); };
+            if (img.complete && img.naturalWidth) run(); else img.addEventListener('load', run, { once: true });
+        }
+        warmSprite(imgZaec, [[58, 62], [58, 34]]);
+        warmSprite(imgKot, [[75, 52]]);
+        warmSprite(imgFog, [[58, 66], [58, 38]]);
+        warmSprite(imgChekuwka, [[14, 20], [28, 36]]);
+        warmSprite(imgDrun, [[88, 88]]);
+        warmSprite(imgChe, [[233, 215]]);
 
         // ==========================================
         // ТОЧНЫЙ ХИТБОКС ЗАЙЦА 1:1 (UNITY POLYGON COLLIDER)
@@ -534,20 +603,50 @@
             minY: -0.3288, maxY: 0.4321, spanY: 0.4321 - (-0.3288)
         };
 
+        // Нормализованные координаты считаем один раз, а полигон переиспользуем (без аллокаций каждый кадр)
+        const _BUNNY_U = RAW_BUNNY_POINTS.map(pt => (pt.x - BUNNY_BOUNDS.minX) / BUNNY_BOUNDS.spanX);
+        const _BUNNY_V = RAW_BUNNY_POINTS.map(pt => (BUNNY_BOUNDS.maxY - pt.y) / BUNNY_BOUNDS.spanY);
+        const _bunnyPoly = RAW_BUNNY_POINTS.map(() => ({ x: 0, y: 0 }));
+
         function getBunnyWorldPolygon() {
-            const poly = [];
-            for (let i = 0; i < RAW_BUNNY_POINTS.length; i++) {
-                const pt = RAW_BUNNY_POINTS[i];
-                const normU = (pt.x - BUNNY_BOUNDS.minX) / BUNNY_BOUNDS.spanX;
-                const normV = (BUNNY_BOUNDS.maxY - pt.y) / BUNNY_BOUNDS.spanY;
-                poly.push({
-                    x: player.x + normU * player.w,
-                    y: player.y + normV * player.h
-                });
+            for (let i = 0; i < _bunnyPoly.length; i++) {
+                _bunnyPoly[i].x = player.x + _BUNNY_U[i] * player.w;
+                _bunnyPoly[i].y = player.y + _BUNNY_V[i] * player.h;
             }
-            return poly;
+            return _bunnyPoly;
         }
 
+        // Пересекается ли отрезок с прямоугольником (Лян–Барски)
+        function _segHitsBox(x1, y1, x2, y2, b) {
+            const dx = x2 - x1, dy = y2 - y1;
+            let t0 = 0, t1 = 1;
+            // left
+            let p = -dx, q = x1 - b.left;
+            if (p === 0) { if (q < 0) return false; } else { const t = q / p; if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; } }
+            // right
+            p = dx; q = b.right - x1;
+            if (p === 0) { if (q < 0) return false; } else { const t = q / p; if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; } }
+            // top
+            p = -dy; q = y1 - b.top;
+            if (p === 0) { if (q < 0) return false; } else { const t = q / p; if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; } }
+            // bottom
+            p = dy; q = b.bottom - y1;
+            if (p === 0) { if (q < 0) return false; } else { const t = q / p; if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; } }
+            return true;
+        }
+
+        function _pointInPoly(px, py, poly) {
+            let inside = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
+                if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) inside = !inside;
+            }
+            return inside;
+        }
+
+        // Точная проверка «вогнутый полигон ↔ прямоугольник».
+        // Раньше использовался SAT, который корректен только для выпуклых фигур: зайца он «заполнял»
+        // выпуклой оболочкой (впадина между ушами, «шея» у ушей) → ложные столкновения с воздухом.
         function checkPolygonAABBCollision(poly, box) {
             let pMinX = poly[0].x, pMaxX = poly[0].x, pMinY = poly[0].y, pMaxY = poly[0].y;
             for (let i = 1; i < poly.length; i++) {
@@ -556,36 +655,14 @@
                 if (poly[i].y < pMinY) pMinY = poly[i].y;
                 if (poly[i].y > pMaxY) pMaxY = poly[i].y;
             }
-
             if (pMaxX < box.left || pMinX > box.right || pMaxY < box.top || pMinY > box.bottom) return false;
 
-            const boxCorners = [
-                { x: box.left, y: box.top }, { x: box.right, y: box.top },
-                { x: box.right, y: box.bottom }, { x: box.left, y: box.bottom }
-            ];
-
+            // любое ребро полигона пересекает/лежит внутри бокса
             for (let i = 0; i < poly.length - 1; i++) {
-                const p1 = poly[i], p2 = poly[i + 1];
-                const nx = -(p2.y - p1.y), ny = p2.x - p1.x;
-                if (nx === 0 && ny === 0) continue;
-
-                let minP = Infinity, maxP = -Infinity;
-                for (let j = 0; j < poly.length; j++) {
-                    const dot = poly[j].x * nx + poly[j].y * ny;
-                    if (dot < minP) minP = dot;
-                    if (dot > maxP) maxP = dot;
-                }
-
-                let minB = Infinity, maxB = -Infinity;
-                for (let j = 0; j < 4; j++) {
-                    const dot = boxCorners[j].x * nx + boxCorners[j].y * ny;
-                    if (dot < minB) minB = dot;
-                    if (dot > maxB) maxB = dot;
-                }
-
-                if (maxP < minB || minP > maxB) return false;
+                if (_segHitsBox(poly[i].x, poly[i].y, poly[i + 1].x, poly[i + 1].y, box)) return true;
             }
-            return true;
+            // бокс целиком внутри полигона
+            return _pointInPoly(box.left, box.top, poly);
         }
 
         function drawSpeechBubble(x, y, text, tailX, tailY, options = {}) {
@@ -1195,7 +1272,7 @@
                 csFog.x += 4.5;
                 csBag.x = csFog.x - 18;
                 csBag.y = csFog.y + 16;
-                if (cutsceneTimer === 98) { csZaec.awake = true; csZaec.scaleY = 1; playSfx('sirena.mp3'); }
+                if (cutsceneTimer === 98) { csZaec.awake = true; csZaec.scaleY = 1; }
                 if (cameraZoom > 1.0) cameraZoom = Math.max(1.0, cameraZoom - 0.015);
             } else if (cutsceneTimer >= 140) {
                 csFog.x += 5.5;
@@ -1326,6 +1403,8 @@
         }
 
         // ПЛОТНАЯ ЧАСТОТА ПРЕПЯТСТВИЙ (КАК В ИЗНАЧАЛЬНОМ ХАРДКОРНОМ РАННЕРЕ)
+        const LAND_TOL = 14;      // на сколько пикселей ниже верха платформы ещё засчитывается приземление
+        const DEADLY_SINK = 18;   // на сколько ниже верха пня/камня ноги должны уйти, чтобы это считалось ударом
         let obstacleCooldown = 45;
         let toothCooldown = 55;
         let rockCooldown = 115;
@@ -1354,7 +1433,7 @@
 
             switch (pattern) {
                 case 0: {
-                    let bridgeLen = Math.floor(Math.random() * 80) + 260;
+                    let bridgeLen = Math.round((Math.floor(Math.random() * 80) + 260) / 20) * 20;
                     obstacles.push({ type: 'spikes', x: startX, y: groundY - 28, w: bridgeLen + 80, h: 28 });
                     obstacles.push({ type: 'bridge', x: startX + 35, y: groundY - 82, w: bridgeLen, h: 20 });
                     trySpawnTooth(startX + bridgeLen / 2 + 35, groundY - 120);
@@ -1450,14 +1529,16 @@
             }
             for (let i = 0; i < player.trail.length; i++) player.trail[i].alpha -= 0.08;
 
+            // Приседание/вставание всегда сохраняет положение ног. Раньше при вставании в воздухе
+            // (сошёл с платформы, не отпустив «вниз») заяц телепортировался на землю — прямо на шипы.
             if (keys.down && player.isGrounded) {
-                player.isDucking = true; player.h = player.duckH;
-                player.y = (player.currentPlatform ? player.currentPlatform.y : groundY) - player.duckH;
-            } else {
-                if (player.isDucking) {
-                    player.isDucking = false; player.h = player.normalH;
-                    player.y = (player.currentPlatform ? player.currentPlatform.y : groundY) - player.normalH;
+                if (!player.isDucking) {
+                    const feet = player.y + player.h;
+                    player.isDucking = true; player.h = player.duckH; player.y = feet - player.duckH;
                 }
+            } else if (player.isDucking) {
+                const feet = player.y + player.h;
+                player.isDucking = false; player.h = player.normalH; player.y = feet - player.normalH;
             }
 
             if (keys.up && player.isGrounded && !player.isDucking) {
@@ -1477,9 +1558,11 @@
 
             for (let obs of obstacles) {
                 if (obs.type === 'stump' || obs.type === 'rock' || obs.type === 'bridge' || obs.type === 'upperBranch' || obs.type === 'parkourPlat') {
-                    let withinX = (player.x + player.w - 14 > obs.x && player.x + 14 < obs.x + obs.w);
+                    // окно приземления шире зоны смерти (4px справа против 8px у бокса препятствия),
+                    // поэтому заяц успевает «встать» на край раньше, чем заденет его боком
+                    let withinX = (player.x + player.w - 4 > obs.x && player.x + 10 < obs.x + obs.w);
                     if (withinX) {
-                        if (player.vy >= 0 && playerFeet >= obs.y && playerFeet <= obs.y + player.vy + 10) {
+                        if (player.vy >= 0 && playerFeet >= obs.y && playerFeet <= obs.y + player.vy + LAND_TOL) {
                             player.y = obs.y - player.h;
                             player.vy = 0;
                             player.isGrounded = true;
@@ -1498,7 +1581,8 @@
                     player.vy = 0;
                     if (!player.isGrounded) spawnDust(player.x + player.w / 2, groundY, 7);
                     player.isGrounded = true;
-                } else if (prevPlat && !keys.up) {
+                } else if (player.isGrounded && player.y + player.h < groundY - 0.5) {
+                    // платформа ушла из-под ног — падаем (раньше при зажатом «вверх» заяц зависал в воздухе)
                     player.isGrounded = false;
                 }
             }
@@ -1725,14 +1809,16 @@
                 let isDeadly = false, oBox = null;
                 if (obs.type === 'spikes') {
                     isDeadly = true;
-                    oBox = { left: obs.x + 6, right: obs.x + obs.w - 6, top: obs.y + 10, bottom: obs.y + obs.h };
+                    // смертельна только нарисованная часть: рисуется floor(w/20) шипов, хвост ширины до 19px раньше был невидимым
+                    const visW = Math.floor(obs.w / 20) * 20;
+                    oBox = { left: obs.x + 6, right: obs.x + visW - 6, top: obs.y + 10, bottom: obs.y + obs.h };
                 } else if (obs.type === 'lowBranch') {
                     if (!player.isDucking) {
                         isDeadly = true;
                         oBox = { left: obs.x + 8, right: obs.x + obs.w - 8, top: obs.y + 6, bottom: obs.y + obs.h };
                     }
                 } else if (obs.type === 'stump' || obs.type === 'rock') {
-                    if (player.currentPlatform !== obs && player.y + player.h > obs.y + 12) {
+                    if (player.currentPlatform !== obs && player.y + player.h > obs.y + DEADLY_SINK) {
                         isDeadly = true;
                         oBox = { left: obs.x + 8, right: obs.x + obs.w - 8, top: obs.y + 8, bottom: obs.y + obs.h };
                     }
@@ -1843,7 +1929,6 @@
             }
 
             if (finaleTimer === 120) {
-                playSfx('sirena.mp3');
                 photoDrop.visible = true; photoDrop.x = fog.x + 10; photoDrop.y = fog.y + 15; photoDrop.vy = -3.5;
                 screenShake = 14;
                 for (let i = 0; i < 55; i++) {
@@ -2083,7 +2168,6 @@
 
             if (cs2EndTimer === 150) {
                 cs2Fog.vanished = true;
-                playSfx('sirena.mp3');
                 l2Spark(cs2Fog.x + 29, cs2Fog.y + 33, 50, '#c084fc', 1.6); l2Spark(cs2Fog.x + 29, cs2Fog.y + 33, 40, '#38bdf8', 1.3);
                 screenShake = 10;
                 for (let i = 0; i < 50; i++) {
@@ -2145,7 +2229,7 @@
 
             for (let sp of cs2Smoke) {
                 ctx.save(); ctx.globalAlpha = Math.max(0, sp.alpha) * 0.7; ctx.globalCompositeOperation = 'lighter';
-                ctx.shadowColor = sp.color; ctx.shadowBlur = 14; ctx.fillStyle = sp.color;
+                ctx.fillStyle = sp.color;
                 ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.size * 0.55, 0, Math.PI * 2); ctx.fill();
                 ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0; ctx.globalAlpha = Math.max(0, sp.alpha) * 0.5;
                 ctx.drawImage(_mPuff, sp.x - sp.size, sp.y - sp.size, sp.size * 2, sp.size * 2); ctx.restore();
@@ -2316,7 +2400,6 @@
 
                     if (activeDrun.timer <= 0) {
                         activeDrun.diving = true;
-                        playSfx('sirena.mp3');
                     }
                 } else {
                     let targetX = 480, targetY = groundY - 30;
@@ -2720,8 +2803,10 @@
                 if (p.life <= 0) { l2Fx.splice(i, 1); continue; }
                 if (p.k === 's') {
                     c.globalCompositeOperation = 'lighter'; c.globalAlpha = p.life; c.strokeStyle = p.c; c.lineWidth = 2; c.lineCap = 'round';
-                    c.shadowColor = p.c; c.shadowBlur = 6;
-                    c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 1.8, p.y - p.vy * 1.8); c.stroke();
+                    // без shadowBlur (очень дорого на iOS): мягкое свечение — вторым, более широким и прозрачным штрихом
+                    c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 1.8, p.y - p.vy * 1.8);
+                    c.lineWidth = 5; c.globalAlpha = p.life * 0.25; c.stroke();
+                    c.lineWidth = 2; c.globalAlpha = p.life; c.stroke();
                 } else {
                     c.globalCompositeOperation = 'source-over'; c.shadowBlur = 0; c.globalAlpha = p.life * 0.8; c.fillStyle = p.c;
                     c.beginPath(); c.arc(p.x, p.y, p.sz * p.life + 0.5, 0, 6.283); c.fill();
@@ -2747,7 +2832,7 @@
             ctx.beginPath(); ctx.arc(d.ax, d.ay, SLING_MAX_PULL, 0, 6.283); ctx.stroke();
             ctx.setLineDash([]);
             // резинка от точки касания до пальца
-            ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.shadowColor = col; ctx.shadowBlur = 10;
+            ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round';
             ctx.beginPath(); ctx.moveTo(d.ax, d.ay); ctx.lineTo(fx, fy); ctx.stroke();
             // якорь и палец
             ctx.fillStyle = 'rgba(255,255,255,0.55)';
@@ -2771,7 +2856,7 @@
             const x = aimMouse.x, y = aimMouse.y, pulse = 1 + 0.12 * Math.sin(_mAmb * 0.2);
             ctx.save(); ctx.translate(x, y);
             ctx.strokeStyle = fogShieldActive ? 'rgba(255,209,102,0.95)' : 'rgba(0,255,136,0.95)';
-            ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 8; ctx.lineWidth = 2;
+            ctx.lineWidth = 2;
             ctx.beginPath(); ctx.arc(0, 0, 13 * pulse, 0, 6.283);
             ctx.moveTo(-21, 0); ctx.lineTo(-7, 0); ctx.moveTo(7, 0); ctx.lineTo(21, 0);
             ctx.moveTo(0, -21); ctx.lineTo(0, -7); ctx.moveTo(0, 7); ctx.lineTo(0, 21);
@@ -2976,9 +3061,10 @@
 
             ctx.save();
             ctx.translate(455, 64);
-            if (fog.hitFlash > 0) ctx.filter = 'brightness(2.5) sepia(1) hue-rotate(-50deg)';
             if (imgFog.complete && imgFog.naturalWidth !== 0) drawSprite(ctx, imgFog, 0, 0, 58, 66);
             else { ctx.fillStyle = '#a855f7'; ctx.fillRect(0, 0, 58, 66); }
+            // вспышка попадания без ctx.filter (он тяжёлый/нестабильный в Safari): повторный проход с аддитивным смешиванием
+            if (fog.hitFlash > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, fog.hitFlash / 8) * 0.8; drawSprite(ctx, imgFog, 0, 0, 58, 66); }
             ctx.restore();
 
             if (fogShieldActive) {
@@ -3247,9 +3333,9 @@
                 ctx.save();
                 drawActorShadow(fog.x, fog.w, fog.y + fog.h);
                 ctx.translate(fog.x, fog.y);
-                if (fog.hitFlash > 0) ctx.filter = 'brightness(2.5) sepia(1) hue-rotate(-50deg)';
                 if (imgFog.complete && imgFog.naturalWidth !== 0) drawSprite(ctx, imgFog, 0, 0, fog.w, fog.h);
                 else { ctx.fillStyle = '#a855f7'; ctx.fillRect(0, 0, fog.w, fog.h); }
+                if (fog.hitFlash > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, fog.hitFlash / 8) * 0.8; drawSprite(ctx, imgFog, 0, 0, fog.w, fog.h); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; }
                 drawEpicToothBag(-18, 16, 0.85);
                 ctx.restore();
             }

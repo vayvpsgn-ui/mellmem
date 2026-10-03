@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#070a09">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
     <title>Симулятор Стримера: Меллстрой</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -804,6 +809,21 @@
         }
         .jump-cancel-btn:hover { background: rgba(255, 75, 75, 0.3); }
 
+
+        /* ===== Список лидеров (Космический Бурмалдаец) ===== */
+        .lb-name-row { display:flex; gap:8px; align-items:center; }
+        .lb-name-row input { flex:1; min-width:0; background:#141c19; border:1px solid #23302a; color:#fff; border-radius:8px; padding:8px 10px; font-size:13px; font-weight:700; outline:none; }
+        .lb-name-row input:focus { border-color:#00e5ff; }
+        .lb-list { display:flex; flex-direction:column; gap:6px; }
+        .lb-row { display:flex; align-items:center; gap:10px; background:#141c19; border:1px solid #23302a; border-radius:10px; padding:8px 12px; font-size:13px; }
+        .lb-row.me { background:rgba(0,255,136,.08); }
+        .lb-row.me:not(.gold):not(.silver):not(.bronze) { border-color:#00ff88; }
+        .lb-row.gold { border-color:#ffd700; } .lb-row.silver { border-color:#cfd8dc; } .lb-row.bronze { border-color:#cd7f32; }
+        .lb-pos { width:28px; text-align:center; font-weight:900; color:#7a8a84; }
+        .lb-nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; color:#fff; }
+        .lb-sc { font-weight:900; color:#00e5ff; }
+        .lb-new { font-size:12px; font-weight:800; color:#ffd700; text-align:center; }
+
         .bunny-skins-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 15, 13, 0.96); backdrop-filter: blur(8px);
@@ -1566,6 +1586,138 @@
         @media (max-width: 860px) {
             .mello-button.mello-mini { width: 110px !important; height: 126px !important; }
         }
+
+        /* =====================================================
+           v2 — удобство: нижняя навигация, адаптив, ландшафт
+           ===================================================== */
+        input, textarea { -webkit-user-select: text; user-select: text; }
+        .game-wrapper { height: min(720px, 100dvh); max-height: 100dvh; }
+        .click-stage::before {
+            content: ""; position: absolute; left: 50%; top: 52%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(61,255,160,.16), transparent 65%); z-index: 1; pointer-events: none;
+        }
+        .tab-btn { gap: 5px; }
+        .tab-btn i { font-style: normal; }
+        .upgrade-card:not(.disabled) { border-color: rgba(61,255,160,.2); }
+        .tab-content, .modal-card { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+        .modal-card { overflow-y: auto; }
+        #dogCasinoModal .modal-card { width: min(420px, 94vw) !important; }
+        @media (hover: none) {
+            .corner-icon-btn:hover, .upgrade-card:hover, .jump-start-btn:hover, .modal-close-btn:hover, .spin-btn:hover { transform: none !important; }
+        }
+
+        @media (max-width: 860px) {
+            .game-wrapper { --ib: 40px; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+            .click-stage { height: 44dvh; min-height: 44dvh; }
+            .shop-panel { flex: 1; height: auto; min-height: 0; display: flex; flex-direction: column; }
+            .tab-content { order: 1; min-height: 0; padding: 10px 10px 12px; touch-action: pan-y; }
+            .tabs-header {
+                order: 2; margin: 0; padding: 6px 6px max(6px, env(safe-area-inset-bottom)); gap: 2px; overflow: visible;
+                border: 0; border-top: 1px solid var(--line); border-radius: 0; background: rgba(7,12,9,.97);
+            }
+            .tab-btn { flex-direction: column; gap: 1px; min-height: 50px; padding: 5px 2px; font-size: 10.5px; border-radius: 14px; }
+            .tab-btn i { font-size: 19px; line-height: 1.1; }
+            .tab-btn.active { background: rgba(61,255,160,.14); color: var(--mint); box-shadow: inset 0 0 0 1px var(--line-mint); }
+            .upgrade-card { min-height: 58px; }
+            .upgrade-cost { padding: 8px 12px; }
+
+            .balance-container-topleft { top: 8px; left: 8px; gap: 5px; max-width: calc(100% - 64px); }
+            .main-balance { font-size: 19px; }
+            .cps-indicator { font-size: 11px; padding: 2px 9px; }
+            .top-buttons-container { flex-direction: column; align-items: flex-end; top: 8px; right: 8px; gap: 6px; }
+            .active-boosters-bar { top: auto; right: auto; left: 8px; bottom: 56px; align-items: flex-start; gap: 3px; }
+            .bottom-left-buttons { left: 8px; bottom: 8px; gap: 6px; }
+            .bottom-right-buttons { right: 8px; bottom: 8px; }
+            .level-status-bottom { bottom: 8px; max-width: calc(100% - 200px); padding: 5px 12px; }
+            .level-status-info { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 10px; }
+            .level-progress-bar-bg { width: min(120px, 100%); }
+            .cpc-badge { bottom: 52px; }
+
+            .mello-button { width: auto; height: min(250px, 60%); aspect-ratio: 5 / 6; }
+            .mello-button.dark-drun-hitbox { width: auto; height: min(330px, 82%); aspect-ratio: 7 / 8; }
+            #jumpCanvas { width: auto; height: auto; max-width: min(100%, 380px); max-height: calc(94dvh - 160px); }
+            input[type="text"] { font-size: 16px; }
+        }
+
+        @media (orientation: landscape) and (max-height: 520px) {
+            .game-wrapper { width: 100vw; max-width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
+            .main-content { flex-direction: row; }
+            .click-stage { flex: 1; height: auto; min-height: 0; }
+            .shop-panel { flex: none; width: min(46vw, 360px); height: 100%; border-top: 0; border-left: 1px solid var(--line); box-shadow: -14px 0 30px rgba(0,0,0,.35); }
+            .tab-btn { min-height: 44px; }
+            .mello-button { height: min(240px, 64%); }
+            .main-balance { font-size: 17px; }
+            .modal-card { max-height: 94dvh; padding: 14px; gap: 10px; }
+            #jumpCanvas { max-height: calc(100dvh - 130px); }
+        }
+        /* ===== v3 — отклик, магазин, заставка уровня, SVG-иконки ===== */
+        :root { --ico-bolt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L4 14h7l-1 8 9-12h-7z'/%3E%3C/svg%3E"); --ico-trend: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 17l6-6 4 4 8-8M15 7h6v6'/%3E%3C/svg%3E"); --ico-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z'/%3E%3C/svg%3E"); --ico-card: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='5' width='20' height='14' rx='3'/%3E%3Cpath d='M2 10h20M6 15h4'/%3E%3C/svg%3E"); --ico-shirt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7l4-3 2 2h4l2-2 4 3-2 4-2-1v9H8v-9l-2 1z'/%3E%3C/svg%3E"); }
+        .tab-btn i, #openInfoBtn, #toggleFullscreenBtn, #openSettingsBtn, #openStoryBtn, #openAchievementsBtn { font-size: 0; }
+        .tab-btn i { width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--m) center/contain no-repeat; mask: var(--m) center/contain no-repeat; }
+        [data-tab="tab-clicks"] i { --m: var(--ico-bolt); } [data-tab="tab-passive"] i { --m: var(--ico-trend); }
+        [data-tab="tab-boosters"] i { --m: var(--ico-star); } [data-tab="tab-donate"] i { --m: var(--ico-card); } [data-tab="tab-skins"] i { --m: var(--ico-shirt); }
+        #openInfoBtn::before, #toggleFullscreenBtn::before, #openSettingsBtn::before, #openStoryBtn::before, #openAchievementsBtn::before {
+            content: ""; width: 20px; height: 20px; background: currentColor; -webkit-mask: var(--m) center/contain no-repeat; mask: var(--m) center/contain no-repeat; }
+        #openInfoBtn { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7.5v.01'/%3E%3C/svg%3E"); } #toggleFullscreenBtn { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'/%3E%3C/svg%3E"); } #openSettingsBtn { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h10M18 7h2M4 17h2M10 17h10'/%3E%3Ccircle cx='16' cy='7' r='2'/%3E%3Ccircle cx='8' cy='17' r='2'/%3E%3C/svg%3E"); }
+        #openStoryBtn { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z'/%3E%3Cpath d='M4 21V5M9 8h6'/%3E%3C/svg%3E"); } #openAchievementsBtn { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3M12 14v4M8 21h8'/%3E%3C/svg%3E"); }
+        .fx-coin { position: absolute; z-index: 60; pointer-events: none; font-size: 18px; will-change: transform, opacity; animation: fxCoin .7s cubic-bezier(.2,.8,.3,1) forwards; }
+        @keyframes fxCoin { to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(.4); opacity: 0; } }
+        .main-balance.bump { animation: balBump .18s ease-out; transform-origin: left center; }
+        @keyframes balBump { 50% { transform: scale(1.06); } }
+        .click-stage.shake { animation: stShake .28s linear; }
+        @keyframes stShake { 20% { transform: translate(-4px, 2px); } 40% { transform: translate(4px, -2px); } 60% { transform: translate(-3px, -1px); } 80% { transform: translate(2px, 2px); } }
+        .upgrade-card:not(.disabled) { box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 18px -6px rgba(61,255,160,.45); }
+        .upgrade-card.disabled::before { content: ""; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 3px; border-radius: 3px;
+            background: linear-gradient(90deg, var(--mint-2) calc(var(--p, 0) * 1%), rgba(255,255,255,.08) 0); }
+        .upgrade-card.best-buy { border-color: var(--gold) !important; }
+        .upgrade-card.best-buy::after { content: "🔥 выгодно"; position: absolute; top: -8px; left: 14px; font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: var(--ink); }
+        .level-banner { position: absolute; left: 50%; top: 38%; z-index: 90; pointer-events: none; text-align: center; transform: translate(-50%, -50%);
+            padding: 14px 26px; border-radius: 22px; background: rgba(6,16,11,.82); border: 1px solid var(--line-mint); backdrop-filter: blur(12px);
+            box-shadow: 0 0 50px rgba(61,255,160,.35); animation: lvlIn 2.6s var(--ease) forwards; max-width: 90%; }
+        .level-banner small { display: block; font-size: 11px; letter-spacing: 2px; color: var(--mint); font-weight: 800; }
+        .level-banner b { font-family: 'Unbounded', sans-serif; font-size: 17px; color: #fff; }
+        @keyframes lvlIn { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.8); } 12%, 78% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(1.04); } }
+        .boss-modal-overlay { background: radial-gradient(90% 60% at 50% 0%, #2a0d16, #080406 75%) !important; }
+        .boss-header-wrap { border-radius: 20px; padding: 10px 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,77,125,.3); }
+        .boss-hp-bar-bg, .boss-hp-bar-fill { border-radius: 99px !important; }
+        .ut-btn { border-radius: 999px !important; min-height: 40px; }
+        #dogCasinoModal .modal-card { border-color: rgba(255,77,125,.5) !important; border-radius: 28px !important; background: linear-gradient(160deg, rgba(42,18,28,.95), rgba(14,8,11,.97)) !important; }
+        #dogCasinoModal [id^="slot"] { border-radius: 16px !important; box-shadow: inset 0 0 20px rgba(0,0,0,.6); }
+        /* ===== v3.1 — вкладки без обрезки на ПК ===== */
+        .tabs-header { overflow: visible; }
+        .tab-btn { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; padding: 7px 2px; min-height: 52px; font-size: 10.5px; }
+        .tab-btn i { width: 20px; height: 20px; }
+        /* ===== Космический Бурмалдаец — оформление ===== */
+        .minigame-modal-card { background: radial-gradient(120% 70% at 50% 0%, rgba(54,230,255,.12), transparent 60%), linear-gradient(160deg, rgba(24,22,48,.95), rgba(8,10,20,.97)); border-color: rgba(54,230,255,.28); }
+        .minigame-header-title { background: linear-gradient(90deg, var(--cyan), #c75cff, var(--mint)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: .5px; }
+        .minigame-distance-sub { font-size: 26px; background: linear-gradient(180deg, #fff, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .minigame-hud > div { padding: 4px 14px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid var(--line); font-weight: 800; backdrop-filter: blur(8px); }
+        #jumpCanvas { border-color: rgba(199,92,255,.35); box-shadow: 0 0 40px rgba(199,92,255,.18), 0 0 60px rgba(54,230,255,.1); }
+        /* ===== Бурмалдаец: HUD в потоке, без наложения ===== */
+        .minigame-header-title { margin-top: 0; }
+        .minigame-distance-sub { font-size: 24px; margin-bottom: 0; line-height: 1.15; }
+        .minigame-hud { position: static; justify-content: center; gap: 8px; margin: 0 0 2px; font-size: 13px; }
+        .minigame-hud > div { padding: 3px 13px; }
+        #jumpCanvas { width: auto; height: auto; max-width: min(100%, 460px); max-height: calc(92dvh - 215px); }
+        @media (orientation: landscape) and (max-height: 520px) {
+            .minigame-header-title { display: none; }
+            #jumpCanvas { max-height: calc(100dvh - 140px); }
+        }
+
+        /* ===== v4 — аккуратные полосы прокрутки (не вылезают за скруглённые края) ===== */
+        .tab-content, .achievements-list, .bunny-skins-screen, .info-list, .modal-card, .story-menu, .boss-modal-overlay, .lb-list {
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; overflow-x: hidden;
+        }
+        .tab-content::-webkit-scrollbar, .achievements-list::-webkit-scrollbar, .bunny-skins-screen::-webkit-scrollbar,
+        .info-list::-webkit-scrollbar, .modal-card::-webkit-scrollbar, .story-menu::-webkit-scrollbar, .boss-modal-overlay::-webkit-scrollbar { width: 10px; }
+        .tab-content::-webkit-scrollbar-track, .achievements-list::-webkit-scrollbar-track, .bunny-skins-screen::-webkit-scrollbar-track,
+        .info-list::-webkit-scrollbar-track, .modal-card::-webkit-scrollbar-track, .story-menu::-webkit-scrollbar-track, .boss-modal-overlay::-webkit-scrollbar-track { background: transparent; margin: 22px 0; }
+        .tab-content::-webkit-scrollbar-thumb, .achievements-list::-webkit-scrollbar-thumb, .bunny-skins-screen::-webkit-scrollbar-thumb,
+        .info-list::-webkit-scrollbar-thumb, .modal-card::-webkit-scrollbar-thumb, .story-menu::-webkit-scrollbar-thumb, .boss-modal-overlay::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.22); border-radius: 99px; border: 3px solid transparent; background-clip: padding-box;
+        }
+        .bunny-skins-screen { padding-right: 14px; overscroll-behavior: contain; }
+        .minigame-modal-card { overflow: hidden; }
     </style>
 </head>
 <body>
@@ -1640,9 +1792,9 @@
                     Сбрось прогресс до 1 уровня, сохранив ресурсы и скины:
                 </div>
                 <div style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,215,0,0.3); text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 6px;">
-                    <div>✨ <b>+50% ко ВСЕМУ доходу</b> (клик и пассив) навсегда!</div>
+                    <div>✨ <b>+100% ко ВСЕМУ доходу</b> (клик и пассив) за каждое перерождение, навсегда!</div>
                     <div>🚀 Открытие <b>11–20 элитных уровней</b>!</div>
-                    <div>👑 Эксклюзивный скин <b>«Султан Всея Интернета»</b> (skinpres.png)!</div>
+                    <div>👑 Эксклюзивный скин <b>«Султан Всея Интернета»</b>!</div>
                     <div>💎 <b>+50 Алмазов</b> бонусом прямо сейчас!</div>
                 </div>
                 <button class="prestige-btn" id="doPrestigeBtn">Сделать Престиж (Сброс до 1 уровня)</button>
@@ -1761,6 +1913,7 @@
                     </div>
                     <button class="jump-start-btn" id="startJumpBtn">Старт (1 🎫)</button>
                     <button class="jump-secondary-btn" id="openBunnySkinsBtn">Скины и Рулетка 🎰</button>
+                    <button class="jump-secondary-btn" id="openLeaderboardBtn">Список лидеров 🏆</button>
                     <button class="jump-cancel-btn" id="cancelJumpBtn">Отмена / Выйти</button>
                 </div>
 
@@ -1776,12 +1929,26 @@
                             <div class="roulette-track" id="rouletteTrack"></div>
                         </div>
                         <button class="spin-btn" id="spinRouletteBtn">Крутить за 50 🦷</button>
-                        <div style="font-size:11px; color:#7a8a84;">Шансы: Редкий 50%, Супер 25%, Эпик 15%, Мифик 7%, Легендарный 2.5%, Мега 0.5%</div>
-                        <div style="font-size:11px; color:#00e5ff; font-weight:700;">Повторный скин дает ценные алмазы 💎!</div>
+                        <div style="font-size:11px; color:#7a8a84;"></div>
+                        <div style="font-size:11px; color:#00e5ff; font-weight:700;">Повторный скин даёт алмазы 💎!</div>
                     </div>
 
                     <div style="font-size:14px; font-weight:800; color:#00e5ff; margin-top:4px;">Гардероб Зайца:</div>
                     <div class="bunny-skins-grid" id="bunnySkinsGrid"></div>
+                </div>
+
+                <div class="bunny-skins-screen" id="leaderboardScreen">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="modal-title" style="font-size: 17px;">🏆 Список лидеров</div>
+                        <button class="remove-deco-btn" id="closeLeaderboardBtn" style="width:24px; height:24px; font-size:14px;">×</button>
+                    </div>
+                    <div style="font-size:12px; color:#7a8a84;">Лучшие забеги по высоте. Ваше имя в таблице:</div>
+                    <div class="lb-name-row">
+                        <input type="text" id="lbNameInput" maxlength="16" placeholder="Ваше имя" autocomplete="off">
+                        <button class="jump-secondary-btn" id="lbSaveNameBtn" style="padding:8px 14px;">ОК</button>
+                    </div>
+                    <div class="lb-new" id="lbNewRecord" style="display:none;"></div>
+                    <div class="lb-list" id="lbList"></div>
                 </div>
 
                 <button class="modal-close-btn" id="closeJumpBtn" style="width: 100%;">Закрыть</button>
@@ -1904,12 +2071,12 @@
 
             <div class="shop-panel">
                 <div class="tabs-header">
-                    <button class="tab-btn active" data-tab="tab-clicks">⚡ Клики</button>
-                    <button class="tab-btn" data-tab="tab-passive">📈 Доход</button>
-                    <button class="tab-btn" data-tab="tab-boosters">🚀 Бусты</button>
-                    <button class="tab-btn" data-tab="tab-donate" id="donateTabBtn">💳 Донат</button>
+                    <button class="tab-btn active" data-tab="tab-clicks"><i>⚡</i><span>Клики</span></button>
+                    <button class="tab-btn" data-tab="tab-passive"><i>📈</i><span>Доход</span></button>
+                    <button class="tab-btn" data-tab="tab-boosters"><i>🚀</i><span>Бусты</span></button>
+                    <button class="tab-btn" data-tab="tab-donate" id="donateTabBtn"><i>💳</i><span>Донат</span></button>
                     <button class="tab-btn" data-tab="tab-skins" id="skinTabBtn">
-                        👕 Скины
+                        <i>👕</i><span>Скины</span>
                         <div class="notification-dot" id="skinNotifDot" style="top: 8px; right: 6px;"></div>
                     </button>
                 </div>
@@ -1948,7 +2115,7 @@
                     <div class="upgrade-card disabled" id="upgCryptoExchange"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🪙</div><div class="upgrade-info"><div class="upgrade-title">Собственная крипта $MELL</div><div class="upgrade-effect">+3,500,000$ в секунду</div><div class="item-count-sub" id="cntCryptoExchange">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costCryptoExchange">1.5B</span></div></div>
                     <div class="upgrade-card disabled" id="upgMediaHolding"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🏢</div><div class="upgrade-info"><div class="upgrade-title">Челленджи мировым звёздам</div><div class="upgrade-effect">+18,000,000$ в сек</div><div class="item-count-sub" id="cntMediaHolding">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costMediaHolding">12B</span></div></div>
                     <div class="upgrade-card disabled" id="upgSpaceport"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🚀</div><div class="upgrade-info"><div class="upgrade-title">Трансляция на Луне</div><div class="upgrade-effect">+90,000,000$ в сек</div><div class="item-count-sub" id="cntSpaceport">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costSpaceport">95B</span></div></div>
-                    <div class="upgrade-card disabled" id="upgOrbitalStudio"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🛰️️</div><div class="upgrade-info"><div class="upgrade-title">Орбитальный лудо-комплекс</div><div class="upgrade-effect">+450M$ в сек</div><div class="item-count-sub" id="cntOrbitalStudio">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costOrbitalStudio">750B</span></div></div>
+                    <div class="upgrade-card disabled" id="upgOrbitalStudio"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🛰️</div><div class="upgrade-info"><div class="upgrade-title">Орбитальный лудо-комплекс</div><div class="upgrade-effect">+450M$ в сек</div><div class="item-count-sub" id="cntOrbitalStudio">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costOrbitalStudio">750B</span></div></div>
                     <div class="upgrade-card disabled" id="upgGalaxyEmpire"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🌌</div><div class="upgrade-info"><div class="upgrade-title">Галактика Хайпа Мелла</div><div class="upgrade-effect">+2.5B$ в сек</div><div class="item-count-sub" id="cntGalaxyEmpire">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costGalaxyEmpire">6T</span></div></div>
                     <div class="upgrade-card disabled" id="upgQuantumFarm"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🌐</div><div class="upgrade-info"><div class="upgrade-title">Квантовая ферма хайпа</div><div class="upgrade-effect">+15B$ в сек</div><div class="item-count-sub" id="cntQuantumFarm">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costQuantumFarm">50T</span></div></div>
                     <div class="upgrade-card disabled" id="upgMultiverseEmpire"><div class="upgrade-left-wrap"><div class="upgrade-icon-img">🌠</div><div class="upgrade-info"><div class="upgrade-title">Мультивселенская империя Мелла</div><div class="upgrade-effect">+120B$ в сек</div><div class="item-count-sub" id="cntMultiverseEmpire">куплено: 0</div></div></div><div class="upgrade-cost">$<span id="costMultiverseEmpire">450T</span></div></div>
@@ -2074,7 +2241,7 @@
                             <img src="skindon3.png" class="upgrade-icon-img" style="border-radius:50%;" onerror="this.style.display='none'">
                             <div class="upgrade-info">
                                 <div class="upgrade-title">Кэжуал Мелл в худи</div>
-                                <div class="upgrade-effect" id="statusDonSkin3">Облик Мелла (skindon3.png)</div>
+                                <div class="upgrade-effect" id="statusDonSkin3">Облик Мелла</div>
                             </div>
                         </div>
                         <div class="upgrade-cost" id="priceDonSkin3" style="color: #00ff88;">99 ₽</div>
@@ -2468,6 +2635,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let diamonds = 0;
         let teeth = 0; 
         let tickets = 3;
+        const PRESTIGE_BONUS = 1.0; // +100% ко всему доходу за каждое перерождение
         let rebirths = 0;
         let rebirthSkinUnlocked = false;
         let noAdsPurchased = false;
@@ -2606,7 +2774,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             { id: 'box5', name: 'Сундук 5 мин', timeReq: 300, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 3, tickets: 0 }) },
             { id: 'box10', name: 'Сундук 10 мин', timeReq: 600, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 8) + 3, tickets: 0 }) },
             { id: 'box20', name: 'Сундук 20 мин', timeReq: 1200, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 6) + 10, tickets: 0 }) },
-            { id: 'box30', name: 'Сундук 30 мин', timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 1 }) }
+            { id: 'box30', name: 'Сундук 30 мин', timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 2 }) }
         ];
 
         let melloPosX = null;
@@ -2709,6 +2877,13 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             LuckMell: { lvl: 0, cost: 350000, costMult: 1.55 }
         };
 
+        // Поздние апгрейды (после ~10 уровня) чуть дороже: престиж становится почти обязательным
+        ['DiamondHand','QuantumClick','MellFinger','Singularity','MellImpulse','GalaxyTap','DivineTouch','TrueSingularity','MultiverseLord',
+         'PrivateJet','Island','CryptoExchange','MediaHolding','Spaceport','OrbitalStudio','GalaxyEmpire','QuantumFarm','MultiverseEmpire'].forEach(k => {
+            defaultUpgrades[k].cost = Math.round(defaultUpgrades[k].cost * 1.35);
+            defaultUpgrades[k].costMult = +(defaultUpgrades[k].costMult + 0.025).toFixed(3);
+        });
+
         let upgrades = JSON.parse(JSON.stringify(defaultUpgrades));
 
         // 20 УРОВНЕЙ И ОБРАЗОВ
@@ -2723,17 +2898,20 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             { threshold: 75000000, name: '«Шейх на суете в Дубае»', img: 'mell8.png', bg: 'images7.png' },
             { threshold: 350000000, name: '«Хозяин бабок и движа»', img: 'mell9.png', bg: 'images8.png' },
             { threshold: 1000000000, name: '«Я купил этот интернет!»', img: 'mell10.png', bg: 'images9.png' },
-            { threshold: 5000000000, name: '«Давай по новой, я тильтанул»', img: 'mell10.png', bg: 'images9.png' },
-            { threshold: 25000000000, name: '«Казино всей галактики»', img: 'mell11.png', bg: 'images8.png' },
-            { threshold: 120000000000, name: '«Лям туда, лям сюда»', img: 'mell8.png', bg: 'images7.png' },
-            { threshold: 600000000000, name: '«Орбитальный занос x100000»', img: 'mell12.png', bg: 'images6.png' },
-            { threshold: 3000000000000, name: '«Бабки не проблема, родной»', img: 'mell6.png', bg: 'images5.png' },
-            { threshold: 15000000000000, name: '«Перекупил саму Вселенную»', img: 'mell13.png', bg: 'images4.png' },
-            { threshold: 75000000000000, name: '«Бог лудки и хайпа»', img: 'mell4.png', bg: 'images3.png' },
-            { threshold: 350000000000000, name: '«Вне времени и пространства»', img: 'mell14.png', bg: 'images2.png' },
-            { threshold: 1500000000000000, name: '«Сверхчеловек Меллстрой»', img: 'mell2.png', bg: 'images1.png' },
-            { threshold: 10000000000000000, name: '«Абсолютный Мелл: Легенда»', img: 'mell15.png', bg: 'images9.png' }
+            { threshold: 5000000000, name: '«Давай по новой, я тильтанул»', img: 'mell10.png', bg: 'images10.png' },
+            { threshold: 25000000000, name: '«Казино всей галактики»', img: 'mell11.png', bg: 'images11.png' },
+            { threshold: 120000000000, name: '«Лям туда, лям сюда»', img: 'mell8.png', bg: 'images12.png' },
+            { threshold: 600000000000, name: '«Орбитальный занос x100000»', img: 'mell12.png', bg: 'images13.png' },
+            { threshold: 3000000000000, name: '«Бабки не проблема, родной»', img: 'mell6.png', bg: 'images14.png' },
+            { threshold: 15000000000000, name: '«Перекупил саму Вселенную»', img: 'mell13.png', bg: 'images15.png' },
+            { threshold: 75000000000000, name: '«Бог лудки и хайпа»', img: 'mell4.png', bg: 'images16.png' },
+            { threshold: 350000000000000, name: '«Вне времени и пространства»', img: 'mell14.png', bg: 'images17.png' },
+            { threshold: 1500000000000000, name: '«Сверхчеловек Меллстрой»', img: 'mell2.png', bg: 'images18.png' },
+            { threshold: 10000000000000000, name: '«Абсолютный Мелл: Легенда»', img: 'mell15.png', bg: 'images19.png' }
         ];
+
+        // Уровни 11–20 требуют на 60% больше заработка
+        levels.forEach((l, i) => { if (i >= 10) l.threshold = Math.round(l.threshold * 1.6); });
 
         const SKIN_UNLOCK_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20];
         const skins = SKIN_UNLOCK_LEVELS.map(l => ({
@@ -2903,7 +3081,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 prestigeSound.play().catch(() => playJackpotSound());
             }
 
-            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${rebirths * 50}% ко всему доходу!\nСобытия и все 15 скинов доступны!`, 'ПЕРЕРОЖДЕНИЕ');
+            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все 15 скинов доступны!`, 'ПЕРЕРОЖДЕНИЕ');
             
             updateUI();
             saveGame();
@@ -2922,6 +3100,82 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 250);
         }
 
+
+        // ============================================================
+        // СПИСОК ЛИДЕРОВ (КОСМИЧЕСКИЙ БУРМАЛДАЕЦ) — локальный топ-10
+        // ============================================================
+        const LB_KEY = 'mello_jump_leaderboard';
+        const LB_SEED = [
+            { name: 'Котость', score: 2400 }, { name: 'Чекушка', score: 1800 },
+            { name: 'Черемша', score: 1300 }, { name: 'Друн', score: 900 },
+            { name: 'ФОГ', score: 600 }
+        ];
+        function lbLoad() {
+            try {
+                const d = JSON.parse(localStorage.getItem(LB_KEY) || 'null');
+                if (d && Array.isArray(d.entries)) {
+                    // оставляем только одну запись игрока (лучшую)
+                    let best = null;
+                    const others = [];
+                    d.entries.forEach(e => {
+                        if (e && e.mine) { if (!best || e.score > best.score) best = e; }
+                        else others.push(e);
+                    });
+                    if (best) others.push(best);
+                    return { name: String(d.name || 'Игрок'), entries: others };
+                }
+            } catch (e) {}
+            return { name: 'Игрок', entries: LB_SEED.map(e => ({ ...e })) };
+        }
+        let lbData = lbLoad();
+        function lbSave() { try { localStorage.setItem(LB_KEY, JSON.stringify({ name: lbData.name, entries: lbData.entries })); } catch (e) {} }
+        function lbEscape(t) { return String(t).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+        function lbSorted() { return lbData.entries.slice().sort((a, b) => b.score - a.score).slice(0, 10); }
+        function lbSubmit(score) {
+            score = Math.floor(score || 0);
+            if (score <= 0) return 0;
+            let mine = lbData.entries.find(e => e.mine);
+            if (mine) {
+                // игрок уже в таблице — обновляем только если новый результат лучше
+                if (score <= mine.score) return 0;
+                mine.score = score;
+                mine.name = lbData.name;
+            } else {
+                const before = lbSorted();
+                if (before.length >= 10 && score <= before[before.length - 1].score) return 0;
+                mine = { name: lbData.name, score, mine: true };
+                lbData.entries.push(mine);
+            }
+            lbData.entries = lbSorted();
+            lbSave();
+            return lbData.entries.indexOf(mine) + 1;
+        }
+        function renderLeaderboard(newPlace) {
+            const list = document.getElementById('lbList');
+            const note = document.getElementById('lbNewRecord');
+            const input = document.getElementById('lbNameInput');
+            if (input && document.activeElement !== input) input.value = lbData.name;
+            const rows = lbSorted();
+            const medals = ['🥇', '🥈', '🥉'];
+            const cls = ['gold', 'silver', 'bronze'];
+            list.innerHTML = rows.map((e, i) =>
+                `<div class="lb-row ${e.mine ? 'me' : ''} ${cls[i] || ''}"><div class="lb-pos">${medals[i] || (i + 1)}</div><div class="lb-nm">${lbEscape(e.name)}</div><div class="lb-sc">${Number(e.score).toLocaleString('ru-RU')} м</div></div>`
+            ).join('') || '<div style="text-align:center; color:#7a8a84; font-size:13px;">Пока пусто — станьте первым!</div>';
+            if (newPlace) { note.style.display = 'block'; note.textContent = `🎉 Ваш результат попал в таблицу: ${newPlace}-е место!`; }
+            else note.style.display = 'none';
+        }
+        const leaderboardScreen = document.getElementById('leaderboardScreen');
+        document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; });
+        document.getElementById('closeLeaderboardBtn').addEventListener('click', () => { leaderboardScreen.style.display = 'none'; });
+        function lbApplyName() {
+            const v = document.getElementById('lbNameInput').value.trim().slice(0, 16) || 'Игрок';
+            lbData.name = v;
+            lbData.entries.forEach(e => { if (e.mine) e.name = v; });
+            lbSave(); renderLeaderboard();
+        }
+        document.getElementById('lbSaveNameBtn').addEventListener('click', lbApplyName);
+        document.getElementById('lbNameInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); lbApplyName(); } });
+
         function closeMinigame() {
             forcePortrait();
             jumpModal.classList.remove('active');
@@ -2930,6 +3184,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             isJumpPaused = false;
             if (jumpPauseOverlay) jumpPauseOverlay.style.display = 'none';
             bunnySkinsScreen.style.display = 'none';
+            leaderboardScreen.style.display = 'none';
             jumpBgMusic.pause();
             if (musicEnabled && !isDrunInvasionActive && hasStartedMainBgMusic) mainBgMusic.play().catch(() => {});
         }
@@ -3296,9 +3551,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             rouletteTrack.offsetHeight;
 
-            const cardWidth = 98;
-            const centerOffset = 215;
-            const targetX = (winIndex * cardWidth) + (cardWidth / 2) - centerOffset + (Math.random() * 20 - 10);
+            // Реальные размеры из DOM: указатель стоит ровно по центру окна рулетки
+            const winCard = rouletteTrack.children[winIndex];
+            const displayEl = rouletteTrack.parentElement;
+            const pointerX = displayEl.clientWidth / 2;
+            // Случайная точка остановки внутри выпавшей карточки (с отступом от краёв, чтобы не попасть на границу)
+            const frac = 0.1 + Math.random() * 0.8;
+            const targetX = winCard.offsetLeft + winCard.offsetWidth * frac - pointerX;
 
             rouletteTrack.style.transition = 'transform 4.8s cubic-bezier(0.12, 0.8, 0.25, 1)';
             rouletteTrack.style.transform = `translateX(-${targetX}px)`;
@@ -3381,7 +3640,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 return;
             }
 
-            const ok = await confirm(`Купить скин «Кэжуал Мелл в худи» (skindon3.png) за ${priceRub} ₽?`);
+            const ok = await confirm(`Купить скин «Кэжуал Мелл в худи» за ${priceRub} ₽?`);
             if (ok) {
                 donSkin3Unlocked = true;
                 activeSpecialSkin = 'skindon3';
@@ -3624,6 +3883,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         document.addEventListener('mouseup', endMelloDrag);
 
         melloBtn.addEventListener('touchstart', (e) => {
+            window.__melloTouchAt = Date.now();
             ensureMainBgMusic();
             for (let i = 0; i < e.changedTouches.length; i++) {
                 handleMelloTap(e.changedTouches[i]);
@@ -4088,7 +4348,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 bunnySkinsUnlocked: bunnySkinsConfig.map(s => ({ id: s.id, unlocked: s.unlocked })),
                 baseCpc, upgrades, claimedLevelBonuses,
                 sfxEnabled, sfxVolume, musicEnabled, musicVolume, selectedSkinIndex, userManuallySelectedSkin,
-                maxSeenSkinIndex, skinFmt: 2, priceFmt: 4, melloPosX, melloPosY, playTimeSeconds, lastDayString,
+                maxSeenSkinIndex, skinFmt: 2, priceFmt: 5, melloPosX, melloPosY, playTimeSeconds, lastDayString,
                 boxesClaimedState: boxesConfig.map(b => b.claimed),
                 decos, highestDecoZIndex,
                 achievementsData: {
@@ -4238,7 +4498,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     for (let k in data.upgrades) {
                         if (upgrades[k]) {
                             upgrades[k] = Object.assign(upgrades[k], data.upgrades[k]);
-                            if (data.priceFmt !== 4) { // миграция старых сохранений на новую экономику
+                            if (data.priceFmt !== 5) { // миграция старых сохранений на новую экономику
                                 const df = defaultUpgrades[k];
                                 upgrades[k].costMult = df.costMult;
                                 upgrades[k].cost = Math.floor(df.cost * Math.pow(df.costMult, upgrades[k].lvl || 0));
@@ -4272,6 +4532,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 clearInterval(luckMellTimer);
 
                 localStorage.removeItem('mello_clicker_save');
+                localStorage.removeItem('mello_jump_leaderboard');
                 upgrades = JSON.parse(JSON.stringify(defaultUpgrades));
                 location.reload();
             }
@@ -4280,10 +4541,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         function updateChestButtonUI() {
             let nextBox = boxesConfig.find(b => !b.claimed);
             if (!nextBox) {
-                mainChestBtn.innerHTML = '🎁 Все собрано!';
                 mainChestBtn.classList.remove('ready');
+                mainChestBtn.style.display = 'none';
                 return;
             }
+            if (mainChestBtn.style.display === 'none') mainChestBtn.style.display = '';
 
             if (playTimeSeconds >= nextBox.timeReq) {
                 mainChestBtn.innerHTML = `🎁 ${nextBox.name} (Забрать!)`;
@@ -4514,7 +4776,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             const onCoinCollect = (e) => {
                 e.stopPropagation();
-                let actualVal = value * (1 + rebirths * 0.5);
+                let actualVal = value * (1 + rebirths * PRESTIGE_BONUS);
                 balance += actualVal;
                 totalEarned += actualVal; 
                 showFloatingText(`+$${formatCompactNumber(actualVal)}`, e, true);
@@ -4533,7 +4795,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         function getCpc() { 
             let val = baseCpc * cpcMultiplier;
-            if (rebirths > 0) val *= (1 + rebirths * 0.5);
+            if (rebirths > 0) val *= (1 + rebirths * PRESTIGE_BONUS);
             return val; 
         }
 
@@ -4556,7 +4818,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                        (upgrades.MultiverseEmpire.lvl * upgrades.MultiverseEmpire.power);
 
             if (hypeStormTimeLeft > 0) base *= 2;
-            if (rebirths > 0) base *= (1 + rebirths * 0.5);
+            if (rebirths > 0) base *= (1 + rebirths * PRESTIGE_BONUS);
             return base;
         }
 
@@ -4722,7 +4984,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         melloBtn.addEventListener('click', (e) => {
             if (melloHasMoved) return;
-            if (e.pointerType === 'touch') return;
+            if (e.pointerType === 'touch' || Date.now() - (window.__melloTouchAt || 0) < 700) return;
             handleMelloTap(e);
         });
 
@@ -5243,7 +5505,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 playerSoul.y = Math.max(0, Math.min(utCanvas.height - playerSoul.h, playerSoul.y));
             }
 
-            if (dodgeTimer % 10 === 0) {
+            if (dodgeTimer % 14 === 0) {
                 let targetX = playerSoul.x + playerSoul.w / 2;
                 let targetY = playerSoul.y + playerSoul.h / 2;
 
@@ -5251,19 +5513,19 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     let spawnLeft = Math.random() < 0.5;
                     let bx = spawnLeft ? -15 : utCanvas.width + 15;
                     let by = Math.random() * utCanvas.height;
-                    let angle = Math.atan2(targetY - by, targetX - bx);
+                    let angle = Math.atan2(targetY - by, targetX - bx) + (Math.random() - 0.5) * 1.0;
                     bullets.push({ 
                         x: bx, y: by, 
-                        vx: Math.cos(angle) * 4.9, vy: Math.sin(angle) * 4.9, 
+                        vx: Math.cos(angle) * 3.1, vy: Math.sin(angle) * 3.1, 
                         angle: angle, type: 'knife', rot: angle 
                     });
                 } else if (currentPattern === 2) {
                     let bx = utCanvas.width / 2 + (Math.random() - 0.5) * 80;
                     let by = -15;
-                    let angle = Math.atan2(targetY - by, targetX - bx) + (Math.random() - 0.5) * 0.40;
+                    let angle = Math.atan2(targetY - by, targetX - bx) + (Math.random() - 0.5) * 1.0;
                     bullets.push({ 
                         x: bx, y: by, 
-                        vx: Math.cos(angle) * 4.5, vy: Math.sin(angle) * 4.5, 
+                        vx: Math.cos(angle) * 2.9, vy: Math.sin(angle) * 2.9, 
                         type: 'saw', rot: 0, r: 10 
                     });
                 } else if (currentPattern === 3) {
@@ -5272,7 +5534,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     let angle = Math.atan2(targetY - by, targetX - bx);
                     bullets.push({ 
                         x: bx, y: by, 
-                        vx: Math.cos(angle) * 3.8, vy: Math.max(3.0, Math.sin(angle) * 5.0), 
+                        vx: Math.cos(angle) * 1.5 + (Math.random() - 0.5) * 1.2, vy: Math.max(2.0, Math.sin(angle) * 3.2), 
                         type: 'drop', rot: 0 
                     });
                 }
@@ -5282,9 +5544,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let b = bullets[i];
                 b.x += b.vx;
                 b.y += b.vy;
-                if (b.type === 'saw') b.rot += 0.25;
+                if (b.type === 'saw') b.rot += 0.12;
 
-                let hitRadius = b.type === 'saw' ? 10 : 7;
+                let hitRadius = b.type === 'saw' ? 9 : 6;
                 let soulCenterX = playerSoul.x + playerSoul.w / 2;
                 let soulCenterY = playerSoul.y + playerSoul.h / 2;
                 let dist = Math.hypot(b.x - soulCenterX, b.y - soulCenterY);
@@ -5321,48 +5583,54 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     utCtx.save();
                     utCtx.translate(b.x, b.y);
 
+                    const face = (ex, ey, sx, sy, sr, col) => {
+                        utCtx.fillStyle = col;
+                        utCtx.beginPath(); utCtx.arc(ex - sx, ey, sr, 0, 6.3); utCtx.arc(ex + sx, ey, sr, 0, 6.3); utCtx.fill();
+                        utCtx.strokeStyle = col; utCtx.lineWidth = 1.1; utCtx.lineCap = 'round';
+                        utCtx.beginPath(); utCtx.arc(ex, ey + sy, sx * 0.85, 0.15 * Math.PI, 0.85 * Math.PI); utCtx.stroke();
+                    };
                     if (b.type === 'knife') {
                         utCtx.rotate(b.rot);
-                        utCtx.fillStyle = '#e0e0e0';
+                        utCtx.shadowColor = 'rgba(54, 230, 255, 0.7)'; utCtx.shadowBlur = 7;
+                        utCtx.fillStyle = '#ff9f43';
+                        utCtx.beginPath(); utCtx.arc(-12, 0, 4.2, 0, 6.3); utCtx.fill();
+                        utCtx.fillRect(-14, -3.5, 8, 7);
+                        utCtx.fillStyle = '#f4fbff'; utCtx.strokeStyle = '#36e6ff'; utCtx.lineWidth = 1.5; utCtx.lineJoin = 'round';
                         utCtx.beginPath();
-                        utCtx.moveTo(-10, -3);
-                        utCtx.lineTo(12, 0);
-                        utCtx.lineTo(-10, 3);
-                        utCtx.closePath();
-                        utCtx.fill();
-                        utCtx.fillStyle = '#ff3366';
-                        utCtx.fillRect(-15, -2, 5, 4);
+                        utCtx.moveTo(-7, -5.5); utCtx.lineTo(8, -5.5);
+                        utCtx.quadraticCurveTo(17, -3.5, 16, 1.5); utCtx.lineTo(-7, 5.5);
+                        utCtx.closePath(); utCtx.fill(); utCtx.stroke();
+                        utCtx.shadowBlur = 0;
+                        face(4, -1.5, 2.8, 2.2, 1.2, '#16323a');
                     } else if (b.type === 'saw') {
+                        utCtx.shadowColor = 'rgba(255, 204, 77, 0.7)'; utCtx.shadowBlur = 8;
                         utCtx.rotate(b.rot);
-                        utCtx.fillStyle = '#ffffff';
-                        utCtx.strokeStyle = '#ff3366';
-                        utCtx.lineWidth = 2;
+                        utCtx.fillStyle = '#ffd84d'; utCtx.strokeStyle = '#ff9f1a'; utCtx.lineWidth = 1.6; utCtx.lineJoin = 'round';
                         utCtx.beginPath();
-                        let teethCount = 8;
-                        for (let t = 0; t < teethCount * 2; t++) {
-                            let rad = t % 2 === 0 ? b.r : b.r - 3.5;
-                            let a = (Math.PI / teethCount) * t;
-                            let px = Math.cos(a) * rad;
-                            let py = Math.sin(a) * rad;
-                            if (t === 0) utCtx.moveTo(px, py);
-                            else utCtx.lineTo(px, py);
+                        for (let t = 0; t < 20; t++) {
+                            const rad = t % 2 === 0 ? b.r : b.r - 3;
+                            const an = (Math.PI / 10) * t;
+                            if (t === 0) utCtx.moveTo(rad, 0); else utCtx.lineTo(Math.cos(an) * rad, Math.sin(an) * rad);
                         }
-                        utCtx.closePath();
-                        utCtx.fill();
-                        utCtx.stroke();
-
-                        utCtx.fillStyle = '#ff0033';
-                        utCtx.beginPath();
-                        utCtx.arc(0, 0, 3, 0, Math.PI * 2);
-                        utCtx.fill();
+                        utCtx.closePath(); utCtx.fill(); utCtx.stroke();
+                        utCtx.rotate(-b.rot);
+                        utCtx.shadowBlur = 0;
+                        utCtx.fillStyle = 'rgba(255, 77, 125, 0.55)';
+                        utCtx.beginPath(); utCtx.arc(-5, 1.5, 1.7, 0, 6.3); utCtx.arc(5, 1.5, 1.7, 0, 6.3); utCtx.fill();
+                        face(0, -2, 3, 3, 1.3, '#4a2a00');
                     } else if (b.type === 'drop') {
-                        utCtx.fillStyle = '#ff2255';
+                        utCtx.rotate(Math.sin(b.y * 0.1) * 0.2);
+                        utCtx.shadowColor = 'rgba(255, 77, 125, 0.7)'; utCtx.shadowBlur = 7;
+                        utCtx.fillStyle = '#ff4d7d'; utCtx.strokeStyle = '#ffd0dc'; utCtx.lineWidth = 1.2;
                         utCtx.beginPath();
-                        utCtx.moveTo(0, 9);
-                        utCtx.lineTo(3.5, -5);
-                        utCtx.lineTo(-3.5, -5);
-                        utCtx.closePath();
-                        utCtx.fill();
+                        utCtx.moveTo(0, -10); utCtx.bezierCurveTo(2, -5, 7, -1, 7, 3.5);
+                        utCtx.arc(0, 3.5, 7, 0, Math.PI, false);
+                        utCtx.bezierCurveTo(-7, -1, -2, -5, 0, -10);
+                        utCtx.closePath(); utCtx.fill(); utCtx.stroke();
+                        utCtx.shadowBlur = 0;
+                        utCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                        utCtx.beginPath(); utCtx.ellipse(-3, 1, 1.3, 2.4, 0.3, 0, 6.3); utCtx.fill();
+                        face(0, 3, 2.3, 1.8, 1.1, '#5a0f27');
                     }
 
                     utCtx.restore();
@@ -5850,34 +6118,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         const cachedItemRocket = createOffscreen(32, 32, (c) => {
             c.translate(16, 16);
-            c.fillStyle = 'rgba(255, 51, 102, 0.35)';
+            c.fillStyle = 'rgba(255, 140, 0, 0.35)';
             c.beginPath();
-            c.arc(0, 0, 13, 0, Math.PI * 2);
+            c.arc(0, 0, 14, 0, Math.PI * 2);
             c.fill();
-
-            c.fillStyle = '#ff3366';
-            c.beginPath();
-            c.moveTo(0, -12);
-            c.lineTo(6, 6);
-            c.lineTo(2, 6);
-            c.lineTo(2, 11);
-            c.lineTo(-2, 11);
-            c.lineTo(-2, 6);
-            c.lineTo(-6, 6);
-            c.closePath();
-            c.fill();
-
-            c.fillStyle = '#ffd700';
-            c.beginPath();
-            c.arc(0, -2, 3, 0, Math.PI * 2);
-            c.fill();
+            c.rotate(Math.PI / 4);
+            c.scale(0.3, 0.3);
+            c.translate(0, -4);
+            paintRocketBody(c);
         });
 
         const cachedPlatformsCache = {};
         function getCachedPlatform(width, type) {
             const key = `${width}_${type}`;
             if (cachedPlatformsCache[key]) return cachedPlatformsCache[key];
-            const P = { moving: ['#fff0a8', '#e0a800', '#ffcc33'], fake: ['#ff9db0', '#b3122f', '#ff3355'] }[type] || ['#a8ffd8', '#00b86b', '#00ff88'];
+            const P = { once: ['#eaf9ff', '#4aa8ff', '#7fdcff'], moving: ['#fff0a8', '#e0a800', '#ffcc33'], fake: ['#ff9db0', '#b3122f', '#ff3355'] }[type] || ['#a8ffd8', '#00b86b', '#00ff88'];
             const oc = document.createElement('canvas');
             oc.width = width + 10; oc.height = 26;
             const c = oc.getContext('2d');
@@ -5895,6 +6150,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             for (let x = 9; x < width - 6; x += 12) { c.fillStyle = P[0]; c.beginPath(); c.arc(x, 6.5, 1.3, 0, 6.283); c.fill(); }
             if (type === 'fake') { c.strokeStyle = 'rgba(20,0,5,0.85)'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(width * 0.35, 0); c.lineTo(width * 0.42, 5); c.lineTo(width * 0.36, 9); c.lineTo(width * 0.45, 14); c.moveTo(width * 0.7, 0); c.lineTo(width * 0.64, 6); c.lineTo(width * 0.7, 14); c.stroke(); }
             if (type === 'moving') { c.fillStyle = 'rgba(60,30,0,0.75)'; [[4, 1], [width - 4, -1]].forEach(([x, d]) => { c.beginPath(); c.moveTo(x, 7); c.lineTo(x + d * 5, 3.5); c.lineTo(x + d * 5, 10.5); c.closePath(); c.fill(); }); }
+            if (type === 'once') {
+                c.strokeStyle = 'rgba(255,255,255,0.9)'; c.lineWidth = 1.3; c.setLineDash([3, 3]);
+                c.beginPath(); c.roundRect(1.5, 1.5, width - 3, 11, 5.5); c.stroke(); c.setLineDash([]);
+                c.fillStyle = 'rgba(255,255,255,0.85)';
+                [width * 0.3, width * 0.5, width * 0.7].forEach(x => { c.beginPath(); c.moveTo(x, 3.5); c.lineTo(x + 2.5, 7); c.lineTo(x, 10.5); c.lineTo(x - 2.5, 7); c.closePath(); c.fill(); });
+            }
             cachedPlatformsCache[key] = oc;
             return oc;
         }
@@ -5925,11 +6186,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }),
             void: createOffscreen(28, 28, (c) => {
                 c.translate(14, 14);
-                c.fillStyle = '#ff0055';
-                c.shadowColor = '#ff0055';
-                c.shadowBlur = 10;
+                c.fillStyle = '#c75cff';
+                c.shadowColor = '#e879f9';
+                c.shadowBlur = 12;
                 c.beginPath();
-                c.arc(0, 0, 6, 0, Math.PI * 2);
+                c.arc(0, 0, 6.5, 0, Math.PI * 2);
                 c.fill();
                 c.fillStyle = '#ffffff';
                 c.beginPath();
@@ -6156,6 +6417,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             } else if (rand < fakeChance + movingChance) {
                 type = 'moving';
             }
+            if (type !== 'fake' && scoreHeight >= 1500 && Math.random() < 0.2 && (!lastPlat || (lastPlat.type !== 'once' && lastPlat.type !== 'fake'))) {
+                type = 'once';
+            }
 
             const pObj = {
                 x: pX, y: y, width: pWidth, height: 14,
@@ -6164,7 +6428,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             };
             platforms.push(pObj);
 
-            if (type !== 'fake') {
+            if (type !== 'fake' && type !== 'once') {
                 const itemRand = Math.random();
                 let offsetX = pWidth / 2 - 12;
                 let offsetY = -26;
@@ -6489,7 +6753,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                             bunny.vy = bunny.jumpForce;
                             bunny.isSpringJumping = false;
                             playJumpNorm();
-                            burst(bunny.x + bunny.width / 2, bunny.y + bunny.height, p.type === 'moving' ? '#ffe27a' : '#7dffc4', 7, 2.2, 20);
+                            burst(bunny.x + bunny.width / 2, bunny.y + bunny.height, p.type === 'moving' ? '#ffe27a' : p.type === 'once' ? '#9be7ff' : '#7dffc4', 7, 2.2, 20);
+                            if (p.type === 'once') {
+                                p.active = false;
+                                burst(p.x + p.width / 2, p.y + 7, '#bfefff', 18, 3.2, 28);
+                            }
                         }
                         break;
                     }
@@ -6587,11 +6855,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     m.y = m.centerY + Math.sin(m.angle) * m.radius - m.h / 2;
                     m.shootCooldown--;
                     if (m.shootCooldown <= 0) {
-                        m.shootCooldown = 45 + Math.floor(Math.random() * 20);
-                        const targetAngle = Math.atan2((bHitTop + 15) - (m.y + m.h / 2), (bHitLeft + 15) - (m.x + m.w / 2));
+                        m.shootCooldown = 60 + Math.floor(Math.random() * 25);
+                        const targetAngle = Math.atan2((bHitTop + 15) - (m.y + m.h / 2), (bHitLeft + 15) - (m.x + m.w / 2)) + (Math.random() - 0.5) * 0.9;
                         monsterBullets.push({
                             x: m.x + m.w / 2, y: m.y + m.h / 2,
-                            vx: Math.cos(targetAngle) * 5.0, vy: Math.sin(targetAngle) * 5.0,
+                            vx: Math.cos(targetAngle) * 3.5, vy: Math.sin(targetAngle) * 3.5,
                             r: 6, style: 'void'
                         });
                     }
@@ -6637,6 +6905,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (scoreHeight > maxHeight) maxHeight = scoreHeight;
                 document.getElementById('jumpTicketsCount').textContent = tickets;
                 startScreen.style.display = 'flex';
+                const lbPlace = lbSubmit(scoreHeight);
+                if (lbPlace) { renderLeaderboard(lbPlace); leaderboardScreen.style.display = 'flex'; }
                 saveGame();
             }
         }
@@ -6734,6 +7004,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }
             ctx.restore();
 
+            {
+                const hue = (265 + scoreHeight * 0.06) % 360;
+                const tg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                tg.addColorStop(0, `hsla(${hue},90%,58%,0.12)`); tg.addColorStop(1, `hsla(${(hue + 70) % 360},90%,58%,0)`);
+                ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = tg; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.restore();
+            }
             for (let i = 0; i < platforms.length; i++) {
                 const p = platforms[i];
                 if (!p.active) continue;
@@ -6874,6 +7150,93 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             ctx.restore();
         }
 
+        // Новая ракета: белый корпус с красными полосами, оранжевые стабилизаторы, синий иллюминатор
+        function paintRocketBody(c) {
+            c.save();
+            // боковые стабилизаторы
+            c.fillStyle = '#ff7a00';
+            c.strokeStyle = '#8a3a00';
+            c.lineWidth = 1.5;
+            [-1, 1].forEach(d => {
+                c.beginPath();
+                c.moveTo(d * 11, 2);
+                c.lineTo(d * 25, 26);
+                c.lineTo(d * 25, 32);
+                c.lineTo(d * 11, 24);
+                c.closePath();
+                c.fill();
+                c.stroke();
+            });
+
+            // сопло
+            c.fillStyle = '#4a4f57';
+            c.beginPath();
+            c.moveTo(-7, 24);
+            c.lineTo(7, 24);
+            c.lineTo(10, 32);
+            c.lineTo(-10, 32);
+            c.closePath();
+            c.fill();
+
+            // корпус
+            const g = c.createLinearGradient(-14, 0, 14, 0);
+            g.addColorStop(0, '#b9c4d0');
+            g.addColorStop(0.35, '#ffffff');
+            g.addColorStop(1, '#9fb0c2');
+            c.fillStyle = g;
+            c.strokeStyle = '#2d3a48';
+            c.lineWidth = 2;
+            c.beginPath();
+            c.moveTo(0, -40);
+            c.bezierCurveTo(16, -22, 14, 8, 12, 25);
+            c.lineTo(-12, 25);
+            c.bezierCurveTo(-14, 8, -16, -22, 0, -40);
+            c.closePath();
+            c.fill();
+            c.stroke();
+
+            // красная носовая часть
+            c.fillStyle = '#e8203c';
+            c.beginPath();
+            c.moveTo(0, -40);
+            c.bezierCurveTo(8, -32, 11, -26, 12, -21);
+            c.lineTo(-12, -21);
+            c.bezierCurveTo(-11, -26, -8, -32, 0, -40);
+            c.closePath();
+            c.fill();
+
+            // полосы на корпусе
+            c.fillStyle = '#e8203c';
+            c.fillRect(-13, 12, 26, 3.5);
+            c.fillStyle = '#ffd23f';
+            c.fillRect(-13, 17, 26, 2.5);
+
+            // иллюминатор
+            c.fillStyle = '#ffd23f';
+            c.beginPath();
+            c.arc(0, -6, 8.5, 0, Math.PI * 2);
+            c.fill();
+            c.stroke();
+            c.fillStyle = '#1b6bd1';
+            c.beginPath();
+            c.arc(0, -6, 6, 0, Math.PI * 2);
+            c.fill();
+            c.fillStyle = 'rgba(255,255,255,0.8)';
+            c.beginPath();
+            c.arc(-2, -8, 2, 0, Math.PI * 2);
+            c.fill();
+            c.restore();
+        }
+
+        function paintRocketFlame(c, size) {
+            for (let i = 0; i < 5; i++) {
+                c.fillStyle = Math.random() < 0.5 ? '#ff5a1f' : '#ffd23f';
+                c.beginPath();
+                c.arc((Math.random() - 0.5) * 12, 34 + Math.random() * size, Math.random() * 4 + 2, 0, Math.PI * 2);
+                c.fill();
+            }
+        }
+
         function drawRocket() {
             rocket.particles.forEach(p => {
                 ctx.save();
@@ -6887,150 +7250,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             ctx.save();
             ctx.translate(rocket.x, rocket.y);
-
-            const bodyGrad = ctx.createLinearGradient(-15, 0, 15, 0);
-            bodyGrad.addColorStop(0, '#e6fff5');
-            bodyGrad.addColorStop(0.5, '#ffffff');
-            bodyGrad.addColorStop(1, '#a3e8cd');
-            ctx.fillStyle = bodyGrad;
-            ctx.strokeStyle = '#00ff88';
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = '#00ff88';
+            if (rocket.stage === 'flying' || rocket.stage === 'eject') paintRocketFlame(ctx, 14);
+            ctx.shadowColor = '#ff7a00';
             ctx.shadowBlur = 10;
-
-            ctx.beginPath();
-            ctx.moveTo(0, -38);
-            ctx.bezierCurveTo(15, -15, 14, 18, 11, 24);
-            ctx.lineTo(-11, 24);
-            ctx.bezierCurveTo(-14, 18, -15, -15, 0, -38);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#ff3366';
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.moveTo(0, -38);
-            ctx.bezierCurveTo(6, -28, 8, -22, 9, -18);
-            ctx.lineTo(-9, -18);
-            ctx.bezierCurveTo(-8, -22, -6, -28, 0, -38);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = '#ff3366';
-            ctx.beginPath();
-            ctx.moveTo(-11, 10);
-            ctx.bezierCurveTo(-18, 14, -23, 22, -22, 27);
-            ctx.lineTo(-11, 23);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.moveTo(11, 10);
-            ctx.bezierCurveTo(18, 14, 23, 22, 22, 27);
-            ctx.lineTo(11, 23);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = '#23302a';
-            ctx.beginPath();
-            ctx.moveTo(-6, 24);
-            ctx.lineTo(6, 24);
-            ctx.lineTo(8, 29);
-            ctx.lineTo(-8, 29);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = '#00e5ff';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#0a252b';
-            ctx.beginPath();
-            ctx.arc(0, -2, 7.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#48cae4';
-            ctx.beginPath();
-            ctx.arc(0, -2, 5.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.beginPath();
-            ctx.arc(-2, -4, 2, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#00ff88';
-            ctx.font = 'bold 8px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('⚡', 0, 16);
-
+            paintRocketBody(ctx);
             ctx.restore();
         }
 
         function drawActiveRocketSprite() {
-            for (let i = 0; i < 4; i++) {
-                ctx.fillStyle = Math.random() < 0.5 ? '#ff3300' : '#ffcc00';
-                ctx.beginPath();
-                ctx.arc((Math.random() - 0.5) * 10, 32 + Math.random() * 15, Math.random() * 4 + 2, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            const bodyGrad = ctx.createLinearGradient(-15, 0, 15, 0);
-            bodyGrad.addColorStop(0, '#e6fff5');
-            bodyGrad.addColorStop(0.5, '#ffffff');
-            bodyGrad.addColorStop(1, '#a3e8cd');
-            ctx.fillStyle = bodyGrad;
-            ctx.strokeStyle = '#00ff88';
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = '#00ff88';
+            paintRocketFlame(ctx, 16);
+            ctx.shadowColor = '#ff7a00';
             ctx.shadowBlur = 12;
-
-            ctx.beginPath();
-            ctx.moveTo(0, -38);
-            ctx.bezierCurveTo(15, -15, 14, 18, 11, 24);
-            ctx.lineTo(-11, 24);
-            ctx.bezierCurveTo(-14, 18, -15, -15, 0, -38);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#ff3366';
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.moveTo(0, -38);
-            ctx.bezierCurveTo(6, -28, 8, -22, 9, -18);
-            ctx.lineTo(-9, -18);
-            ctx.bezierCurveTo(-8, -22, -6, -28, 0, -38);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = '#ff3366';
-            ctx.beginPath();
-            ctx.moveTo(-11, 10);
-            ctx.bezierCurveTo(-18, 14, -23, 22, -22, 27);
-            ctx.lineTo(-11, 23);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.moveTo(11, 10);
-            ctx.bezierCurveTo(18, 14, 23, 22, 22, 27);
-            ctx.lineTo(11, 23);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = '#00e5ff';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = '#0a252b';
-            ctx.beginPath();
-            ctx.arc(0, -2, 7.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#48cae4';
-            ctx.beginPath();
-            ctx.arc(0, -2, 5.5, 0, Math.PI * 2);
-            ctx.fill();
+            paintRocketBody(ctx);
         }
 
         // ========================================================
@@ -7276,7 +7507,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         const slot3 = document.getElementById('slot3');
         const dogCasinoResult = document.getElementById('dogCasinoResult');
 
-        const slotSymbols = ['🐶', '💎', '🦷', '🎫', '💵'];
+        const slotSymbols = ['🐶', '💎', '🦷', '🎫', '💵', '🦴'];
+        const DOG_PRIZE_MULT = 1.5; // призы увеличены в 1.5 раза
+        const dogMult = n => Math.max(1, Math.round(n * DOG_PRIZE_MULT));
+        const dogMultTickets = n => { const v = n * DOG_PRIZE_MULT; return Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); };
+        let dogFreeSpins = 0;
+        let dogFreeRound = false;
         let currentPresetResult = null;
         let isDogCasinoSpinning = false;
 
@@ -7298,6 +7534,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 slot1.textContent = '🐶';
                 slot2.textContent = '💎';
                 slot3.textContent = '🦷';
+                dogFreeSpins = 0;
+                dogFreeRound = false;
+                spinDogCasinoBtn.textContent = 'Крутить барабаны!';
+                closeDogCasinoBtn.style.display = 'block';
                 dogCasinoModal.classList.add('active');
                 
                 if (sfxEnabled) {
@@ -7315,15 +7555,22 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 return { s1: '🐶', s2: '🐶', s3: '🐶', type: 'three', matchSymbol: '🐶' };
             }
 
-            if (roll < 15.5) {
+            // редкие три косточки (0.6%) — 3 фриспина
+            if (roll < 2.1) {
+                return { s1: '🦴', s2: '🦴', s3: '🦴', type: 'three', matchSymbol: '🦴' };
+            }
+
+            if (roll < 16.1) {
                 const regularTriples = ['💎', '🦷', '🎫', '💵'];
                 const sym = regularTriples[Math.floor(Math.random() * regularTriples.length)];
                 return { s1: sym, s2: sym, s3: sym, type: 'three', matchSymbol: sym };
             }
 
-            if (roll < 70.5) {
+            if (roll < 71.1) {
                 let symPool = ['💎', '🦷', '🎫', '💵', '💎', '🦷'];
                 if (Math.random() < 0.08) symPool.push('🐶');
+                // пара косточек (~4%) — 1 фриспин
+                if (Math.random() < 0.04) symPool = ['🦴'];
 
                 let matchSym = symPool[Math.floor(Math.random() * symPool.length)];
                 let otherPool = slotSymbols.filter(s => s !== matchSym);
@@ -7351,7 +7598,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         spinDogCasinoBtn.addEventListener('click', () => {
             if (isDogCasinoSpinning) return;
             isDogCasinoSpinning = true;
+            if (dogFreeRound && dogFreeSpins > 0) dogFreeSpins--;
             spinDogCasinoBtn.style.display = 'none';
+            closeDogCasinoBtn.style.display = 'none';
             dogCasinoResult.textContent = 'Барабаны крутятся... 🎰';
 
             if (sfxEnabled) {
@@ -7393,7 +7642,26 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }, 4100);
         });
 
+        function finishDogSpin() {
+            if (dogFreeSpins > 0) {
+                dogFreeRound = true;
+                currentPresetResult = generatePresetResult();
+                spinDogCasinoBtn.textContent = `🦴 Фриспин (осталось: ${dogFreeSpins})`;
+                spinDogCasinoBtn.style.display = 'block';
+                closeDogCasinoBtn.style.display = 'none';
+            } else {
+                dogFreeRound = false;
+                spinDogCasinoBtn.textContent = 'Крутить барабаны!';
+                closeDogCasinoBtn.style.display = 'block';
+            }
+        }
+
         function applyDogCasinoReward(res) {
+            applyDogCasinoRewardInner(res);
+            finishDogSpin();
+        }
+
+        function applyDogCasinoRewardInner(res) {
             let sym = res.matchSymbol;
             let type = res.type;
 
@@ -7407,70 +7675,80 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             if (type === 'three') {
                 if (sym === '🐶') {
-                    let moneyVal = Math.floor(getCpc() * 50);
-                    tickets += 1;
-                    diamonds += 10;
-                    totalDiamondsEarned += 10;
-                    teeth += 20;
-                    totalTeethEarned += 20;
+                    let moneyVal = Math.floor(getCpc() * 50 * DOG_PRIZE_MULT);
+                    let tk = dogMultTickets(1), dm = dogMult(10), th = dogMult(20);
+                    tickets += tk;
+                    diamonds += dm;
+                    totalDiamondsEarned += dm;
+                    teeth += th;
+                    totalTeethEarned += th;
                     balance += moneyVal;
                     totalEarned += moneyVal;
 
                     dogCasinoResult.innerHTML = `
                         <span style="color: #ffd700;">👑 ЛЕГЕНДАРНЫЙ ДЖЕКПОТ СОБАЧЕК! 👑</span><br>
-                        <span style="font-size:12px; color:#00ff88;">+1 🎫 | +10 💎 | +20 🦷 | +$${formatCompactNumber(moneyVal)} (x50 клика)</span>
+                        <span style="font-size:12px; color:#00ff88;">+${tk} 🎫 | +${dm} 💎 | +${th} 🦷 | +$${formatCompactNumber(moneyVal)} (x75 клика)</span>
                     `;
+                } else if (sym === '🦴') {
+                    dogFreeSpins += 3;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">🦴🦴🦴 ТРИ КОСТОЧКИ! Вы получили 3 фриспина! 🎰</span>`;
                 } else if (sym === '💎') {
-                    let count = Math.floor(Math.random() * 9) + 7;
+                    let count = dogMult(Math.floor(Math.random() * 9) + 7);
                     diamonds += count;
                     totalDiamondsEarned += count;
                     dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">🎉 ТРИ АЛМАЗА! Начислено: +${count} 💎!</span>`;
                 } else if (sym === '🦷') {
-                    let count = Math.floor(Math.random() * 11) + 10;
+                    let count = dogMult(Math.floor(Math.random() * 11) + 10);
                     teeth += count;
                     totalTeethEarned += count;
                     dogCasinoResult.innerHTML = `<span style="color: #ff3366;">🦷 ТРИ ЗУБА! Начислено: +${count} 🦷!</span>`;
                 } else if (sym === '🎫') {
-                    tickets += 2;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">🎫 ТРИ БИЛЕТА! Начислено: +2 🎫 в мини-игру!</span>`;
+                    let tk = dogMultTickets(2);
+                    tickets += tk;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">🎫 ТРИ БИЛЕТА! Начислено: +${tk} 🎫 в мини-игру!</span>`;
                 } else if (sym === '💵') {
-                    let moneyVal = Math.floor(getCpc() * 100);
+                    let moneyVal = Math.floor(getCpc() * 100 * DOG_PRIZE_MULT);
                     balance += moneyVal;
                     totalEarned += moneyVal;
-                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">💵 ТРИ БАКСА! Начислено: +$${formatCompactNumber(moneyVal)} (x100 клика)!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">💵 ТРИ БАКСА! Начислено: +$${formatCompactNumber(moneyVal)} (x150 клика)!</span>`;
                 }
             } else if (type === 'two') {
                 if (sym === '🐶') {
-                    let moneyVal = Math.floor(getCpc() * 25);
-                    diamonds += 5;
-                    totalDiamondsEarned += 5;
-                    teeth += 10;
-                    totalTeethEarned += 10;
+                    let moneyVal = Math.floor(getCpc() * 25 * DOG_PRIZE_MULT);
+                    let dm = dogMult(5), th = dogMult(10);
+                    diamonds += dm;
+                    totalDiamondsEarned += dm;
+                    teeth += th;
+                    totalTeethEarned += th;
                     balance += moneyVal;
                     totalEarned += moneyVal;
 
                     dogCasinoResult.innerHTML = `
                         <span style="color: #ffd700;">✨ Пара Собачек!</span><br>
-                        <span style="font-size:11.5px; color:#00ff88;">+5 💎 | +10 🦷 | +$${formatCompactNumber(moneyVal)} (x25 клика)</span>
+                        <span style="font-size:11.5px; color:#00ff88;">+${dm} 💎 | +${th} 🦷 | +$${formatCompactNumber(moneyVal)} (x37.5 клика)</span>
                     `;
+                } else if (sym === '🦴') {
+                    dogFreeSpins += 1;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">🦴🦴 Пара Косточек! Вы получили 1 фриспин! 🎰</span>`;
                 } else if (sym === '💎') {
-                    let count = Math.floor(Math.random() * 5) + 3;
+                    let count = dogMult(Math.floor(Math.random() * 5) + 3);
                     diamonds += count;
                     totalDiamondsEarned += count;
                     dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">✨ Пара Алмазов! Начислено: +${count} 💎!</span>`;
                 } else if (sym === '🦷') {
-                    let count = Math.floor(Math.random() * 6) + 5;
+                    let count = dogMult(Math.floor(Math.random() * 6) + 5);
                     teeth += count;
                     totalTeethEarned += count;
                     dogCasinoResult.innerHTML = `<span style="color: #ff3366;">✨ Пара Зубов! Начислено: +${count} 🦷!</span>`;
                 } else if (sym === '🎫') {
-                    tickets += 1;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">✨ Пара Билетов! Начислено: +1 🎫!</span>`;
+                    let tk = dogMultTickets(1);
+                    tickets += tk;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">✨ Пара Билетов! Начислено: +${tk} 🎫!</span>`;
                 } else if (sym === '💵') {
-                    let moneyVal = Math.floor(getCpc() * 50);
+                    let moneyVal = Math.floor(getCpc() * 50 * DOG_PRIZE_MULT);
                     balance += moneyVal;
                     totalEarned += moneyVal;
-                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">✨ Пара Баксов! Начислено: +$${formatCompactNumber(moneyVal)} (x50 клика)!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">✨ Пара Баксов! Начислено: +$${formatCompactNumber(moneyVal)} (x75 клика)!</span>`;
                 }
             }
 
@@ -7478,5 +7756,70 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             saveGame();
         }
     </script>
+<script>
+(function () {
+    var b = document.getElementById("toggleFullscreenBtn"), d = document.documentElement;
+    if (b && !(d.requestFullscreen || d.webkitRequestFullscreen)) b.style.display = "none";
+})();
+</script>
+<script>
+(function () {
+    var stage = document.getElementById('clickStage'), mello = document.getElementById('melloBtn');
+    var bal = document.querySelector('.main-balance'), n = 0, lastFx = 0, EM = ['💸', '💰', '🪙', '💵'];
+    function fx(x, y) {
+        var now = Date.now(); if (now - lastFx < 60 || n > 24) return; lastFx = now;
+        var r = stage.getBoundingClientRect();
+        for (var i = 0; i < 3; i++) {
+            var c = document.createElement('div'); c.className = 'fx-coin'; c.textContent = EM[(Math.random() * 4) | 0];
+            c.style.left = (x - r.left) + 'px'; c.style.top = (y - r.top) + 'px';
+            c.style.setProperty('--dx', ((Math.random() - .5) * 120) + 'px'); c.style.setProperty('--dy', (-40 - Math.random() * 90) + 'px');
+            c.style.setProperty('--r', ((Math.random() - .5) * 180) + 'deg');
+            stage.appendChild(c); n++; setTimeout(function (el) { el.remove(); n--; }, 720, c);
+        }
+        bal.classList.remove('bump'); void bal.offsetWidth; bal.classList.add('bump');
+    }
+    mello.addEventListener('touchstart', function (e) { var t = e.changedTouches[0]; if (t) fx(t.clientX, t.clientY); }, { passive: true });
+    mello.addEventListener('mousedown', function (e) { fx(e.clientX, e.clientY); });
+    new MutationObserver(function (m) {
+        for (var i = 0; i < m.length; i++) for (var j = 0; j < m[i].addedNodes.length; j++) {
+            var a = m[i].addedNodes[j]; if (a.classList && a.classList.contains('crit-text')) { stage.classList.remove('shake'); void stage.offsetWidth; stage.classList.add('shake'); }
+        }
+    }).observe(stage, { childList: true });
+    var lvl = document.getElementById('levelStatusText'), prev = 0;
+    new MutationObserver(function () {
+        var m = /Ур\. (\d+)\/\d+: (.*) \(\d+%\)/.exec(lvl.textContent); if (!m) return;
+        var cur = +m[1];
+        if (prev && cur > prev) {
+            var b = document.createElement('div'); b.className = 'level-banner';
+            b.innerHTML = '<small>НОВЫЙ УРОВЕНЬ ' + cur + '</small><b></b>'; b.lastChild.textContent = m[2];
+            stage.appendChild(b); setTimeout(function () { b.remove(); }, 2700);
+        }
+        prev = cur;
+    }).observe(lvl, { childList: true, characterData: true, subtree: true });
+    var U = { K: 1e3, M: 1e6, B: 1e9, T: 1e12, Qa: 1e15 };
+    function num(t) { var m = /([\d.,]+)\s*(Qa|[KMBT])?/.exec(t || ''); return m ? parseFloat(m[1].replace(/,/g, '')) * (U[m[2]] || 1) : 0; }
+    setInterval(function () {
+        if (document.hidden || typeof balance === 'undefined') return;
+        var tab = document.querySelector('.tab-content.active');
+        if (!tab || (tab.id !== 'tab-clicks' && tab.id !== 'tab-passive')) return;
+        var best = null, bv = 0, cards = tab.querySelectorAll('.upgrade-card');
+        cards.forEach(function (c) {
+            var cost = num((c.querySelector('.upgrade-cost') || {}).textContent), eff = num((c.querySelector('.upgrade-effect') || {}).textContent);
+            if (!cost) return;
+            var dis = c.classList.contains('disabled');
+            c.style.setProperty('--p', dis ? Math.min(100, balance / cost * 100) : 100);
+            c.classList.remove('best-buy');
+            if (!dis && eff / cost > bv) { bv = eff / cost; best = c; }
+        });
+        if (best) best.classList.add('best-buy');
+    }, 600);
+})();
+</script>
+<script>
+(function () {
+    var w = document.querySelector('.game-wrapper'), m = document.getElementById('dogCasinoModal');
+    if (w && m && m.parentNode !== w) w.appendChild(m);
+})();
+</script>
 </body>
 </html>
