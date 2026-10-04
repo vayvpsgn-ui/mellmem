@@ -1896,6 +1896,16 @@
             <img src="artu.png" alt="Артур">
         </div>
 
+        <div class="modal-overlay" id="offlineModal" style="z-index: 9998;">
+            <div class="modal-card" style="width: 340px; max-width: 92%; text-align: center;">
+                <div class="modal-title">С ВОЗВРАЩЕНИЕМ!</div>
+                <div id="offlineAwayText" style="color:#a3b8b0; font-size:14px;"></div>
+                <div style="color:#fff; font-size:14px;">Пока тебя не было, бизнес приносил доход:</div>
+                <button class="modal-close-btn" id="offlineFreeBtn" style="font-size:16px; padding:12px;"></button>
+                <button class="modal-close-btn" id="offlineAdBtn" style="font-size:16px; padding:12px; background:#ffd700;"></button>
+            </div>
+        </div>
+
         <div class="modal-overlay" id="customAlertOverlay" style="z-index: 9999;">
             <div class="custom-alert-card">
                 <div class="custom-alert-title" id="customAlertTitle">Уведомление</div>
@@ -2195,7 +2205,7 @@
                 <div class="desktop-decoration" id="desktopDecorationCatness" data-key="catness">
                     <img src="kot.png" alt="Котость" id="decoImg_catness">
                     <div class="deco-controls">
-                        <input type="range" class="decoSizeRange" min="50" max="180" value="130" title="Изменить размер">
+                        <input type="range" class="decoSizeRange" min="40" max="140" value="95" title="Изменить размер">
                         <button class="remove-deco-btn" onclick="removeDecoration('catness')" title="Убрать с экрана">×</button>
                     </div>
                 </div>
@@ -2965,7 +2975,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         // ========================================================
         const SAVE_KEY = 'mello_clicker_save';
         const LB_SENT_KEY = 'mello_jump_cloud_sent';
-        const LB_CLOUD_NAME = 'jump_leaderboard';
+        const LB_CLOUD_NAME = 'jumpleaderboard';
         const IS_LOCAL_DEV = location.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
 
         let ysdk = null, yaPlayer = null, yaPayments = null, yaLeaderboards = null;
@@ -3098,7 +3108,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             try {
                 localStorage.removeItem('mello_promo_used');
                 localStorage.removeItem(SAVE_KEY);
-                localStorage.removeItem('mello_jump_leaderboard');
+                localStorage.removeItem('mello_jumpleaderboard');
                 localStorage.removeItem(LB_SENT_KEY);
             } catch (e) {}
             return true;
@@ -3421,7 +3431,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         };
 
         let decos = {
-            catness: { unlockedOnScreen: false, size: 130, posX: 40, posY: 40, zIndex: 40 },
+            catness: { unlockedOnScreen: false, size: 95, posX: 40, posY: 40, zIndex: 40 },
             chekuwka: { unlockedOnScreen: false, size: 75, posX: 170, posY: 40, zIndex: 41 },
             fog: { unlockedOnScreen: false, size: 95, posX: 300, posY: 40, zIndex: 42 },
             burm: { unlockedOnScreen: false, size: 95, posX: 430, posY: 40, zIndex: 43 },
@@ -3740,7 +3750,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         // ============================================================
         // СПИСОК ЛИДЕРОВ (КОСМИЧЕСКИЙ БУРМАЛДАЕЦ) — локальный топ-10
         // ============================================================
-        const LB_KEY = 'mello_jump_leaderboard';
+        const LB_KEY = 'mello_jumpleaderboard';
         const LB_SEED = [
             { name: 'Котость', score: 2400 }, { name: 'Чекушка', score: 1800 },
             { name: 'Черемша', score: 1300 }, { name: 'Друн', score: 900 },
@@ -4477,7 +4487,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             'dogjackpot':   { id: 'casino',    perPlayer: 1, global: 0 },
             'dronestorm':   { id: 'drune',     perPlayer: 1, global: 0 },   // нашествие друнов
             'wildgarlic':   { id: 'cheremsha', perPlayer: 1, global: 0 },   // достижение «Черемша»
-            'storyskip':    { id: 'storyall',  perPlayer: 1, global: 0 }    // все сюжетные уровни пройдены
+            'storyskip':    { id: 'storyall',  perPlayer: 2, global: 0 }    // все сюжетные уровни пройдены
         };
         let promoUsed = {};
         let lastPromoTry = 0;
@@ -5137,9 +5147,81 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             else notifDot.style.display = 'none';
         }
 
+        // ---------- ОФЛАЙН-ДОХОД ----------
+        // Ставка фиксируется при каждом сохранении (т.е. в момент выхода), отсчёт времени идёт сразу после выхода.
+        const OFFLINE_MAX_SEC = 3 * 3600;     // максимум 3 часа
+        const OFFLINE_MIN_SEC = 60;           // меньше минуты не считаем
+        const OFFLINE_FREE_K = 0.03;          // бесплатно
+        const OFFLINE_AD_K = 0.20;            // за рекламу
+        let pendingOffline = null;            // {free, ad, sec} — ещё не забрано
+        let offlineClaimed = false;
+        function getOfflineRate() {
+            let r = getBasePassiveCps();
+            if (hypeStormTimeLeft > 0) r /= 2;   // временный буст не учитываем
+            return Number.isFinite(r) ? Math.max(0, r) : 0;
+        }
+        function computeOfflineReward(d) {
+            let free = 0, ad = 0, sec = 0;
+            if (d && d.pendingOffline) {
+                free = Math.max(0, Number(d.pendingOffline.free) || 0);
+                ad = Math.max(0, Number(d.pendingOffline.ad) || 0);
+                sec = Math.max(0, Number(d.pendingOffline.sec) || 0);
+            }
+            const savedAt = d ? Number(d.savedAt) || 0 : 0;
+            const away = (Date.now() - savedAt) / 1000;
+            if (savedAt > 0 && away >= OFFLINE_MIN_SEC) {
+                const used = Math.min(away, OFFLINE_MAX_SEC);
+                let rate = d && d.offlineCps !== undefined ? Number(d.offlineCps) : getOfflineRate();
+                if (!Number.isFinite(rate) || rate < 0) rate = 0;
+                free += rate * used * OFFLINE_FREE_K;
+                ad += rate * used * OFFLINE_AD_K;
+                sec += away;
+            }
+            free = Math.floor(free); ad = Math.floor(ad);
+            pendingOffline = (ad > 0 && free > 0) ? { free, ad, sec } : null;
+        }
+        function formatAway(sec) {
+            const m = Math.floor(sec / 60), h = Math.floor(m / 60), dd = Math.floor(h / 24);
+            if (dd >= 1) return `Тебя не было: ${dd} д ${h % 24} ч`;
+            if (h >= 1) return `Тебя не было: ${h} ч ${m % 60} мин`;
+            return `Тебя не было: ${m} мин`;
+        }
+        function showOfflineModal() {
+            if (!pendingOffline) return;
+            offlineClaimed = false;
+            document.getElementById('offlineAwayText').textContent = formatAway(pendingOffline.sec);
+            document.getElementById('offlineFreeBtn').textContent = `Забрать $${formatCompactNumber(pendingOffline.free)}`;
+            document.getElementById('offlineAdBtn').textContent = `📺 Забрать $${formatCompactNumber(pendingOffline.ad)} за рекламу`;
+            document.getElementById('offlineModal').classList.add('active');
+        }
+        function claimOffline(kind) {
+            if (offlineClaimed || !pendingOffline) return;
+            offlineClaimed = true;
+            const amt = kind === 'ad' ? pendingOffline.ad : pendingOffline.free;
+            pendingOffline = null;
+            balance += amt;
+            totalEarned += amt;
+            document.getElementById('offlineModal').classList.remove('active');
+            updateUI();
+            saveGame();
+            flushLocalSave();
+            try {
+                const r = document.getElementById('clickStage').getBoundingClientRect();
+                showFloatingTextExplicit(`+$${formatCompactNumber(amt)}`, r.width / 2 - 40, r.height / 2 - 30, false, true, false);
+            } catch (e) {}
+        }
+        document.getElementById('offlineFreeBtn').addEventListener('click', () => claimOffline('free'));
+        document.getElementById('offlineAdBtn').addEventListener('click', () => {
+            if (offlineClaimed || adPending || adActive) return;
+            showRewardedAd(() => claimOffline('ad'));
+        });
+
         function getSavePayload() {
             const gameData = {
                 balance, diamonds, teeth, tickets, mellCoins, coinLevelsClaimed, rebirths, rebirthSkinUnlocked, donSkin3Unlocked, activeSpecialSkin, specialSkins,
+                savedAt: Date.now(),
+                offlineCps: getOfflineRate(),
+                pendingOffline,
                 noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, mamabirdClicksCount, postRebirthLvl10, selectedBgLevel, maxBgLevelReached, storyProgress,
                 lastFreeTicketTime, totalDiamondsEarned, totalDiamondsSpent, totalEarned, totalSpent, totalClicks,
                 selectedBunnySkinId, bossKillsCount, mellTiltCooldown, bossIntroDone, drunIntroDone, bossTutorialSeen, drunTutorialSeen, nextBossScheduledTime, nextDrunScheduledTime, survivedDrunInvasionsCount, perfectDrunInvasionsCount, halfDodgedDrunWaves,
@@ -5185,6 +5267,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 mellTiltCooldown = data.mellTiltCooldown || 0;
                 nextBossScheduledTime = data.nextBossScheduledTime || 0;
                 nextDrunScheduledTime = data.nextDrunScheduledTime || 0;
+                { const soon = Date.now() + 30000;
+                  if (nextBossScheduledTime > 0 && nextBossScheduledTime < Date.now()) nextBossScheduledTime = soon;
+                  if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < Date.now()) nextDrunScheduledTime = soon + 20000; }
                 // старые сохранения: если расписание уже было — «первый раз» уже прошёл
                 bossIntroDone = data.bossIntroDone !== undefined ? !!data.bossIntroDone : (nextBossScheduledTime > 0 || rebirths > 0);
                 drunIntroDone = data.drunIntroDone !== undefined ? !!data.drunIntroDone : (nextDrunScheduledTime > 0 || rebirths > 0);
@@ -5267,6 +5352,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
                 if (data.decos) {
                     decos = Object.assign(decos, data.decos);
+                    if (decos.catness && Number(decos.catness.size) >= 130) decos.catness.size = 95;   // старый размер по умолчанию
                     for (let key in decos) {
                         const elId = wrapIdMap[key];
                         const wrap = document.getElementById(elId);
@@ -5445,11 +5531,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 triggerGoldenRain(levelBonuses[currentLevel]);
             }
 
-            if ((activeLvlIdx >= 5 || rebirths > 0) && (nextBossScheduledTime === 0 || nextBossScheduledTime < Date.now()) && !inBattle) {
+            if ((activeLvlIdx >= 5 || rebirths > 0) && nextBossScheduledTime === 0 && !inBattle) {
                 nextBossScheduledTime = Date.now() + bossGapMs();
             }
 
-            if ((activeLvlIdx >= 7 || rebirths > 0) && (nextDrunScheduledTime === 0 || nextDrunScheduledTime < Date.now()) && !isDrunInvasionActive) {
+            if ((activeLvlIdx >= 7 || rebirths > 0) && nextDrunScheduledTime === 0 && !isDrunInvasionActive) {
                 nextDrunScheduledTime = Date.now() + drunGapMs();
             }
 
@@ -8360,7 +8446,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
             }
 
-            if (playTimeSeconds % 180 === 0 && Math.random() < 0.45) {
+            if (playTimeSeconds % 120 === 0 && Math.random() < 0.45) {
                 spawnArtur();
             }
 
@@ -8369,7 +8455,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (totalEarned >= levels[i].threshold) { activeLvlIdx = i; break; }
             }
 
-            let isAnyMinigameOpen = jumpModal.classList.contains('active') || storyModal.classList.contains('active');
+            let isAnyMinigameOpen = jumpModal.classList.contains('active') || storyModal.classList.contains('active') || document.getElementById('offlineModal').classList.contains('active');
 
             // Первое появление: событие стартует сразу, как только игрок дошёл до его уровня
             const introBlocked = inBattle || isDrunInvasionActive || jumpGameActive || isAnyMinigameOpen || eventIntroOpen ||
@@ -8448,7 +8534,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             { n: 3, title: 'Уровень 3: В поисках Черемши', url: 'level3.html?embed=1', reqAch: [], reqPrev: 2,
               desc: 'Бешеная погоня на машинах. Награда: достижение «Черемша».' },
             { n: 4, title: 'Уровень 4: Гнездо Мамы Птицы', url: 'level4.html?embed=1', reqAch: [], reqPrev: 3, reqRebirth: true,
-              desc: 'ФОГ добрался до гнезда. Босс-файт с Мамой Птицей! Награда: 100 🦷 и достижение «Мама Птица».' }
+              desc: 'ФОГ добрался до гнезда. Босс-файт с Мамой Птицей! Награда: достижение «Мама Птица».' }
         ];
 
         function getStoryAccess(lvl) {
@@ -8628,16 +8714,32 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             // Облако -> localStorage (если в облаке пусто, loadGame возьмёт локальное)
             try {
                 const cloud = await fetchCloudSave();
-                if (cloud) { JSON.parse(cloud); localStorage.setItem(SAVE_KEY, cloud); }
+                if (cloud) {
+                    const c = JSON.parse(cloud);
+                    let l = null;
+                    try { l = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) {}
+                    // Берём более свежее сохранение (раньше облако всегда затирало локальное -> терялся прогресс)
+                    const cT = Number(c.savedAt) || 0, lT = l ? (Number(l.savedAt) || 0) : 0;
+                    const winner = (l && lT > cT) ? l : c;
+                    const loser = winner === l ? c : l;
+                    // Прохождение сюжета только растёт — объединяем из обоих сохранений
+                    if (loser && loser.storyProgress) {
+                        winner.storyProgress = Object.assign({}, winner.storyProgress || {});
+                        ['l1','l2','l3','l4'].forEach(k => { if (loser.storyProgress[k]) winner.storyProgress[k] = true; });
+                    }
+                    localStorage.setItem(SAVE_KEY, JSON.stringify(winner));
+                }
             } catch (e) { console.warn('[YSDK] cloud save invalid, using local', e); }
 
             try { loadGame(); } catch (e) { console.error('loadGame failed', e); }
+            try { computeOfflineReward(JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')); } catch (e) { console.warn('offline calc failed', e); }
             gameLoaded = true;
             updateUI();
             clampAllDecos();
             setTimeout(clampAllDecos, 400);
             lastFullscreenAdTime = Date.now();
             hideLoader();
+            showOfflineModal();
             if (yaPlayer) saveGame();          // первичная синхронизация local -> cloud
             signalGameReady();                 // LoadingAPI.ready()
             try { await restorePurchases(); } catch (e) { console.warn(e); }

@@ -262,13 +262,13 @@
             <div class="hud-stats">
                 <div class="stat-hearts" id="hudHeartsWrap">❤️ ❤️ ❤️</div>
                 <div class="stat-score" id="hudScoreWrap"><span id="scoreLabel">Кристаллы</span>: <span id="scoreVal">0</span></div>
-                <div class="stat-weapon" id="hudWeaponWrap">🍾 <span id="ammoVal">Чекушки: 4 шт.</span></div>
+                <div class="stat-weapon" id="hudWeaponWrap">🍾 <span id="ammoVal">Чекушки: 2 шт.</span></div>
             </div>
         </div>
 
         <div class="canvas-wrap" id="canvasContainer">
             <div class="fog-boss-hud" id="fogBossHud" style="display: none;">
-                <div class="fog-boss-label" id="fogHudLabel">ФОГ С МЕШКОМ: <span id="fogHpText">30/30</span> HP</div>
+                <div class="fog-boss-label" id="fogHudLabel">ФОГ С МЕШКОМ: <span id="fogHpText">40/40</span> HP</div>
                 <div class="fog-hp-bar">
                     <div class="fog-hp-ghost" id="fogHpGhost"></div>
                     <div class="fog-hp-fill" id="fogHpFill"></div>
@@ -286,7 +286,7 @@
                     ФОГ заманил героев в ловушку, но на помощь прилетела <b>Мама Птица</b>!<br>
                     Лавируйте между кристаллов, сбивайте летучих мышей и ФОГа чекушками.<br><br>
                     🎮 <b>Управление:</b><br>
-                    • <b>ПК:</b> [Пробел / W / ↑ / ЛКМ] — взмах · [A / ←] и [D / →] — бросок влево/вправо · [F / ПКМ] — бросок в сторону ФОГа<br>
+                    • <b>ПК:</b> [Пробел / W / ↑ / ЛКМ] — взмах · [A / ←] и [D / →] — бросок влево/вправо · [ПКМ] — бросок в сторону курсора · [F] — в последнюю выбранную сторону<br>
                     • <b>Телефон:</b> тап по экрану (или большая кнопка слева) — взмах, кнопки справа — броски<br>
                     • 🍾 Чекушка самонаводится на ФОГа и снимает 3–4 HP. Подбирай их в полёте!<br>
                     • В финале: <b>закликай Гигантского ФОГа</b> и сбивай взрывающихся Друнов!
@@ -931,8 +931,8 @@
         bird = { x: 300, y: H / 2, vy: 0, rot: 0, hearts: 3, inv: 0, started: false };
         pillars = []; pickups = []; bats = []; orbs = []; projectiles = [];
         parts = []; pops = [];
-        ammo = 4; score = 0; flapHintT = 0; fade = 0;
-        boss = { hp: 30, max: 30, x: 1100, y: 230, tx: 830, side: 'right', tele: 80, flash: 0, charge: 0, cd: 190, w: 80, h: 92, r: 46 };
+        ammo = 2; score = 0; flapHintT = 0; fade = 0;
+        boss = { hp: 40, max: 40, x: 1100, y: 230, tx: 830, side: 'right', tele: 80, flash: 0, charge: 0, cd: 190, w: 80, h: 92, r: 46 };
         scoreVal.textContent = '0';
         updateHeartsUI(3); updateAmmoUI();
         setBossHud('ФОГ С МЕШКОМ:', boss.hp, boss.max, true);
@@ -947,8 +947,10 @@
         playSfx('zvuknorm.mp3');
         for (let i = 0; i < 4; i++) parts.push({ x: bird.x - 18, y: bird.y + 8, vx: -Math.random() * 2.5 - 0.8, vy: (Math.random() - 0.5) * 2.4, g: 0, life: 22, max: 22, size: Math.random() * 3 + 1.5, color: '#7dd3fc', shape: 'c' });
     }
+    let lastShootDir = 1;
     function shoot(dir) {
         if (state !== 'playing' || !bird) return;
+        lastShootDir = dir;
         bird.started = true;
         if (ammo <= 0) {
             playSfx('lose.mp3');
@@ -959,9 +961,8 @@
         playSfx('zvukpr.mp3');
         projectiles.push({ x: bird.x + dir * 22, y: bird.y - 2, vx: dir * 15, vy: -1.2, rot: 0 });
     }
-    function shootAuto() {
-        if (!boss) return;
-        shoot(boss.x >= bird.x ? 1 : -1);
+    function shootAuto(dir) {
+        shoot(dir || lastShootDir);
     }
 
     function hurtBird(reason) {
@@ -1090,7 +1091,7 @@
             }
         } else if (--boss.cd <= 0 && boss.x > 40 && boss.x < W - 40) {
             boss.cd = boss.hp <= boss.max * 0.5 ? 120 : 165;
-            boss.charge = 30;
+            boss.charge = 40;
         }
 
         for (let i = orbs.length - 1; i >= 0; i--) {
@@ -1276,7 +1277,7 @@
             const t1 = touchDevice ? 'ТАП ПО ЭКРАНУ — ВЗМАХ КРЫЛЬЯМИ' : 'ПРОБЕЛ / КЛИК — ВЗМАХ КРЫЛЬЯМИ';
             ctx.strokeText(t1, W / 2, 150); ctx.fillStyle = '#e9d5ff'; ctx.fillText(t1, W / 2, 150);
             ctx.font = '800 16px "Segoe UI", sans-serif';
-            const t2 = touchDevice ? 'Кнопки 🍾 справа — бросить чекушку влево / вправо' : 'A / D — бросок влево / вправо · F или ПКМ — в сторону ФОГа';
+            const t2 = touchDevice ? 'Кнопки 🍾 справа — бросить чекушку влево / вправо' : 'A / D — бросок влево / вправо · ПКМ — в сторону курсора · F — в последнюю сторону';
             ctx.strokeText(t2, W / 2, 182); ctx.fillStyle = '#7dd3fc'; ctx.fillText(t2, W / 2, 182);
             ctx.restore();
         } else if (flapHintT < 300 && score < 1) {
@@ -1642,7 +1643,7 @@
     // ============================================================
     //  ФАЗА 2: ГИГАНТСКИЙ ФОГ (закликивание ~500 раз)
     // ============================================================
-    const GIANT_MAX_HP = 18000;
+    const GIANT_MAX_HP = 21600;
     const BOSS_X = 662, BOSS_FEET = 424, BOSS_MW = 280, BOSS_MH = 320;
     const BOSS_CX = BOSS_X, BOSS_CY = 262;
     let giant, heroes, druns, gPickups, gFx, mamG, giantGhost = null, gIntro = null, winCS = null;
@@ -1682,7 +1683,7 @@
         const old = giant;
         giant = mkGiant();
         if (retry && old) { giant.hp = old.ckHp; giant.clicks = old.ckClicks; giant.bonus = old.ckBonus; giant.ckHp = old.ckHp; giant.ckClicks = old.ckClicks; giant.ckBonus = old.ckBonus;
-            giant.rage = Math.round((1 - old.ckHp / GIANT_MAX_HP) / 0.25) ; if (giant.rage < 0) giant.rage = 0; }
+            giant.rage = old.ckHp <= GIANT_MAX_HP / 3 + 1 ? 2 : (old.ckHp <= GIANT_MAX_HP * 2 / 3 + 1 ? 1 : 0); }
         scoreVal.textContent = giant.clicks;
         heroes = mkHeroes(); druns = []; gPickups = []; gFx = []; parts = []; pops = [];
         mamG = { x: 150, y: 130 };
@@ -1725,17 +1726,17 @@
 
         // чекпоинты и ярость
         const frac = G.hp / G.max;
-        const thresholds = [0.75, 0.5, 0.25];
-        while (G.rage < 3 && frac <= thresholds[G.rage]) {
+        const thresholds = [2 / 3, 1 / 3];
+        while (G.rage < 2 && frac <= thresholds[G.rage]) {
             const thr = thresholds[G.rage];
             G.rage++;
             G.ckHp = Math.round(G.max * thr); G.ckClicks = G.clicks; G.ckBonus = G.bonus;
-            G.bannerT = 130; G.bannerText = 'ФОГ В ЯРОСТИ! ' + G.rage + '/3';
+            G.bannerT = 130; G.bannerText = G.rage === 1 ? 'ФАЗА 2: ФОГ ЗЛИТСЯ! ДРУНОВ БОЛЬШЕ!' : 'ФАЗА 3: ЯРОСТЬ ФОГА! ДРУНЫ ВЗРЫВАЮТСЯ ЗА 1.5с!';
             if (G.hearts < 3) { G.hearts++; updateHeartsUI(G.hearts); }
             floatText('Мама Птица лечит команду! ❤️', 480, 200, '#fda4af', 22);
             playSfx('lose.mp3'); shake = 14;
         }
-        if (G.clicks % 100 === 0) {
+        if (G.clicks % 130 === 0) {
             G.surge = 180; floatText('СИЛА МАМЫ ПТИЦЫ! +25% урона', 330, 160, '#bae6fd', 22);
             playSfx('jackpot.mp3');
             gFx.push({ type: 'ring', x: mamG.x, y: mamG.y, age: 0, max: 40, color: '#7dd3fc' });
@@ -1829,11 +1830,18 @@
             }
         }
 
-        // дрейф: спавн Друнов
-        const interval = [190, 150, 118, 92][G.rage], maxD = G.rage >= 2 ? 3 : 2;
-        if (G.t > 60 && G.t % interval === 0 && druns.length < maxD) {
-            const ang = Math.random() * TWO_PI;
-            druns.push({ ang, rad: rnd(190, 225), spd: (Math.random() < 0.5 ? 1 : -1) * rnd(0.014, 0.024), timer: 120, x: BOSS_CX, y: BOSS_CY });
+        // спавн Друнов (фаза 1: 2с, фаза 2: 1.75с, фаза 3: 1.5с и по несколько сразу)
+        const PH = [
+            { interval: 190, maxD: 2, time: 120, burst: [1, 1] },
+            { interval: 130, maxD: 3, time: 105, burst: [1, 2] },
+            { interval: 95,  maxD: 5, time: 90,  burst: [2, 3] }
+        ][G.rage];
+        if (G.t > 60 && G.t % PH.interval === 0 && druns.length < PH.maxD) {
+            const cnt = Math.min(PH.maxD - druns.length, rndInt(PH.burst[0], PH.burst[1]));
+            const a0 = Math.random() * TWO_PI;
+            for (let n = 0; n < cnt; n++) {
+                druns.push({ ang: a0 + n * (TWO_PI / Math.max(cnt, 2)) + rnd(-0.3, 0.3), rad: rnd(190, 225), spd: (Math.random() < 0.5 ? 1 : -1) * rnd(0.014, 0.024) * (1 + G.rage * 0.25), timer: PH.time, max: PH.time, x: BOSS_CX, y: BOSS_CY });
+            }
         }
         for (let i = druns.length - 1; i >= 0; i--) {
             const d = druns[i];
@@ -1900,7 +1908,7 @@
         // аура ярости
         if (G && G.rage > 0) {
             ctx.save(); ctx.globalCompositeOperation = 'lighter';
-            drawGlow('#ff2a6d', 0, -BOSS_MH * 0.5, 230 + Math.sin(tick * 0.2) * 10, 0.18 + G.rage * 0.1);
+            drawGlow('#ff2a6d', 0, -BOSS_MH * 0.5, 230 + Math.sin(tick * 0.2) * 10, 0.16 + G.rage * 0.16);
             ctx.restore(); ctx.globalAlpha = 1;
         }
         const d = fitDims(imgFog, BOSS_MW, BOSS_MH);
@@ -2000,7 +2008,7 @@
         for (const d of druns) {
             ctx.save(); ctx.translate(d.x, d.y);
             const sec = Math.max(0, d.timer / 60);
-            const k = d.timer / 120;
+            const k = d.timer / (d.max || 120);
             // таймер-кольцо
             ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,0.18)';
             ctx.beginPath(); ctx.arc(0, 0, 40, 0, TWO_PI); ctx.stroke();
@@ -2059,7 +2067,7 @@
             const g = ctx.createLinearGradient(0, 95, 0, 130); g.addColorStop(0, '#fff7b0'); g.addColorStop(1, '#ff3355');
             ctx.fillStyle = g; ctx.fillText(G.bannerText, W / 2, 120);
             ctx.restore();
-            if (G.rage > 0) { ctx.fillStyle = 'rgba(255,30,70,' + (0.09 * k) + ')'; ctx.fillRect(0, 0, W, H); }
+            if (G.rage > 0) { ctx.fillStyle = 'rgba(255,30,70,' + (0.09 * k * G.rage) + ')'; ctx.fillRect(0, 0, W, H); }
         }
         if (G.clicks < 3) {
             ctx.save(); ctx.textAlign = 'center'; ctx.font = '900 20px "Segoe UI", sans-serif'; ctx.lineWidth = 5; ctx.lineJoin = 'round';
@@ -2302,7 +2310,7 @@
         gameOverScreen.style.display = 'flex';
         if (phase === 'giant') {
             gameOverTitle.textContent = 'ДРУНЫ ВЗОРВАЛИ КОМАНДУ!';
-            gameOverDesc.textContent = 'Нажимай на Друнов до того, как кончится таймер 2 секунды. Прогресс боя сохранён по контрольной точке (75% / 50% / 25% HP ФОГа).';
+            gameOverDesc.textContent = 'Нажимай на Друнов до того, как кончится таймер (в 3 фазе — всего 1.5 секунды). Прогресс боя сохранён по контрольной точке (66% / 33% HP ФОГа).';
         } else {
             gameOverTitle.textContent = 'МАМА ПТИЦА ВЫБИЛАСЬ ИЗ СИЛ!';
             gameOverDesc.textContent = 'Лавируйте между кристаллов, сбивайте летучих мышей и шары ФОГа чекушками. ' + (reason ? '(' + reason + ')' : '');
@@ -2329,7 +2337,7 @@
         if (state === 'intro_cs') { skipIntro(); return; }
         if (state === 'giant_intro') { startGiantClicker(false); return; }
         if (state === 'playing') {
-            if (e.pointerType === 'mouse' && e.button === 2) shootAuto(); else flap();
+            if (e.pointerType === 'mouse' && e.button === 2) shootAuto(toCanvas(e).x >= bird.x ? 1 : -1); else flap();
             return;
         }
         if (state === 'giant_clicker') { const p = toCanvas(e); giantTap(p.x, p.y); }
@@ -2440,7 +2448,7 @@
 
     // ---- старт ----
     bird = { x: 300, y: H / 2, rot: 0, inv: 0 }; boss = { x: -999, y: 0 };
-    ammo = 4; score = 0; pillars = []; pickups = []; bats = []; orbs = []; projectiles = [];
+    ammo = 2; score = 0; pillars = []; pickups = []; bats = []; orbs = []; projectiles = [];
     updateAmmoUI(); updateHeartsUI(3);
     requestAnimationFrame(gameLoop);
     </script>
