@@ -364,6 +364,30 @@
     const imgChe = loadImg('che.png');
     const imgDrun = loadImg('drun.png');
 
+    // ===== ФОНОВАЯ МУЗЫКА (как в Космическом Бурмалдайце) =====
+    const bgMusic = new Audio('zvukifon.mp3');
+    bgMusic.loop = true;
+    bgMusic.preload = 'auto';
+    bgMusic.volume = 0.35;
+    let _musicWanted = true;
+    function startMusic() {
+        if (!_musicWanted) return;
+        const p = bgMusic.play();
+        if (p && p.catch) p.catch(() => {});
+    }
+    function _unlockMusic() {
+        startMusic();
+        if (!bgMusic.paused) {
+            ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(ev => window.removeEventListener(ev, _unlockMusic, true));
+        }
+    }
+    ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(ev => window.addEventListener(ev, _unlockMusic, true));
+    startMusic();
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) bgMusic.pause();
+        else startMusic();
+    });
+
     // ---- звуки (пул, чтобы не плодить Audio на каждый удар) ----
     const _sfxPool = {}, _sfxLast = {};
     function _getSfx(file) {
