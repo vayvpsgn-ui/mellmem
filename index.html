@@ -1838,15 +1838,6 @@
         .dog-chips span.coin { color: #ffd700; background: rgba(255, 215, 0, .12); border-color: rgba(255, 215, 0, .5); font-weight: 900; }
 
         @media (max-width: 860px) {
-            .balance-container-topleft { max-width: calc(100% - 104px); }
-            /* кнопки справа — компактная сетка 2 колонки вместо длинного столбца */
-            .top-buttons-container {
-                display: grid; grid-template-columns: repeat(2, var(--ib)); grid-auto-flow: row dense; gap: 5px;
-                align-items: center; justify-items: stretch;
-            }
-            .top-buttons-container > .main-chest-btn, .top-buttons-container > .mystery-timer-badge {
-                grid-column: 1 / -1; justify-content: center; padding: 0 4px; font-size: 11.5px; white-space: nowrap;
-            }
             .top-buttons-container .achievement-btn-wrapper, .top-buttons-container .corner-icon-btn { width: var(--ib); }
             /* подпись уровня занимает место между нижними кнопками и переносится на 2 строки */
             .level-status-bottom {
@@ -1862,6 +1853,40 @@
             .currency-row > div { padding: 3px 6px; font-size: 11px; }
             .tab-btn { font-size: 10px; }
             .upgrade-cost { padding: 7px 9px; font-size: 12px; }
+        }
+
+        /* =====================================================
+           v5 — упорядоченные углы сцены: ничего не накладывается
+           Справа: ряд иконок в линию, под ним таймер маньяка и подарок (самый низ).
+           Слева: баланс, под ним активные бусты (в потоке).
+           ===================================================== */
+        .click-stage { --edge: 15px; --rowgap: 8px; --rowN: 3; }
+        .click-stage:has(#openPrestigeBtn[style*="flex"]) { --rowN: 4; }
+
+        .top-buttons-container { display: flex; flex-direction: column; align-items: flex-end; gap: var(--rowgap); top: var(--edge); right: var(--edge); }
+        .top-icon-row { order: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: var(--rowgap); }
+        .top-buttons-container > .mystery-timer-badge { order: 1; align-self: stretch; justify-content: center; white-space: nowrap; padding: 0 8px; font-size: 12px; }
+        .top-buttons-container > .main-chest-btn { order: 2; align-self: stretch; justify-content: center; white-space: nowrap; padding: 0 10px; font-size: 12px; }
+
+        .balance-container-topleft {
+            top: var(--edge); left: var(--edge);
+            max-width: calc(100% - (var(--rowN) * var(--ib) + (var(--rowN) - 1) * var(--rowgap)) - 2 * var(--edge) - 10px);
+        }
+        .main-balance { max-width: 100%; overflow-wrap: anywhere; }
+        .active-boosters-bar { position: static; display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 4px; max-width: 100%; margin-top: 2px; }
+        .booster-timer-tag { font-size: 11px; padding: 3px 9px; }
+
+        .cpc-badge { max-width: calc(100% - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        @media (max-width: 860px) {
+            .click-stage { --edge: 8px; --rowgap: 6px; }
+            .top-buttons-container .achievement-btn-wrapper, .top-buttons-container .corner-icon-btn { width: var(--ib); }
+            .top-buttons-container > .mystery-timer-badge,
+            .top-buttons-container > .main-chest-btn { height: var(--ib); font-size: 11.5px; padding: 0 6px; }
+            .cps-indicator { font-size: 11px; }
+            .booster-timer-tag { font-size: 10.5px; padding: 2px 7px; }
+            /* подпись силы клика выше плашки уровня, не касаясь её */
+            .cpc-badge { bottom: calc(var(--ib) + 24px); font-size: 11px; padding: 4px 12px; }
         }
     </style>
 </head>
@@ -2122,16 +2147,18 @@
 
                 <div class="top-buttons-container">
                     <div class="mystery-timer-badge" id="mysteryTimerBadge">⏳ 01:00</div>
-                    <button class="corner-icon-btn prestige-top-btn" id="openPrestigeBtn" title="Перерождение доступно!">👑</button>
-                    <button class="corner-icon-btn" id="openStoryBtn" title="Сюжетная мини-игра">📖</button>
-                    <button class="corner-icon-btn minigame-btn-wrapper locked-minigame" id="openJumpBtn" title="Мини-игра Заяц">🔒</button>
+                    <div class="top-icon-row">
+                        <button class="corner-icon-btn prestige-top-btn" id="openPrestigeBtn" title="Перерождение доступно!">👑</button>
+                        <button class="corner-icon-btn" id="openStoryBtn" title="Сюжетная мини-игра">📖</button>
+                        <button class="corner-icon-btn minigame-btn-wrapper locked-minigame" id="openJumpBtn" title="Мини-игра Заяц">🔒</button>
+                        <div class="achievement-btn-wrapper">
+                            <button class="corner-icon-btn" id="openAchievementsBtn" title="Достижения">🏆</button>
+                            <div class="notification-dot" id="notifDot"></div>
+                        </div>
+                    </div>
                     <button class="main-chest-btn" id="mainChestBtn" onclick="claimNextAvailableChest(event)">
                         🎁 <span id="chestTimerText">2:00</span>
                     </button>
-                    <div class="achievement-btn-wrapper">
-                        <button class="corner-icon-btn" id="openAchievementsBtn" title="Достижения">🏆</button>
-                        <div class="notification-dot" id="notifDot"></div>
-                    </div>
                 </div>
 
                 <div class="bottom-right-buttons">
@@ -2149,6 +2176,13 @@
                         <div class="coin-balance" id="coinBalanceWrap" style="display:none;">🪙 <span id="mellCoins">0</span></div>
                     </div>
                     <div class="cps-indicator">+<span id="cps">0</span>$ / сек</div>
+                    <!-- Активные бусты: внутри левой колонки, под балансом (в потоке, не накладываются) -->
+                    <div class="active-boosters-bar">
+                        <div class="booster-timer-tag" id="autoClickerTag">🤖 Бот: <span id="autoClickerTimeDisplay">0</span>s</div>
+                        <div class="booster-timer-tag" id="doubleTapTag">⚡ x2 Клик: <span id="doubleTapTimeDisplay">0</span>s</div>
+                        <div class="booster-timer-tag" id="hypeStormTag">🔥 x2 Доход: <span id="hypeStormTimeDisplay">0</span>s</div>
+                        <div class="booster-timer-tag" id="luckMellTag">🍀 x3 Криты: <span id="luckMellTimeDisplay">0</span>s</div>
+                    </div>
                 </div>
 
                 <div class="level-status-bottom">
@@ -2158,14 +2192,6 @@
                     </div>
                 </div>
 
-                <!-- Вертикальный список активных бустов -->
-                <div class="active-boosters-bar">
-                    <div class="booster-timer-tag" id="autoClickerTag">🤖 Бот: <span id="autoClickerTimeDisplay">0</span>s</div>
-                    <div class="booster-timer-tag" id="doubleTapTag">⚡ x2 Клик: <span id="doubleTapTimeDisplay">0</span>s</div>
-                    <div class="booster-timer-tag" id="hypeStormTag">🔥 x2 Доход: <span id="hypeStormTimeDisplay">0</span>s</div>
-                    <div class="booster-timer-tag" id="luckMellTag">🍀 x3 Криты: <span id="luckMellTimeDisplay">0</span>s</div>
-                </div>
-                
                 <div class="desktop-decoration" id="desktopDecorationCatness" data-key="catness">
                     <img src="kot.png" alt="Котость" id="decoImg_catness">
                     <div class="deco-controls">
@@ -5336,13 +5362,15 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (mainChestBtn.style.display === 'none') mainChestBtn.style.display = '';
 
             if (playTimeSeconds >= nextBox.timeReq) {
-                setChestHtml(`🎁 ${nextBox.name} (Забрать!)`);
+                setChestHtml('🎁 Забрать!');
+                mainChestBtn.title = nextBox.name;
                 mainChestBtn.classList.add('ready');
             } else {
                 let remSec = nextBox.timeReq - playTimeSeconds;
                 let m = Math.floor(remSec / 60);
                 let s = remSec % 60;
                 setChestHtml(`🎁 ${m}:${s < 10 ? '0' : ''}${s}`);
+                mainChestBtn.title = nextBox.name;
                 mainChestBtn.classList.remove('ready');
             }
         }
