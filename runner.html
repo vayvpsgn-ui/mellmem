@@ -897,29 +897,83 @@
         }
         initMurinoWindows();
 
+        let lastDefensePattern = -1;
+        const CITY_MV = '#ec4899', CITY_VT = '#a855f7', CITY_ST = '#38bdf8', CITY_BL = '#fb923c';
+        function mkBlock(o) {
+            const b = Object.assign({ type: 'horiz', w: 90, h: 20, ox: 0, oy: 0, ax: 0, ay: 0, sp: 0.03, ph: 0, ph2: 0, blink: 0, off: 0, stroke: CITY_ST, active: true, t: 0 }, o);
+            b.x = b.ox; b.y = b.oy;
+            return b;
+        }
+        // позиция = центр + амплитуда * sin(время): ходит по линии (ax или ay) либо по эллипсу (оба + сдвиг фазы)
+        function updateCityBlock(b) {
+            b.t++;
+            b.x = b.ox + b.ax * Math.sin(b.t * b.sp + b.ph);
+            b.y = b.oy + b.ay * Math.sin(b.t * b.sp + b.ph2);
+            if (b.blink) b.active = ((b.t + b.off) % b.blink) < b.blink * 0.6;
+        }
+        const CITY_PATTERNS = (() => {
+            const R = () => Math.random() * Math.PI * 2, H = Math.PI / 2;
+            return [
+                // 0: два «маятника» на разной высоте
+                () => [
+                    { ox: 190, oy: 215, w: 100, ax: 80, sp: 0.026, ph: R(), stroke: CITY_MV },
+                    { ox: 640, oy: 265, w: 100, ax: 90, sp: 0.030, ph: R(), stroke: CITY_MV }
+                ],
+                // 1: вертикальный шлагбаум + неподвижная доска
+                () => [
+                    { type: 'vert', ox: 640, oy: 215, w: 26, h: 95, ay: 60, sp: 0.030, ph2: R(), stroke: CITY_VT },
+                    { ox: 140, oy: 250, w: 100 }
+                ],
+                // 2: два блока-«карусели» по эллипсу в разные стороны
+                () => { const a = R(), c = R(); return [
+                    { ox: 240, oy: 245, w: 90, ax: 70, ay: 40, sp: 0.035, ph: a, ph2: a + H, stroke: CITY_MV },
+                    { ox: 620, oy: 245, w: 90, ax: 70, ay: 40, sp: -0.035, ph: c, ph2: c + H, stroke: CITY_MV }
+                ]; },
+                // 3: мигающие платформы (то есть, то нет)
+                () => [
+                    { ox: 200, oy: 230, w: 110, blink: 150, off: 0, stroke: CITY_BL },
+                    { ox: 650, oy: 200, w: 110, blink: 150, off: 50, stroke: CITY_BL },
+                    { ox: 430, oy: 300, w: 100, blink: 150, off: 100, stroke: CITY_BL }
+                ],
+                // 4: лесенки-отражатели по краям
+                () => [
+                    { ox: 120, oy: 300, w: 80, h: 18 }, { ox: 200, oy: 260, w: 80, h: 18 }, { ox: 280, oy: 220, w: 80, h: 18 },
+                    { ox: 760, oy: 300, w: 80, h: 18 }, { ox: 680, oy: 260, w: 80, h: 18 }, { ox: 600, oy: 220, w: 80, h: 18 }
+                ],
+                // 5: две вертикальные балки в противофазе
+                () => [
+                    { type: 'vert', ox: 300, oy: 215, w: 26, h: 90, ay: 55, sp: 0.032, ph2: 0, stroke: CITY_VT },
+                    { type: 'vert', ox: 650, oy: 215, w: 26, h: 90, ay: 55, sp: 0.032, ph2: Math.PI, stroke: CITY_VT },
+                    { ox: 130, oy: 190, w: 90 }
+                ],
+                // 6: широкий скользящий щит + квадратные «кубики» в углах
+                () => [
+                    { ox: 400, oy: 245, w: 160, ax: 240, sp: 0.018, ph: R(), stroke: CITY_MV },
+                    { type: 'square', ox: 130, oy: 170, w: 40, h: 40 },
+                    { type: 'square', ox: 790, oy: 170, w: 40, h: 40 }
+                ],
+                // 7: быстрая вертикаль + быстрая горизонталь
+                () => [
+                    { type: 'vert', ox: 300, oy: 230, w: 26, h: 90, ay: 65, sp: 0.045, ph2: R(), stroke: CITY_VT },
+                    { ox: 560, oy: 300, w: 100, ax: 80, sp: 0.040, ph: R(), stroke: CITY_MV }
+                ],
+                // 8: одна карусель + мигающая платформа
+                () => { const a = R(); return [
+                    { ox: 650, oy: 250, w: 90, ax: 60, ay: 50, sp: 0.030, ph: a, ph2: a + H, stroke: CITY_MV },
+                    { ox: 170, oy: 240, w: 110, blink: 140, off: 0, stroke: CITY_BL }
+                ]; }
+            ];
+        })();
+
         function generateCityDefenses() {
-            cityBlocks = [];
-            cityBlocks.push({ x: 375, y: 130, w: 210, h: 24, type: 'roof', movingH: false, movingV: false });
-
-            if (fogLevel2Hp >= 16) return;
-
-            cityBlocks.push({
-                x: 140, y: 220, w: 105, h: 22, type: 'horiz',
-                movingH: true, movingV: false, minX: 110, maxX: 260, vx: 1.6
-            });
-
-            cityBlocks.push({
-                x: 620, y: 180, w: 26, h: 95, type: 'vert',
-                movingH: false, movingV: true, minY: 150, maxY: 260, vy: 1.8
-            });
-
-            if (Math.random() < 0.7) {
-                cityBlocks.push({
-                    x: Math.random() < 0.5 ? 260 : 540,
-                    y: Math.random() * 60 + 200,
-                    w: 90, h: 20, type: 'horiz', movingH: false, movingV: false
-                });
-            }
+            cityBlocks = [mkBlock({ type: 'roof', ox: 375, oy: 130, w: 210, h: 24 })];
+            if (fogLevel2Hp >= 16) return; // в начале боя — только крыша
+            let idx;
+            do { idx = Math.floor(Math.random() * CITY_PATTERNS.length); } while (idx === lastDefensePattern);
+            lastDefensePattern = idx;
+            const defs = CITY_PATTERNS[idx]();
+            if (Math.random() < 0.5) defs.forEach(o => { o.ox = 960 - o.ox - (o.w || 90); }); // зеркалим расстановку
+            defs.forEach(o => cityBlocks.push(mkBlock(o)));
         }
 
         // ДЕКОРАЦИИ ЛЕСА
@@ -1222,7 +1276,21 @@
         });
         finishBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (EMBED) { storyNotify({ type: 'story-exit' }); return; }
+            leaveToMain();
+        });
+        // Кнопки экранов победы — раньше обработчиков не было вообще, поэтому они «не нажимались»
+        startLevel2Btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (startLevel2Btn.classList.contains('locked')) return;
+            startCutsceneLevel2();
+        });
+        tbcLevel3Btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (EMBED) storyNotify({ type: 'story-goto', level: 3 });
+            else window.location.href = 'level3.html';
+        });
+        tbcMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             leaveToMain();
         });
 
@@ -2321,7 +2389,7 @@
                 radiusY: Math.random() * 30 + 50,
                 angle: Math.random() * Math.PI * 2,
                 speed: (Math.random() < 0.5 ? 1 : -1) * (0.021 + Math.random() * 0.007),
-                timer: 360, maxTimer: 360, diving: false, diveSpeed: 6.8,
+                timer: 210, maxTimer: 210, diving: false, diveSpeed: 6.8,
                 r: 44 // Увеличено в 1.7 раза!
             };
         }
@@ -2343,13 +2411,11 @@
             let targetY = aimMouse.active ? aimMouse.y : 150;
             let angle = Math.atan2(targetY - originY, targetX - originX);
             let speed = 14.5;
-            let isGolden = Math.random() < 0.06;
-
-            playSfx(isGolden ? 'Pres.mp3' : 'zvukpr.mp3');
+            playSfx('zvukpr.mp3');
             projectiles.push({
                 x: originX, y: originY,
                 vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-                bouncesLeft: 3, r: 12, rot: 0, isGolden: isGolden
+                bouncesLeft: 3, r: 12, rot: 0
             });
         }
 
@@ -2365,16 +2431,7 @@
                 rw.lit = !rw.lit;
             }
 
-            for (let b of cityBlocks) {
-                if (b.movingH) {
-                    b.x += b.vx;
-                    if (b.x < b.minX || b.x + b.w > b.maxX + b.w) b.vx = -b.vx;
-                }
-                if (b.movingV) {
-                    b.y += b.vy;
-                    if (b.y < b.minY || b.y + b.h > b.maxY + b.h) b.vy = -b.vy;
-                }
-            }
+            for (let b of cityBlocks) updateCityBlock(b);
 
             // пар и дождь анимируются в drawMurinoBackground/drawMurinoFx
 
@@ -2382,6 +2439,7 @@
                 fogVulnerableTimer--;
                 if (fogVulnerableTimer <= 0) {
                     fogShieldActive = true;
+                    generateCityDefenses();
                     drunSpawnTimer = 35;
                 }
             }
@@ -2424,10 +2482,7 @@
                 let p = projectiles[i];
                 p.x += p.vx; p.y += p.vy; p.rot += 0.25;
 
-                if (p.isGolden && animTick % 2 === 0) {
-                    l2Spark(p.x, p.y, 1, '#ffd700', 0.3);
-                }
-
+                
                 const leftWallX = 90, rightWallX = canvas.width - 90;
                 if (p.x - p.r < leftWallX) {
                     p.x = leftWallX + p.r; p.vx = -p.vx; p.bouncesLeft--; playSfx('zvuknorm.mp3'); l2Dust(p.x, p.y, 5, '#cbd5e1');
@@ -2446,6 +2501,7 @@
                 }
 
                 for (let b of cityBlocks) {
+                    if (b.active === false) continue;
                     if (p.x + p.r > b.x && p.x - p.r < b.x + b.w && p.y + p.r > b.y && p.y - p.r < b.y + b.h) {
                         let overlapLeft = (p.x + p.r) - b.x;
                         let overlapRight = (b.x + b.w) - (p.x - p.r);
@@ -2505,16 +2561,9 @@
                 if (p.x + p.r > fogBox.left && p.x - p.r < fogBox.right &&
                     p.y + p.r > fogBox.top && p.y - p.r < fogBox.bottom) {
                     if (!fogShieldActive) {
-                        let dmg = 2;
-                        if (p.isGolden) {
-                            dmg = 6;
-                            playSfx('Pres.mp3');
-                            screenShake = 18;
-                            hitFloats.push({ x: 480, y: 45, text: '🌟 ЗОЛОТАЯ ЧЕКУШКА! -6 HP! 🌟', alpha: 1.5, color: '#ffd700' });
-                        } else {
-                            let isCrit = Math.random() < 0.08;
-                            dmg = isCrit ? 5 : 2;
-                            if (isCrit) {
+                        let isCrit = Math.random() < 0.08;
+                        let dmg = isCrit ? 5 : 2;
+                        if (isCrit) {
                                 playSfx('Pres.mp3');
                                 screenShake = 12;
                                 hitFloats.push({ x: 480, y: 45, text: '🔥 КРИТИЧЕСКИЙ УДАР! -5 HP! 🔥', alpha: 1.4, color: '#ff0055' });
@@ -2523,7 +2572,6 @@
                                 screenShake = 5;
                                 hitFloats.push({ x: 480, y: 45, text: '-2 HP!', alpha: 1.1, color: '#ffaa00' });
                             }
-                        }
 
                         fogLevel2Hp = Math.max(0, fogLevel2Hp - dmg);
                         fog.hitFlash = 14;
@@ -2957,6 +3005,7 @@
                 }
 
                 for (let b of cityBlocks) {
+                    if (b.active === false) continue;
                     if (curX > b.x && curX < b.x + b.w && curY > b.y && curY < b.y + b.h) {
                         let fromBottom = vy < 0 && curY > b.y + b.h / 2;
                         let fromTop = vy > 0 && curY < b.y + b.h / 2;
@@ -3034,13 +3083,14 @@
 
             for (let b of cityBlocks) {
                 ctx.save();
+                if (b.active === false) ctx.globalAlpha = 0.2;
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                 ctx.fillRect(b.x + 4, b.y + 6, b.w, b.h);
 
                 if (b.type === 'vert') {
                     ctx.fillStyle = '#1e293b';
                     ctx.fillRect(b.x, b.y, b.w, b.h);
-                    ctx.strokeStyle = b.movingV ? '#a855f7' : '#00f2fe';
+                    ctx.strokeStyle = b.stroke || '#00f2fe';
                     ctx.lineWidth = 2.5;
                     ctx.strokeRect(b.x, b.y, b.w, b.h);
 
@@ -3049,7 +3099,7 @@
                 } else {
                     ctx.fillStyle = '#334155';
                     ctx.fillRect(b.x, b.y, b.w, b.h);
-                    ctx.strokeStyle = b.movingH ? '#ec4899' : '#38bdf8';
+                    ctx.strokeStyle = b.stroke || '#38bdf8';
                     ctx.lineWidth = 2.5;
                     ctx.strokeRect(b.x, b.y, b.w, b.h);
 
@@ -3107,10 +3157,7 @@
                 ctx.save();
                 ctx.translate(p.x, p.y);
                 ctx.rotate(p.rot);
-                if (p.isGolden) {
-                    ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 14; ctx.fillStyle = '#ffd700';
-                    ctx.fillRect(-9, -15, 18, 30); ctx.fillStyle = '#ffffff'; ctx.fillRect(-4, -10, 8, 12);
-                } else if (imgChekuwka.complete && imgChekuwka.naturalWidth !== 0) {
+                if (imgChekuwka.complete && imgChekuwka.naturalWidth !== 0) {
                     drawSprite(ctx, imgChekuwka, -14, -18, 28, 36);
                 } else {
                     ctx.fillStyle = '#38bdf8';

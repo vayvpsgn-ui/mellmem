@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script>
+        if (location.search.indexOf('embed=1') !== -1 && window.parent !== window) {
+            document.documentElement.classList.add('embed-mode');
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Погоня за ФОГом — Уровень 4: Гнездо Мамы Птицы</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #03040a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: none;
+            overscroll-behavior: none;
+        }
+
+        .game-card {
+            width: 960px;
+            height: 560px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: 0 0;
+            background: #060814;
+            border-radius: 24px;
+            border: 2px solid #281d45;
+            box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(192, 132, 252, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .game-header {
+            height: 52px;
+            background: linear-gradient(90deg, #090618, #180f33);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: #c084fc;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 12px rgba(192, 132, 252, 0.45);
+        }
+
+        .hud-stats {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-weight: 800;
+            font-size: 13.5px;
+        }
+
+        .stat-weapon { color: #38bdf8; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+        .stat-score { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
+        .stat-hearts { color: #f43f5e; text-shadow: 0 0 10px rgba(244, 63, 94, 0.6); font-size: 16px; letter-spacing: 1px; }
+
+        .canvas-wrap {
+            flex: 1;
+            position: relative;
+            background: #020308;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+        }
+
+        .fog-boss-hud {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            z-index: 15;
+            background: rgba(18, 12, 34, 0.9);
+            padding: 6px 22px 8px;
+            border-radius: 14px;
+            border: 1px solid rgba(236, 72, 153, 0.5);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        .fog-boss-label {
+            font-size: 12px;
+            font-weight: 900;
+            color: #ec4899;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .fog-hp-bar {
+            position: relative;
+            width: 300px;
+            height: 13px;
+            background: rgba(0, 0, 0, 0.75);
+            border-radius: 8px;
+            border: 1px solid #4a1538;
+            overflow: hidden;
+        }
+
+        .fog-hp-ghost {
+            position: absolute; left: 0; top: 0; height: 100%; width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            transition: width 0.7s ease 0.3s;
+        }
+
+        .fog-hp-fill {
+            position: absolute; left: 0; top: 0; height: 100%; width: 100%;
+            background: linear-gradient(90deg, #ec4899, #f43f5e);
+            box-shadow: 0 0 12px #ec4899;
+            transition: width 0.1s ease-out;
+        }
+
+        .overlay-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 5, 12, 0.94);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            z-index: 40;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #ffffff;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 14px;
+            font-size: 15.5px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 0 22px rgba(168, 85, 247, 0.45);
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        .action-btn.green-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.5);
+        }
+
+        .skip-hint-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 15, 36, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        /* ===== Мобильное управление ===== */
+        .mobile-controls {
+            position: absolute;
+            inset: 0;
+            display: none;
+            pointer-events: none;
+            z-index: 25;
+        }
+        .mobile-controls.show { display: block; }
+
+        .ctrl-btn {
+            position: absolute;
+            pointer-events: auto;
+            border-radius: 50%;
+            background: rgba(22, 16, 40, 0.62);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-weight: 900;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            line-height: 1;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+            touch-action: none;
+            transition: transform 0.05s, background 0.05s;
+        }
+        .ctrl-btn::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; }
+        .ctrl-btn small { font-size: 12px; font-weight: 800; opacity: 0.85; margin-top: 3px; }
+        .ctrl-btn.pressed { transform: scale(0.92); background: rgba(168, 85, 247, 0.85); }
+
+        .ctrl-btn.flap-btn { width: 116px; height: 116px; bottom: 16px; left: 22px; font-size: 44px; border-color: #38bdf8; color: #38bdf8; }
+        .ctrl-btn.shoot-l, .ctrl-btn.shoot-r { width: 92px; height: 92px; bottom: 22px; font-size: 32px; border-color: #f43f5e; color: #fda4af; }
+        .ctrl-btn.shoot-l { right: 126px; }
+        .ctrl-btn.shoot-r { right: 22px; }
+        .ammo-badge {
+            position: absolute; top: -6px; right: -4px; min-width: 26px; height: 26px; padding: 0 6px;
+            border-radius: 13px; background: #0ea5e9; color: #fff; font-style: normal; font-size: 14px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; border: 2px solid #0b1020;
+        }
+        .ammo-badge.empty { background: #475569; }
+
+        #rotateOverlay {
+            display: none; position: fixed; inset: 0; z-index: 99999;
+            background: #03040a; color: #fff;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 18px; text-align: center; font-size: 22px; font-weight: 800; padding: 24px;
+        }
+        #rotateOverlay .rot-icon { font-size: 72px; animation: rotHint 2s ease-in-out infinite; }
+        @keyframes rotHint { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(90deg); } }
+        @media (orientation: portrait) and (pointer: coarse) { #rotateOverlay { display: flex; } }
+
+        html.embed-mode, html.embed-mode body { background: #000; }
+        html.embed-mode .game-card { border-radius: 0; border: none; box-shadow: none; }
+    </style>
+</head>
+<body>
+    <div class="game-card">
+        <div class="game-header">
+            <div class="header-title" id="gameHeaderTitle">🪨 УРОВЕНЬ 4: ПАДЕНИЕ В БЕЗДНУ И МАМА ПТИЦА</div>
+            <div class="hud-stats">
+                <div class="stat-hearts" id="hudHeartsWrap">❤️ ❤️ ❤️</div>
+                <div class="stat-score" id="hudScoreWrap"><span id="scoreLabel">Кристаллы</span>: <span id="scoreVal">0</span></div>
+                <div class="stat-weapon" id="hudWeaponWrap">🍾 <span id="ammoVal">Чекушки: 4 шт.</span></div>
+            </div>
+        </div>
+
+        <div class="canvas-wrap" id="canvasContainer">
+            <div class="fog-boss-hud" id="fogBossHud" style="display: none;">
+                <div class="fog-boss-label" id="fogHudLabel">ФОГ С МЕШКОМ: <span id="fogHpText">30/30</span> HP</div>
+                <div class="fog-hp-bar">
+                    <div class="fog-hp-ghost" id="fogHpGhost"></div>
+                    <div class="fog-hp-fill" id="fogHpFill"></div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="960" height="508"></canvas>
+            <div class="skip-hint-badge" id="skipHintBadge" style="display: none;">Тапните, чтобы пропустить катсцену ⏩</div>
+
+            <div class="overlay-screen" id="startScreen">
+                <div style="font-size: 26px; font-weight: 900; color: #c084fc; text-shadow: 0 0 15px rgba(192, 132, 252, 0.6);">
+                    УРОВЕНЬ 4: ГНЕЗДО МАМЫ ПТИЦЫ
+                </div>
+                <div style="font-size: 14px; color: #cbd5e1; max-width: 640px; line-height: 1.6;">
+                    ФОГ заманил героев в ловушку, но на помощь прилетела <b>Мама Птица</b>!<br>
+                    Лавируйте между кристаллов, сбивайте летучих мышей и ФОГа чекушками.<br><br>
+                    🎮 <b>Управление:</b><br>
+                    • <b>ПК:</b> [Пробел / W / ↑ / ЛКМ] — взмах · [A / ←] и [D / →] — бросок влево/вправо · [F / ПКМ] — бросок в сторону ФОГа<br>
+                    • <b>Телефон:</b> тап по экрану (или большая кнопка слева) — взмах, кнопки справа — броски<br>
+                    • 🍾 Чекушка самонаводится на ФОГа и снимает 3–4 HP. Подбирай их в полёте!<br>
+                    • В финале: <b>закликай Гигантского ФОГа</b> и сбивай взрывающихся Друнов!
+                </div>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+                    <button class="action-btn" id="startCutsceneBtn">НАЧАТЬ 🚀</button>
+                    <button class="action-btn green-btn" id="menuBtnStart">В ГЛАВНОЕ МЕНЮ</button>
+                </div>
+            </div>
+
+            <div class="overlay-screen" id="gameOverScreen" style="display: none;">
+                <div style="font-size: 28px; font-weight: 900; color: #f43f5e;" id="gameOverTitle">КОМАНДА ПОТЕРЯЛА СИЛЫ!</div>
+                <div style="font-size: 14.5px; color: #d1d5db; max-width: 520px; line-height: 1.6;" id="gameOverDesc"></div>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+                    <button class="action-btn" id="restartBtn">ПОПРОБОВАТЬ СНОВА 🔄</button>
+                    <button class="action-btn green-btn" id="menuBtnOver">В ГЛАВНОЕ МЕНЮ</button>
+                </div>
+            </div>
+
+            <div class="overlay-screen" id="victoryScreen" style="display: none; background: rgba(3, 7, 18, 0.96);">
+                <div style="font-size: 32px; font-weight: 900; color: #38bdf8; text-shadow: 0 0 25px rgba(56, 189, 248, 0.7);">
+                    🎉 ФОГ ПОВЕРЖЕН НАВСЕГДА!
+                </div>
+                <div style="font-size: 16px; font-weight: 800; color: #facc15;">
+                    МЕШОК С ЗУБАМИ ВОЗВРАЩЁН!
+                </div>
+                <div style="font-size: 14.5px; color: #cbd5e1; max-width: 560px; line-height: 1.6;">
+                    Все герои ударили разом — и ФОГ растворился в кристаллах пещеры.<br>
+                    Мама Птица подхватила выпавший мешок.<br><br>
+                    🎁 <b>Награда:</b> +100 Зубов 🦷<br>
+                    🏆 <b>Новое достижение:</b> «Мама Птица» — забери её в разделе достижений!
+                </div>
+                <button class="action-btn green-btn" id="victoryMenuBtn">ЗАБРАТЬ НАГРАДУ И ВЫЙТИ 🏆</button>
+            </div>
+
+            <div class="mobile-controls" id="mobileControls">
+                <div class="ctrl-btn flap-btn" id="btnMobileFlap">🕊️<small>ВЗМАХ</small></div>
+                <div class="ctrl-btn shoot-l" id="btnMobileShootL">🍾<small>◀ ВЛЕВО</small><i class="ammo-badge" id="ammoBadgeL">4</i></div>
+                <div class="ctrl-btn shoot-r" id="btnMobileShootR">🍾<small>ВПРАВО ▶</small><i class="ammo-badge" id="ammoBadgeR">4</i></div>
+            </div>
+        </div>
+    </div>
+    <div id="rotateOverlay"><div class="rot-icon">🔄</div><div>Поверните устройство горизонтально 🔄</div></div>
+
+    <script>
+    'use strict';
+    // ============================================================
+    //  БАЗА
+    // ============================================================
+    const W = 960, H = 508;
+    const $ = (id) => document.getElementById(id);
+    const canvas = $('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const gameHeaderTitle = $('gameHeaderTitle'), scoreVal = $('scoreVal'), scoreLabel = $('scoreLabel'), ammoVal = $('ammoVal');
+    const hudHeartsWrap = $('hudHeartsWrap'), fogBossHud = $('fogBossHud'), fogHudLabel = $('fogHudLabel');
+    const fogHpFill = $('fogHpFill'), fogHpGhost = $('fogHpGhost'), skipHintBadge = $('skipHintBadge');
+    const startScreen = $('startScreen'), gameOverScreen = $('gameOverScreen'), gameOverTitle = $('gameOverTitle'), gameOverDesc = $('gameOverDesc');
+    const victoryScreen = $('victoryScreen');
+    const mobileControls = $('mobileControls'), ammoBadgeL = $('ammoBadgeL'), ammoBadgeR = $('ammoBadgeR');
+    const gameCard = document.querySelector('.game-card');
+    const portraitMQ = window.matchMedia('(orientation: portrait) and (pointer: coarse)');
+
+    function loadImg(src, alt) {
+        const i = new Image();
+        if (alt) i.onerror = () => { i.onerror = null; i.src = alt; };
+        i.src = src;
+        return i;
+    }
+    const imgMam = loadImg('mam.png');
+    const imgFog = loadImg('fog.png', 'fogs.png');
+    const imgChekuwka = loadImg('chekuwka.png');
+    const imgZaec = loadImg('zaec.png');
+    const imgKot = loadImg('kot.png');
+    const imgChe = loadImg('che.png');
+    const imgDrun = loadImg('drun.png');
+
+    // ---- звуки (пул, чтобы не плодить Audio на каждый удар) ----
+    const _sfxPool = {}, _sfxLast = {};
+    function _getSfx(file) {
+        let p = _sfxPool[file];
+        if (!p) {
+            p = _sfxPool[file] = { list: [], i: 0 };
+            for (let k = 0; k < 3; k++) { const a = new Audio(file); a.preload = 'auto'; a.volume = 0.6; p.list.push(a); }
+        }
+        return p;
+    }
+    ['Pres.mp3', 'zvukpr.mp3', 'zvuknorm.mp3', 'lose.mp3', 'jackpot.mp3'].forEach(_getSfx);
+    function playSfx(file) {
+        try {
+            const now = performance.now();
+            if (now - (_sfxLast[file] || 0) < 55) return;
+            _sfxLast[file] = now;
+            const p = _getSfx(file), a = p.list[p.i];
+            p.i = (p.i + 1) % p.list.length;
+            a.currentTime = 0;
+            const pr = a.play();
+            if (pr && pr.catch) pr.catch(() => {});
+        } catch (e) {}
+    }
+
+    // ---- утилиты ----
+    function _rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    const easeOutBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const rndInt = (a, b) => Math.floor(rnd(a, b + 1));
+    function createOffscreen(w, h, fn) { const oc = document.createElement('canvas'); oc.width = w; oc.height = h; fn(oc.getContext('2d'), w, h); return oc; }
+    const imgOk = (i) => i.complete && i.naturalWidth > 0;
+
+    function fitDims(img, mw, mh) {
+        if (!imgOk(img)) return { w: mw, h: mh };
+        const r = Math.min(mw / img.naturalWidth, mh / img.naturalHeight);
+        return { w: img.naturalWidth * r, h: img.naturalHeight * r };
+    }
+    // рисует картинку, вписанную в mw×mh; якорь — низ по центру
+    function drawFit(img, cx, by, mw, mh, flip, c) {
+        c = c || ctx;
+        const d = fitDims(img, mw, mh);
+        c.save();
+        c.translate(cx, by);
+        if (flip) c.scale(-1, 1);
+        if (imgOk(img)) c.drawImage(img, -d.w / 2, -d.h, d.w, d.h);
+        else { c.fillStyle = '#a855f7'; c.fillRect(-d.w / 2, -d.h, d.w, d.h); }
+        c.restore();
+        return d;
+    }
+
+    // ---- спрайты свечения ----
+    const glowCache = {};
+    function glowSprite(col) {
+        if (glowCache[col]) return glowCache[col];
+        return (glowCache[col] = createOffscreen(128, 128, (c) => {
+            const g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+            g.addColorStop(0, col + 'cc'); g.addColorStop(0.45, col + '44'); g.addColorStop(1, col + '00');
+            c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+        }));
+    }
+    function drawGlow(col, x, y, r, a) {
+        ctx.globalAlpha = a;
+        ctx.drawImage(glowSprite(col), x - r, y - r, r * 2, r * 2);
+    }
+
+    // ---- зуб и мешок (как в уровне 3) ----
+    const cachedTooth = createOffscreen(36, 36, (c) => {
+        c.translate(18, 18);
+        c.strokeStyle = '#00e5ff'; c.lineWidth = 1.8;
+        c.beginPath();
+        c.moveTo(-7, -9); c.bezierCurveTo(-9, -7, -9, 0, -5, 8);
+        c.lineTo(-2, 4); c.lineTo(2, 4); c.lineTo(5, 8);
+        c.bezierCurveTo(9, 0, 9, -7, 7, -9); c.bezierCurveTo(4, -11, -4, -11, -7, -9);
+        c.closePath();
+        const tg = c.createLinearGradient(0, -10, 0, 8);
+        tg.addColorStop(0, '#ffffff'); tg.addColorStop(0.65, '#e0f7ff'); tg.addColorStop(1, '#b3ecff');
+        c.fillStyle = tg; c.fill(); c.stroke();
+        c.fillStyle = 'rgba(255,255,255,0.9)';
+        c.beginPath(); c.ellipse(-3, -5, 2, 4, Math.PI / 8, 0, Math.PI * 2); c.fill();
+    });
+
+    function drawEpicToothBag(c, x, y, scale) {
+        c.save();
+        c.translate(x, y);
+        c.scale(scale, scale);
+        c.fillStyle = 'rgba(0,0,0,0.45)';
+        c.beginPath(); c.ellipse(22, 38, 22, 7, 0, 0, Math.PI * 2); c.fill();
+        const bg = c.createRadialGradient(16, 16, 5, 22, 24, 28);
+        bg.addColorStop(0, '#e0a05a'); bg.addColorStop(0.5, '#ab682c'); bg.addColorStop(0.9, '#6e3c15'); bg.addColorStop(1, '#3b1d06');
+        c.fillStyle = bg; c.strokeStyle = '#241003'; c.lineWidth = 2.5;
+        c.beginPath(); c.moveTo(12, 10); c.bezierCurveTo(4, 18, -1, 32, 10, 38); c.bezierCurveTo(20, 42, 34, 41, 37, 35); c.bezierCurveTo(45, 28, 41, 16, 32, 10); c.closePath();
+        c.fill(); c.stroke();
+        c.drawImage(cachedTooth, 3, -10, 22, 22); c.drawImage(cachedTooth, 18, -13, 24, 24);
+        c.restore();
+    }
+
+    // ---- реплики ----
+    const SPK = {
+        fog:  ['ФОГ', '#ff8fb8', '#ec4899'],
+        zaec: ['ЗАЕЦ', '#7dd3fc', '#38bdf8'],
+        kot:  ['КОТОСТЬ', '#fcd34d', '#f59e0b'],
+        che:  ['ЧЕРЕМША', '#6ee7b7', '#10b981'],
+        mam:  ['МАМА ПТИЦА', '#bfdbfe', '#60a5fa']
+    };
+    function bubble(who, text, x, y, tx, ty) {
+        const sp = SPK[who] || SPK.zaec;
+        ctx.save();
+        const font = '800 13.5px "Segoe UI", sans-serif';
+        ctx.font = font;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        const padX = 14, padY = 9, lh = 18, maxW = 360;
+        const words = text.split(' '), lines = []; let cur = '';
+        for (const w of words) {
+            const t = cur ? cur + ' ' + w : w;
+            if (cur && ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t;
+        }
+        if (cur) lines.push(cur);
+        let tw = 0; for (const l of lines) tw = Math.max(tw, ctx.measureText(l).width);
+        ctx.font = '900 11px "Segoe UI", sans-serif';
+        tw = Math.max(tw, ctx.measureText(sp[0]).width + 6);
+        const bw = tw + padX * 2, bh = lines.length * lh + padY * 2 + 14;
+        const bx = clamp(x - bw / 2, 14, W - bw - 14);
+        const by = clamp(y - bh / 2, 46, H - bh - 14);
+        ctx.fillStyle = 'rgba(12,16,32,0.95)'; ctx.strokeStyle = sp[2]; ctx.lineWidth = 2;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 12); ctx.fill(); ctx.stroke();
+        if (tx !== undefined) {
+            const below = ty >= by + bh;
+            const tb = clamp(tx, bx + 18, bx + bw - 18);
+            const ey = below ? by + bh - 1 : by + 1;
+            ctx.beginPath(); ctx.moveTo(tb - 7, ey); ctx.lineTo(clamp(tx, 8, W - 8), clamp(ty, 4, H - 4)); ctx.lineTo(tb + 7, ey); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = sp[1]; ctx.font = '900 11px "Segoe UI", sans-serif';
+        ctx.fillText(sp[0], bx + bw / 2, by + padY + 6);
+        ctx.fillStyle = '#ffffff'; ctx.font = font;
+        lines.forEach((l, i) => ctx.fillText(l, bx + bw / 2, by + padY + 14 + lh * i + lh / 2));
+        ctx.restore();
+    }
+
+    // ============================================================
+    //  ПЕЩЕРА И КРИСТАЛЛЫ (из уровня 3)
+    // ============================================================
+    const COL = ['#c084fc', '#38bdf8', '#ec4899', '#34d399', '#818cf8'];
+
+    function prism(c, x, base, dir, w, h, col, lean) {
+        const tx = x + lean, ty = base + dir * h, sh = ty - dir * h * 0.2;
+        c.save(); c.shadowColor = col; c.shadowBlur = 26;
+        c.fillStyle = col; c.globalAlpha = 0.9 * c.globalAlpha;
+        c.beginPath(); c.moveTo(x - w / 2, base); c.lineTo(x - w / 2 + lean * 0.3, sh); c.lineTo(tx, ty); c.lineTo(x, base); c.closePath(); c.fill();
+        c.shadowBlur = 0;
+        c.fillStyle = 'rgba(0,0,25,0.42)';
+        c.beginPath(); c.moveTo(x, base); c.lineTo(tx, ty); c.lineTo(x + w / 2 + lean * 0.3, sh); c.lineTo(x + w / 2, base); c.closePath(); c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.5)';
+        c.beginPath(); c.moveTo(x - w / 2 + 2, base + dir * 6); c.lineTo(x - w / 2 + lean * 0.3 + 2, sh); c.lineTo(tx - 1, ty + dir * 4); c.lineTo(x - w * 0.15, base + dir * 6); c.closePath(); c.fill();
+        c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineWidth = 1;
+        c.beginPath(); c.moveTo(x - w / 2, base); c.lineTo(x - w / 2 + lean * 0.3, sh); c.lineTo(tx, ty); c.lineTo(x + w / 2 + lean * 0.3, sh); c.lineTo(x + w / 2, base); c.stroke();
+        c.restore();
+    }
+    function cluster(c, x, base, dir, sc, col) {
+        prism(c, x, base, dir, 22 * sc, 120 * sc, col, 4 * sc);
+        prism(c, x - 20 * sc, base, dir, 16 * sc, 70 * sc, col, -10 * sc);
+        prism(c, x + 18 * sc, base, dir, 15 * sc, 58 * sc, col, 9 * sc);
+        prism(c, x + 5 * sc, base, dir, 10 * sc, 36 * sc, col, 14 * sc);
+    }
+    function crystalAt(c, x, y, ang, sc, col) {
+        c.save(); c.translate(x, y); c.rotate(ang);
+        prism(c, 0, 0, -1, 22 * sc, 120 * sc, col, 4 * sc);
+        prism(c, -20 * sc, 0, -1, 16 * sc, 70 * sc, col, -10 * sc);
+        prism(c, 18 * sc, 0, -1, 15 * sc, 58 * sc, col, 9 * sc);
+        c.restore();
+    }
+
+    const TWO_PI = Math.PI * 2;
+    const bandTop = (x) => 20 + 6 * Math.sin(TWO_PI * 3 * x / W) + 4 * Math.sin(TWO_PI * 8 * x / W + 1.3);
+    const bandBot = (x) => 24 + 7 * Math.sin(TWO_PI * 4 * x / W + 0.7) + 4 * Math.sin(TWO_PI * 9 * x / W + 2);
+    const CEIL = 40, FLOOR = H - 44;
+
+    // дальний слой — тайл по горизонтали
+    const farTile = createOffscreen(W, H, (c) => {
+        const r = _rng(7);
+        const bg = c.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, '#02010a'); bg.addColorStop(0.45, '#0c0620'); bg.addColorStop(0.82, '#1a0b36'); bg.addColorStop(1, '#2a1150');
+        c.fillStyle = bg; c.fillRect(0, 0, W, H);
+        for (let i = 0; i < 70; i++) {
+            const x = r() * W, y = r() * H, rad = 30 + r() * 70;
+            [-W, 0, W].forEach((o) => {
+                const g = c.createRadialGradient(x + o, y, 0, x + o, y, rad);
+                g.addColorStop(0, r() < 0.55 ? 'rgba(2,1,10,0.35)' : 'rgba(120,70,200,0.10)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                c.fillStyle = g; c.fillRect(x + o - rad, y - rad, rad * 2, rad * 2);
+            });
+        }
+        c.globalAlpha = 0.3;
+        for (let i = 0; i < 9; i++) {
+            const x = (i + 0.5) * (W / 9) + (r() - 0.5) * 30, up = i % 2 === 0, col = COL[i % 5], sc = 0.7 + r() * 0.5;
+            [-W, 0, W].forEach((o) => cluster(c, x + o, up ? H : 0, up ? -1 : 1, sc, col));
+        }
+        c.globalAlpha = 1;
+    });
+    const farGlows = [];
+    {
+        const r = _rng(21);
+        for (let i = 0; i < 9; i++) farGlows.push({ x: (i + 0.5) * (W / 9), y: i % 2 === 0 ? H - 40 : 40, col: COL[i % 5], r: 120 + r() * 60, ph: r() * 6.28 });
+    }
+
+    // ближний слой — стены пещеры (потолок и пол), скроллится со скоростью мира
+    const nearTile = createOffscreen(W, H, (c) => {
+        const gt = c.createLinearGradient(0, 0, 0, 44);
+        gt.addColorStop(0, '#04020a'); gt.addColorStop(1, '#1a0d38');
+        c.fillStyle = gt;
+        c.beginPath(); c.moveTo(0, 0);
+        for (let x = 0; x <= W; x += 4) c.lineTo(x, bandTop(x));
+        c.lineTo(W, 0); c.closePath(); c.fill();
+        const gb = c.createLinearGradient(0, H - 48, 0, H);
+        gb.addColorStop(0, '#1a0d38'); gb.addColorStop(1, '#04020a');
+        c.fillStyle = gb;
+        c.beginPath(); c.moveTo(0, H);
+        for (let x = 0; x <= W; x += 4) c.lineTo(x, H - bandBot(x));
+        c.lineTo(W, H); c.closePath(); c.fill();
+        // шипы-сталактиты (до y≈38)
+        const n = 12;
+        for (let i = 0; i < n; i++) {
+            const x = (i + 0.5) * (W / n);
+            c.fillStyle = '#0d0620';
+            c.beginPath(); c.moveTo(x - 16, bandTop(x - 16) - 2); c.lineTo(x, bandTop(x) + 7); c.lineTo(x + 16, bandTop(x + 16) - 2); c.closePath(); c.fill();
+            c.beginPath(); c.moveTo(x - 18, H - bandBot(x - 18) + 2); c.lineTo(x + 2, H - bandBot(x) - 7); c.lineTo(x + 18, H - bandBot(x + 18) + 2); c.closePath(); c.fill();
+        }
+        c.shadowColor = '#c084fc'; c.shadowBlur = 10; c.strokeStyle = 'rgba(192,132,252,0.75)'; c.lineWidth = 2;
+        c.beginPath(); for (let x = 0; x <= W; x += 4) { const y = bandTop(x) + (Math.abs(((x % (W / n)) / (W / n)) - 0.5) < 0.15 ? 4 : 0); x === 0 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
+        c.beginPath(); for (let x = 0; x <= W; x += 4) { const y = H - bandBot(x); x === 0 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
+        c.shadowBlur = 0;
+        // мелкие светящиеся камешки в породе
+        const r = _rng(5);
+        for (let i = 0; i < 60; i++) {
+            const x = r() * W, top = r() < 0.5, y = top ? r() * 14 : H - r() * 16;
+            c.fillStyle = `rgba(${150 + (r() * 90) | 0},${120 + (r() * 90) | 0},255,${0.15 + r() * 0.25})`;
+            c.fillRect(x, y, 2 + r() * 3, 2);
+        }
+    });
+
+    // арена финального боя
+    const arenaTile = createOffscreen(W, H, (c) => {
+        const r = _rng(99);
+        const fg = c.createLinearGradient(0, 428, 0, H);
+        fg.addColorStop(0, '#2a1456'); fg.addColorStop(0.2, '#150a30'); fg.addColorStop(1, '#04020a');
+        c.fillStyle = fg; c.fillRect(0, 428, W, H - 428);
+        for (let i = 0; i < 50; i++) {
+            const x = r() * W, y = 434 + r() * (H - 440), rx = 3 + r() * 10;
+            c.fillStyle = 'rgba(0,0,10,0.5)'; c.beginPath(); c.ellipse(x, y, rx, rx * 0.4, 0, 0, TWO_PI); c.fill();
+            c.fillStyle = 'rgba(170,140,255,0.12)'; c.beginPath(); c.ellipse(x - 1, y - 1, rx * 0.8, rx * 0.25, 0, 0, TWO_PI); c.fill();
+        }
+        [70, 205, 760, 895].forEach((x, i) => cluster(c, x, 432, -1, 0.7 + (i % 2) * 0.25, COL[(i * 2) % 5]));
+        [130, 480, 840].forEach((x, i) => cluster(c, x, 0, 1, 0.55 + i * 0.12, COL[(i + 2) % 5]));
+        c.shadowColor = '#c084fc'; c.shadowBlur = 8; c.strokeStyle = '#c084fc'; c.lineWidth = 1.8;
+        c.beginPath(); c.moveTo(0, 430); c.lineTo(W, 430); c.stroke();
+        c.shadowBlur = 0;
+        const v = c.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, H * 0.95);
+        v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(3,1,12,0.62)');
+        c.fillStyle = v; c.fillRect(0, 0, W, H);
+    });
+    const vignette = createOffscreen(W, H, (c) => {
+        const v = c.createRadialGradient(W / 2, H / 2, H * 0.42, W / 2, H / 2, H * 0.98);
+        v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(3,1,12,0.6)');
+        c.fillStyle = v; c.fillRect(0, 0, W, H);
+    });
+
+    const spores = [];
+    for (let i = 0; i < 40; i++) {
+        spores.push({
+            x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2 + 1,
+            vx: (Math.random() - 0.5) * 0.4, vy: -Math.random() * 0.4 - 0.1,
+            color: COL[Math.floor(Math.random() * 5)], alpha: Math.random() * 0.6 + 0.3
+        });
+    }
+    let bgT = 0, bgScrollFar = 0, bgScrollNear = 0;
+
+    function stepSpores(speed) {
+        bgT++;
+        for (const sp of spores) {
+            sp.x += sp.vx - speed * 0.3; sp.y += sp.vy;
+            if (sp.y < 20) sp.y = H - 30;
+            if (sp.x < -5) sp.x = W + 5;
+            if (sp.x > W + 5) sp.x = -5;
+        }
+    }
+    function drawSpores() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (const sp of spores) {
+            ctx.globalAlpha = sp.alpha * (0.7 + 0.3 * Math.sin(bgT * 0.05 + sp.x));
+            ctx.fillStyle = sp.color;
+            ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r + 0.6, 0, TWO_PI); ctx.fill();
+            ctx.globalAlpha = sp.alpha * 0.25;
+            ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r * 4, 0, TWO_PI); ctx.fill();
+        }
+        ctx.restore();
+    }
+    function drawTile(tile, scroll) {
+        const x = -(((scroll % W) + W) % W);
+        ctx.drawImage(tile, x, 0);
+        ctx.drawImage(tile, x + W, 0);
+    }
+    function drawFarGlows(scroll) {
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        const off = ((scroll % W) + W) % W;
+        for (const g of farGlows) {
+            let x = g.x - off; if (x < -200) x += W;
+            for (const xx of [x, x + W]) drawGlow(g.col, xx, g.y, g.r, 0.22 + 0.1 * Math.sin(bgT * 0.04 + g.ph));
+        }
+        ctx.restore();
+    }
+
+    // ============================================================
+    //  ОБЩЕЕ СОСТОЯНИЕ
+    // ============================================================
+    let state = 'menu';   // menu, intro_cs, playing, giant_intro, giant_clicker, win_cs, win, gameover
+    let tick = 0, shake = 0, fade = 0, freeze = 0, lastDeath = 'flappy';
+    let touchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+    let showHitbox = false;
+
+    const EMBED = location.search.indexOf('embed=1') !== -1 && window.parent !== window;
+    function storyNotify(msg) { if (EMBED) { try { window.parent.postMessage(msg, '*'); } catch (e) {} } }
+    function leaveToMain() {
+        if (EMBED) { storyNotify({ type: 'story-exit' }); return; }
+        window.location.href = 'index.html';
+    }
+    ['menuBtnStart', 'menuBtnOver', 'victoryMenuBtn'].forEach((id) => {
+        const b = $(id);
+        if (b) b.addEventListener('click', (e) => { e.stopPropagation(); leaveToMain(); });
+    });
+
+    // общие частицы и всплывающие тексты (экранные координаты)
+    let parts = [], pops = [];
+    function burst(x, y, n, colors, speed, size, grav, life) {
+        for (let i = 0; i < n; i++) {
+            const a = Math.random() * TWO_PI, v = Math.random() * speed + speed * 0.25;
+            parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: grav || 0, life: life || 30, max: life || 30,
+                size: Math.random() * size + size * 0.4, color: colors[(Math.random() * colors.length) | 0], shape: 'c' });
+        }
+    }
+    function toothBurst(x, y, n) {
+        for (let i = 0; i < n; i++) {
+            const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.2, v = 3 + Math.random() * 6;
+            parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0.22, life: 70, max: 70, size: 14 + Math.random() * 8, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, shape: 'tooth' });
+        }
+    }
+    function stepParts() {
+        for (let i = parts.length - 1; i >= 0; i--) {
+            const p = parts[i];
+            p.x += p.vx; p.y += p.vy; p.vy += p.g; p.life--;
+            if (p.rot !== undefined) p.rot += p.vr;
+            if (p.life <= 0) parts.splice(i, 1);
+        }
+    }
+    function drawParts() {
+        for (const p of parts) {
+            const a = clamp(p.life / p.max, 0, 1);
+            if (p.shape === 'tooth') {
+                ctx.save(); ctx.globalAlpha = Math.min(1, a * 1.6); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+                ctx.drawImage(cachedTooth, -p.size / 2, -p.size / 2, p.size, p.size); ctx.restore();
+            } else {
+                ctx.globalAlpha = a; ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size * (0.5 + a * 0.5), 0, TWO_PI); ctx.fill();
+            }
+        }
+        ctx.globalAlpha = 1;
+    }
+    function floatText(text, x, y, color, size) {
+        pops.push({ kind: 'text', text, x, y, color: color || '#fff', size: size || 17, age: 0, max: 60, rise: 38, wig: 0, seed: 0 });
+    }
+    function damagePop(x, y, dmg, crit) {
+        const words = ['БАМ!', 'КРАК!', 'ХРЯСЬ!', 'ТРЕСК!', 'ВЖУХ!'];
+        pops.push({ kind: 'dmg', text: String(dmg), x: x + rnd(-26, 26), y: y + rnd(-14, 10), dmg, crit, word: crit ? words[(Math.random() * words.length) | 0] : '',
+            size: crit ? 46 : clamp(24 + dmg * 0.12, 24, 34), age: 0, max: crit ? 74 : 54, rise: crit ? 96 : 70, wig: crit ? 5 : 9, seed: Math.random() * 6 });
+    }
+    function stepPops() {
+        for (let i = pops.length - 1; i >= 0; i--) { pops[i].age++; if (pops[i].age >= pops[i].max) pops.splice(i, 1); }
+    }
+    function drawPops() {
+        for (const p of pops) {
+            const t = p.age / p.max;
+            const a = t > 0.68 ? 1 - (t - 0.68) / 0.32 : 1;
+            const x = p.x + Math.sin(p.age * 0.18 + p.seed) * p.wig * easeOutCubic(Math.min(1, t * 2));
+            const y = p.y - easeOutCubic(Math.min(1, t * 1.2)) * p.rise;
+            ctx.save();
+            ctx.globalAlpha = clamp(a, 0, 1);
+            ctx.translate(x, y);
+            if (p.kind === 'text') {
+                ctx.font = `900 ${p.size}px "Segoe UI", sans-serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+                ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,4,24,0.9)'; ctx.strokeText(p.text, 0, 0);
+                ctx.fillStyle = p.color; ctx.fillText(p.text, 0, 0);
+                ctx.restore(); continue;
+            }
+            const sc = p.age < 10 ? lerp(p.crit ? 2.3 : 1.7, 1, easeOutCubic(p.age / 10)) : 1 + (p.crit ? Math.sin(p.age * 0.35) * 0.03 : 0);
+            ctx.scale(sc, sc);
+            if (p.crit) {
+                ctx.rotate(-0.09);
+                if (p.age < 16) {
+                    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+                    const L = 30 + p.age * 5;
+                    ctx.strokeStyle = 'rgba(255,214,120,' + (1 - p.age / 16) * 0.9 + ')'; ctx.lineWidth = 3;
+                    for (let k = 0; k < 10; k++) { const an = k * TWO_PI / 10; ctx.beginPath(); ctx.moveTo(Math.cos(an) * 22, Math.sin(an) * 14); ctx.lineTo(Math.cos(an) * L, Math.sin(an) * L * 0.6); ctx.stroke(); }
+                    ctx.restore();
+                }
+                ctx.font = '900 15px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+                ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(40,0,20,0.95)'; ctx.strokeText('КРИТ! ' + p.word, 0, -p.size * 0.78);
+                ctx.fillStyle = '#ffe27a'; ctx.fillText('КРИТ! ' + p.word, 0, -p.size * 0.78);
+            }
+            const fs = p.size;
+            ctx.font = `900 ${fs}px "Segoe UI", sans-serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+            const txt = '-' + p.text;
+            ctx.shadowColor = p.crit ? 'rgba(255,60,90,0.9)' : 'rgba(80,200,255,0.8)'; ctx.shadowBlur = p.crit ? 18 : 10;
+            ctx.lineWidth = fs * 0.24; ctx.strokeStyle = p.crit ? 'rgba(60,0,24,0.97)' : 'rgba(8,16,48,0.95)';
+            ctx.strokeText(txt, 0, 0);
+            ctx.shadowBlur = 0;
+            const g = ctx.createLinearGradient(0, -fs * 0.5, 0, fs * 0.5);
+            if (p.crit) { g.addColorStop(0, '#fff7b0'); g.addColorStop(0.5, '#ffb020'); g.addColorStop(1, '#ff3355'); }
+            else { g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#8fe3ff'); }
+            ctx.fillStyle = g; ctx.fillText(txt, 0, 0);
+            ctx.restore();
+        }
+    }
+
+    // ============================================================
+    //  HUD
+    // ============================================================
+    function updateHeartsUI(h) {
+        let s = '';
+        for (let i = 0; i < 3; i++) s += i < h ? '❤️ ' : '🖤 ';
+        hudHeartsWrap.textContent = s.trim();
+    }
+    function setBossHud(label, hp, max, instantGhost) {
+        fogHudLabel.textContent = label + ' ' + Math.max(0, Math.ceil(hp)) + ' / ' + max + ' HP';
+        const pct = Math.max(0, hp / max * 100) + '%';
+        fogHpFill.style.width = pct;
+        if (instantGhost) {
+            fogHpGhost.style.transition = 'none'; fogHpGhost.style.width = pct;
+            void fogHpGhost.offsetWidth; fogHpGhost.style.transition = '';
+        } else fogHpGhost.style.width = pct;
+    }
+    function updateAmmoUI() {
+        ammoVal.innerHTML = 'Чекушки: <b>' + ammo + '</b> шт.';
+        ammoVal.style.color = ammo > 0 ? '#38bdf8' : '#ef4444';
+        ammoBadgeL.textContent = ammo; ammoBadgeR.textContent = ammo;
+        ammoBadgeL.classList.toggle('empty', ammo <= 0); ammoBadgeR.classList.toggle('empty', ammo <= 0);
+    }
+    function setControls(on) { mobileControls.classList.toggle('show', !!on && touchDevice); }
+
+    // ============================================================
+    //  ПТИЦА (Мама Птица + герои на спине)
+    // ============================================================
+    const BIRD_W = 96, BIRD_H = 68;
+    const ON_BIRD = [
+        { img: imgChe,  dx: 22,  dy: -22, mw: 30, mh: 34 },
+        { img: imgZaec, dx: -24, dy: -22, mw: 30, mh: 34 },
+        { img: imgKot,  dx: 0,   dy: -20, mw: 36, mh: 26 }
+    ];
+    function drawMamBird(x, y, rot, opts) {
+        opts = opts || {};
+        const flap = Math.sin(tick * 0.3);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot || 0);
+        if (opts.blink) ctx.globalAlpha = 0.35;
+        ctx.save();
+        ctx.shadowColor = '#38bdf8'; ctx.shadowBlur = 14;
+        ctx.scale(1, 1 + flap * 0.05);
+        const d = fitDims(imgMam, opts.w || BIRD_W, opts.h || BIRD_H);
+        if (imgOk(imgMam)) ctx.drawImage(imgMam, -d.w / 2, -d.h / 2, d.w, d.h);
+        else { ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, 0, d.w / 2, d.h / 2, 0, 0, TWO_PI); ctx.fill(); }
+        ctx.restore();
+        if (opts.heroes !== false) {
+            for (const h of ON_BIRD) drawFit(h.img, h.dx, h.dy + Math.sin(tick * 0.3 + h.dx) * 1.2 + 4, h.mw, h.mh, false);
+        }
+        ctx.restore();
+    }
+
+    // хитбокс птицы: три круга (тело, голова, хвост), вращаются вместе с птицей
+    const BIRD_CIRCLES = [{ dx: 0, dy: 2, r: 13 }, { dx: 21, dy: -2, r: 9 }, { dx: -20, dy: 4, r: 8 }];
+    function birdCirclesWorld(b) {
+        const cs = Math.cos(b.rot), sn = Math.sin(b.rot);
+        return BIRD_CIRCLES.map((c) => ({ x: b.x + c.dx * cs - c.dy * sn, y: b.y + c.dx * sn + c.dy * cs, r: c.r }));
+    }
+
+    // ============================================================
+    //  ФАЗА 1: ФЛЭППИ С ВЫСТРЕЛАМИ
+    // ============================================================
+    const PILLAR_W = 76, SPACING = 360;
+    let bird, pillars, pickups, bats, orbs, projectiles, ammo, score, boss, flapHintT;
+    const colorPalette = ['#a855f7', '#38bdf8', '#ec4899', '#34d399', '#818cf8'];
+
+    function hwAt(p, t) { // половина ширины кристалла на относительной длине t (0 — основание, 1 — кончик)
+        return t <= 0.5 ? p.w * 0.5 * (1 - 0.4 * t / 0.5 * 0.5 * 2 * 0.5) * 1 : p.w * 0.4 * (1 - t) / 0.5;
+    }
+    // исправленная форма: от 0.5w у основания до 0.4w на середине, затем к нулю на кончике
+    function crystalHalfWidth(p, t) {
+        t = clamp(t, 0, 1);
+        return t <= 0.5 ? p.w * 0.5 * (1 - 0.4 * t) : p.w * 0.4 * (1 - t) / 0.5;
+    }
+    function pillarHit(p, cx, cy, r) {
+        const mid = p.x + p.w / 2;
+        if (cx + r < p.x || cx - r > p.x + p.w) return false;
+        if (cy - r < p.topH) {
+            const t = p.topH > 0 ? clamp(cy / p.topH, 0, 1) : 1;
+            if (Math.abs(cx - mid) < crystalHalfWidth(p, t) + r * 0.62 - 2) return true;
+        }
+        if (cy + r > p.botY) {
+            const len = H - p.botY;
+            const t = len > 0 ? clamp((H - cy) / len, 0, 1) : 1;
+            if (Math.abs(cx - mid) < crystalHalfWidth(p, t) + r * 0.62 - 2) return true;
+        }
+        return false;
+    }
+
+    function spawnPillar(x, idx) {
+        const gap = Math.round(lerp(218, 180, clamp(score / 30, 0, 1)));
+        const amp = score >= 6 && Math.random() < 0.65 ? Math.min(30, (score - 4) * 3) : 0;
+        const lo = CEIL + 28 + amp, hi = FLOOR - gap - 28 - amp;
+        const baseTop = lo + Math.random() * Math.max(10, hi - lo);
+        const p = { x, w: PILLAR_W, baseTop, gap, amp, ph: Math.random() * 6.28, topH: baseTop, botY: baseTop + gap, passed: false,
+            col: colorPalette[idx % colorPalette.length], idx };
+        pillars.push(p);
+        if (idx % 2 === 0) pickups.push({ x: x + SPACING / 2, y: rnd(110, 390), rot: 0, bob: Math.random() * 6 });
+        if (idx >= 3 && Math.random() < 0.55) bats.push({ x: x + SPACING * 0.5 + 40, y0: rnd(120, 380), y: 200, ph: Math.random() * 6, dead: false });
+    }
+
+    function startFlappy() {
+        state = 'playing';
+        startScreen.style.display = 'none'; gameOverScreen.style.display = 'none'; victoryScreen.style.display = 'none';
+        skipHintBadge.style.display = 'none';
+        fogBossHud.style.display = 'flex';
+        gameHeaderTitle.textContent = '🪨 УРОВЕНЬ 4: ПОЛЁТ С МАМОЙ ПТИЦЕЙ';
+        scoreLabel.textContent = 'Кристаллы';
+        bird = { x: 300, y: H / 2, vy: 0, rot: 0, hearts: 3, inv: 0, started: false };
+        pillars = []; pickups = []; bats = []; orbs = []; projectiles = [];
+        parts = []; pops = [];
+        ammo = 4; score = 0; flapHintT = 0; fade = 0;
+        boss = { hp: 30, max: 30, x: 1100, y: 230, tx: 830, side: 'right', tele: 80, flash: 0, charge: 0, cd: 190, w: 80, h: 92, r: 46 };
+        scoreVal.textContent = '0';
+        updateHeartsUI(3); updateAmmoUI();
+        setBossHud('ФОГ С МЕШКОМ:', boss.hp, boss.max, true);
+        for (let i = 0; i < 3; i++) spawnPillar(W + 140 + i * SPACING, i + 1);
+        setControls(true);
+    }
+
+    function flap() {
+        if (state !== 'playing' || !bird) return;
+        bird.started = true;
+        bird.vy = -7.7;
+        playSfx('zvuknorm.mp3');
+        for (let i = 0; i < 4; i++) parts.push({ x: bird.x - 18, y: bird.y + 8, vx: -Math.random() * 2.5 - 0.8, vy: (Math.random() - 0.5) * 2.4, g: 0, life: 22, max: 22, size: Math.random() * 3 + 1.5, color: '#7dd3fc', shape: 'c' });
+    }
+    function shoot(dir) {
+        if (state !== 'playing' || !bird) return;
+        bird.started = true;
+        if (ammo <= 0) {
+            playSfx('lose.mp3');
+            floatText('Нет чекушек! Подбирай в полёте', bird.x, bird.y - 34, '#ef4444', 15);
+            return;
+        }
+        ammo--; updateAmmoUI();
+        playSfx('zvukpr.mp3');
+        projectiles.push({ x: bird.x + dir * 22, y: bird.y - 2, vx: dir * 15, vy: -1.2, rot: 0 });
+    }
+    function shootAuto() {
+        if (!boss) return;
+        shoot(boss.x >= bird.x ? 1 : -1);
+    }
+
+    function hurtBird(reason) {
+        if (bird.inv > 0) return;
+        bird.hearts--; bird.inv = 110; shake = 12;
+        playSfx('lose.mp3');
+        updateHeartsUI(bird.hearts);
+        floatText(reason + ' -1 ❤️', bird.x, bird.y - 36, '#ff5577', 17);
+        burst(bird.x, bird.y, 14, ['#fb7185', '#fde68a', '#fff'], 4, 3, 0.1, 28);
+        if (bird.hearts <= 0) gameOver('flappy', reason);
+    }
+
+    function updatePlaying() {
+        tick++;
+        const B = bird;
+        if (B.inv > 0) B.inv--;
+        if (boss.flash > 0) boss.flash--;
+        flapHintT++;
+
+        // босс въезжает и висит у края
+        boss.x += (boss.tx - boss.x) * 0.06;
+        boss.y += (boss.ty !== undefined ? (boss.ty - boss.y) * 0.05 : 0);
+
+        if (!B.started) {
+            B.y = H / 2 + Math.sin(tick * 0.08) * 9; B.vy = 0; B.rot = 0;
+            stepSpores(0.5); stepParts(); stepPops();
+            return;
+        }
+
+        const speed = 4.4 + Math.min(1.4, score * 0.045);
+        bgScrollFar += speed * 0.22; bgScrollNear += speed;
+        stepSpores(speed);
+
+        B.vy = Math.min(B.vy + 0.42, 10);
+        B.y += B.vy;
+        B.rot = clamp(B.vy * 0.055, -0.45, 0.7);
+
+        // потолок и пол
+        if (B.y - 13 < CEIL) { B.y = CEIL + 13; B.vy = 2.5; hurtBird('Удар о потолок!'); }
+        else if (B.y + 13 > FLOOR) { B.y = FLOOR - 13; B.vy = -8; hurtBird('Удар об пол!'); }
+        if (state !== 'playing') return;
+
+        const circles = birdCirclesWorld(B);
+
+        // кристаллы
+        for (let i = pillars.length - 1; i >= 0; i--) {
+            const p = pillars[i];
+            p.x -= speed;
+            p.topH = p.baseTop + (p.amp ? Math.sin(tick * 0.03 + p.ph) * p.amp : 0);
+            p.botY = p.topH + p.gap;
+            if (B.inv <= 0) {
+                for (const c of circles) {
+                    if (pillarHit(p, c.x, c.y, c.r)) {
+                        B.vy = B.y < (p.topH + p.botY) / 2 ? 3 : -6.5;
+                        hurtBird('Кристалл!');
+                        break;
+                    }
+                }
+                if (state !== 'playing') return;
+            }
+            if (!p.passed && p.x + p.w < B.x - 20) {
+                p.passed = true; score++; scoreVal.textContent = score;
+                if (score % 5 === 0) playSfx('Pres.mp3');
+            }
+            if (p.x + p.w < -80) {
+                pillars.splice(i, 1);
+                const last = pillars[pillars.length - 1];
+                spawnPillar(last.x + SPACING, last.idx + 1);
+            }
+        }
+
+        // подбираемые чекушки
+        for (let i = pickups.length - 1; i >= 0; i--) {
+            const pk = pickups[i];
+            pk.x -= speed; pk.rot += 0.05;
+            if (Math.hypot(B.x - pk.x, B.y - pk.y) < 40) {
+                ammo = Math.min(9, ammo + 2); updateAmmoUI();
+                playSfx('zvukpr.mp3');
+                floatText('+2 🍾', pk.x, pk.y - 18, '#7dd3fc', 17);
+                burst(pk.x, pk.y, 10, ['#7dd3fc', '#fff'], 3, 3, 0, 24);
+                pickups.splice(i, 1); continue;
+            }
+            if (pk.x < -40) pickups.splice(i, 1);
+        }
+
+        // летучие мыши
+        for (let i = bats.length - 1; i >= 0; i--) {
+            const m = bats[i];
+            m.x -= speed * 1.12;
+            m.y = m.y0 + Math.sin(tick * 0.07 + m.ph) * 55;
+            if (B.inv <= 0 && circles.some((c) => Math.hypot(c.x - m.x, c.y - m.y) < c.r + 12)) {
+                bats.splice(i, 1);
+                burst(m.x, m.y, 12, ['#6d28d9', '#a78bfa'], 3, 3, 0.1, 24);
+                hurtBird('Летучая мышь!');
+                if (state !== 'playing') return;
+                continue;
+            }
+            if (m.x < -50) bats.splice(i, 1);
+        }
+
+        // босс
+        boss.tele--;
+        if (boss.tele <= 0) {
+            boss.tele = rndInt(150, 220);
+            boss.side = boss.side === 'right' ? 'left' : 'right';
+            boss.tx = boss.side === 'right' ? 840 : 120;
+            boss.x = boss.side === 'right' ? 1020 : -60;
+            boss.y = rnd(120, 380);
+            playSfx('zvukpr.mp3');
+            burst(boss.tx, boss.y, 12, ['#ec4899', '#c084fc'], 4, 3, 0, 24);
+        }
+        boss.y += Math.sin(tick * 0.09) * 1.4;
+        boss.y = clamp(boss.y, 90, 410);
+
+        if (boss.charge > 0) {
+            boss.charge--;
+            if (boss.charge === 0) {
+                const n = boss.hp <= boss.max * 0.5 ? 3 : 1;
+                const base = Math.atan2(B.y - boss.y, B.x - boss.x);
+                const sp = boss.hp <= boss.max * 0.5 ? 4.4 : 3.7;
+                for (let k = 0; k < n; k++) {
+                    const an = base + (k - (n - 1) / 2) * 0.34;
+                    orbs.push({ x: boss.x, y: boss.y, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp, r: 13, ph: Math.random() * 6 });
+                }
+                playSfx('zvukpr.mp3');
+            }
+        } else if (--boss.cd <= 0 && boss.x > 40 && boss.x < W - 40) {
+            boss.cd = boss.hp <= boss.max * 0.5 ? 120 : 165;
+            boss.charge = 30;
+        }
+
+        for (let i = orbs.length - 1; i >= 0; i--) {
+            const o = orbs[i];
+            o.x += o.vx; o.y += o.vy;
+            if (B.inv <= 0 && circles.some((c) => Math.hypot(c.x - o.x, c.y - o.y) < c.r + o.r - 2)) {
+                burst(o.x, o.y, 12, ['#ec4899', '#f0abfc'], 3, 3, 0, 22);
+                orbs.splice(i, 1);
+                hurtBird('Шар ФОГа!');
+                if (state !== 'playing') return;
+                continue;
+            }
+            if (o.x < -40 || o.x > W + 40 || o.y < -40 || o.y > H + 40) orbs.splice(i, 1);
+        }
+
+        // брошенные чекушки (мягкое самонаведение на ФОГа)
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            const pr = projectiles[i];
+            const dx = boss.x - pr.x;
+            if (Math.sign(dx) === Math.sign(pr.vx) && Math.abs(dx) < 420 && boss.x > 0 && boss.x < W) {
+                const want = clamp((boss.y - pr.y) / Math.max(30, Math.abs(dx)) * Math.abs(pr.vx), -9, 9);
+                pr.vy = lerp(pr.vy, want, 0.08);
+            } else pr.vy += 0.04;
+            pr.x += pr.vx; pr.y += pr.vy; pr.rot += 0.45;
+
+            let used = false;
+            // сбиваем шары
+            for (let k = orbs.length - 1; k >= 0; k--) {
+                if (Math.hypot(pr.x - orbs[k].x, pr.y - orbs[k].y) < 24) {
+                    burst(orbs[k].x, orbs[k].y, 14, ['#f0abfc', '#fff', '#7dd3fc'], 4, 3, 0, 24);
+                    floatText('Сбито!', orbs[k].x, orbs[k].y - 14, '#f0abfc', 15);
+                    orbs.splice(k, 1); used = true; playSfx('zvuknorm.mp3'); break;
+                }
+            }
+            // мыши
+            if (!used) for (let k = bats.length - 1; k >= 0; k--) {
+                if (Math.hypot(pr.x - bats[k].x, pr.y - bats[k].y) < 26) {
+                    burst(bats[k].x, bats[k].y, 14, ['#6d28d9', '#a78bfa', '#fff'], 4, 3, 0.1, 26);
+                    if (ammo < 9) { ammo++; updateAmmoUI(); floatText('+1 🍾', bats[k].x, bats[k].y - 14, '#7dd3fc', 15); }
+                    bats.splice(k, 1); used = true; playSfx('zvuknorm.mp3'); break;
+                }
+            }
+            // босс
+            if (!used && Math.hypot(pr.x - boss.x, pr.y - boss.y) < boss.r + 6) {
+                const dmg = rndInt(3, 4);
+                boss.hp = Math.max(0, boss.hp - dmg); boss.flash = 12;
+                setBossHud('ФОГ С МЕШКОМ:', boss.hp, boss.max);
+                playSfx('Pres.mp3');
+                damagePop(boss.x, boss.y - 40, dmg, dmg === 4);
+                toothBurst(boss.x, boss.y - 10, 3);
+                burst(boss.x, boss.y, 12, ['#ec4899', '#ffd166', '#fff'], 5, 3, 0, 24);
+                used = true;
+                if (boss.hp <= 0) { projectiles.splice(i, 1); startGiantIntro(); return; }
+            }
+            if (used || pr.x < -40 || pr.x > W + 40 || pr.y > H + 40 || pr.y < -40) projectiles.splice(i, 1);
+        }
+
+        stepParts(); stepPops();
+    }
+
+    // ---- рисование фазы 1 ----
+    function drawCrystalPillar(p, top) {
+        const x = p.x, w = p.w, y0 = top ? 0 : H, y1 = top ? p.topH : p.botY;
+        const len = Math.abs(y1 - y0), dir = top ? 1 : -1;
+        if (len < 4) return;
+        const pts = [[x, y0], [x + w, y0], [x + w * 0.9, y0 + dir * len * 0.5], [x + w * 0.5, y1], [x + w * 0.1, y0 + dir * len * 0.5]];
+        const g = ctx.createLinearGradient(x, 0, x + w, 0);
+        g.addColorStop(0, '#f4ecff'); g.addColorStop(0.25, p.col); g.addColorStop(1, '#190a38');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fill();
+        // тёмная грань
+        ctx.fillStyle = 'rgba(0,0,30,0.38)';
+        ctx.beginPath(); ctx.moveTo(x + w * 0.5, y0); ctx.lineTo(x + w, y0); ctx.lineTo(pts[2][0], pts[2][1]); ctx.lineTo(pts[3][0], pts[3][1]); ctx.closePath(); ctx.fill();
+        // блик
+        ctx.fillStyle = 'rgba(255,255,255,0.42)';
+        ctx.beginPath(); ctx.moveTo(x + w * 0.1, y0); ctx.lineTo(x + w * 0.26, y0); ctx.lineTo(x + w * 0.3, y0 + dir * len * 0.45); ctx.lineTo(x + w * 0.12, y0 + dir * len * 0.48); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.stroke();
+        // ребро-грань
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x + w * 0.5, y0); ctx.lineTo(x + w * 0.5, y1); ctx.stroke();
+    }
+    function drawBat(m) {
+        const fl = Math.sin(tick * 0.45 + m.ph);
+        ctx.save(); ctx.translate(m.x, m.y);
+        ctx.fillStyle = '#1b0c3a'; ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 1.5;
+        for (const s of [-1, 1]) {
+            ctx.beginPath(); ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(s * 14, -16 - fl * 8, s * 28, -4 - fl * 6);
+            ctx.lineTo(s * 22, 3); ctx.lineTo(s * 15, 0); ctx.lineTo(s * 9, 5); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+        ctx.fillStyle = '#2a1456'; ctx.beginPath(); ctx.ellipse(0, 1, 7, 8, 0, 0, TWO_PI); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-6, -6); ctx.lineTo(-4, -13); ctx.lineTo(-1, -7); ctx.moveTo(6, -6); ctx.lineTo(4, -13); ctx.lineTo(1, -7); ctx.fill();
+        ctx.fillStyle = '#ff4d7d'; ctx.beginPath(); ctx.arc(-3, -1, 1.6, 0, TWO_PI); ctx.arc(3, -1, 1.6, 0, TWO_PI); ctx.fill();
+        ctx.restore();
+    }
+    function drawBossSmall() {
+        if (boss.x < -80 || boss.x > W + 80) return;
+        ctx.save();
+        ctx.translate(boss.x, boss.y);
+        if (boss.charge > 0) {
+            const k = 1 - boss.charge / 30;
+            ctx.save(); ctx.globalCompositeOperation = 'lighter';
+            drawGlow('#ec4899', 0, 0, 40 + k * 50, 0.4 + k * 0.5);
+            ctx.restore();
+            ctx.fillStyle = '#ffd166'; ctx.font = '900 22px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('!', 0, -boss.h * 0.62);
+        }
+        const flipped = boss.x > bird.x; // смотрит на птицу
+        drawFit(imgFog, 0, boss.h / 2, boss.w, boss.h, !flipped);
+        if (boss.flash > 0) {
+            ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = boss.flash / 12 * 0.7;
+            drawFit(imgFog, 0, boss.h / 2, boss.w, boss.h, !flipped);
+            ctx.restore();
+        }
+        drawEpicToothBag(ctx, flipped ? 8 : -52, -4, 0.7);
+        ctx.restore();
+    }
+    function drawOrb(o) {
+        ctx.save(); ctx.translate(o.x, o.y);
+        ctx.globalCompositeOperation = 'lighter';
+        drawGlow('#ec4899', 0, 0, 30, 0.9);
+        ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+        ctx.fillStyle = '#f9a8d4'; ctx.beginPath(); ctx.arc(0, 0, o.r, 0, TWO_PI); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-3, -3, 4, 0, TWO_PI); ctx.fill();
+        ctx.strokeStyle = '#be185d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, o.r, 0, TWO_PI); ctx.stroke();
+        ctx.restore();
+    }
+    function drawPickup(pk) {
+        ctx.save(); ctx.translate(pk.x, pk.y + Math.sin(tick * 0.08 + pk.bob) * 4);
+        ctx.globalCompositeOperation = 'lighter'; drawGlow('#38bdf8', 0, 0, 30, 0.5 + 0.2 * Math.sin(tick * 0.1));
+        ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+        ctx.rotate(Math.sin(pk.rot) * 0.5);
+        drawFit(imgChekuwka, 0, 18, 26, 36, false);
+        ctx.restore();
+    }
+
+    function renderPlaying() {
+        drawTile(farTile, bgScrollFar);
+        drawFarGlows(bgScrollFar);
+        drawSpores();
+
+        for (const p of pillars) {
+            ctx.save(); ctx.globalCompositeOperation = 'lighter';
+            drawGlow(p.col, p.x + p.w / 2, p.topH, 70, 0.28); drawGlow(p.col, p.x + p.w / 2, p.botY, 70, 0.28);
+            ctx.restore(); ctx.globalAlpha = 1;
+            drawCrystalPillar(p, true); drawCrystalPillar(p, false);
+        }
+        for (const pk of pickups) drawPickup(pk);
+        for (const m of bats) drawBat(m);
+        for (const o of orbs) drawOrb(o);
+        drawBossSmall();
+
+        drawTile(nearTile, bgScrollNear);
+
+        // птица
+        const blink = bird.inv > 0 && Math.floor(bird.inv / 5) % 2 === 0;
+        drawMamBird(bird.x, bird.y, bird.rot, { blink });
+
+        for (const pr of projectiles) {
+            ctx.save(); ctx.translate(pr.x, pr.y); ctx.rotate(pr.rot);
+            drawFit(imgChekuwka, 0, 15, 20, 30, false);
+            ctx.restore();
+        }
+
+        drawParts();
+        drawPops();
+
+        if (showHitbox) {
+            ctx.save(); ctx.strokeStyle = '#0f0'; ctx.lineWidth = 1.5;
+            for (const c of birdCirclesWorld(bird)) { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, TWO_PI); ctx.stroke(); }
+            ctx.strokeStyle = '#f0f';
+            ctx.beginPath(); ctx.arc(boss.x, boss.y, boss.r, 0, TWO_PI); ctx.stroke();
+            for (const p of pillars) { ctx.strokeStyle = '#ff0'; ctx.strokeRect(p.x, 0, p.w, p.topH); ctx.strokeRect(p.x, p.botY, p.w, H - p.botY); }
+            ctx.restore();
+        }
+
+        // подсказки
+        if (!bird.started) {
+            ctx.save();
+            ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+            ctx.font = '900 26px "Segoe UI", sans-serif'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(8,4,20,0.9)';
+            const t1 = touchDevice ? 'ТАП ПО ЭКРАНУ — ВЗМАХ КРЫЛЬЯМИ' : 'ПРОБЕЛ / КЛИК — ВЗМАХ КРЫЛЬЯМИ';
+            ctx.strokeText(t1, W / 2, 150); ctx.fillStyle = '#e9d5ff'; ctx.fillText(t1, W / 2, 150);
+            ctx.font = '800 16px "Segoe UI", sans-serif';
+            const t2 = touchDevice ? 'Кнопки 🍾 справа — бросить чекушку влево / вправо' : 'A / D — бросок влево / вправо · F или ПКМ — в сторону ФОГа';
+            ctx.strokeText(t2, W / 2, 182); ctx.fillStyle = '#7dd3fc'; ctx.fillText(t2, W / 2, 182);
+            ctx.restore();
+        } else if (flapHintT < 300 && score < 1) {
+            ctx.save(); ctx.textAlign = 'center'; ctx.font = '800 15px "Segoe UI", sans-serif'; ctx.lineWidth = 5; ctx.lineJoin = 'round';
+            ctx.globalAlpha = clamp((300 - flapHintT) / 80, 0, 1);
+            const t = 'Сбей ФОГа чекушками — они сами летят к нему!';
+            ctx.strokeStyle = 'rgba(8,4,20,0.9)'; ctx.strokeText(t, W / 2, 150); ctx.fillStyle = '#ffd166'; ctx.fillText(t, W / 2, 150);
+            ctx.restore();
+        }
+    }
+
+    // ============================================================
+    //  ВСТУПИТЕЛЬНАЯ КАТСЦЕНА: КНОПКА, ЯМА, СПАСЕНИЕ
+    // ============================================================
+    const WH = 1400, SHAFT_L = 250, SHAFT_R = 710, CH_FLOOR = 400, PIT_FLOOR = 1372, CAM_MAX = WH - H;
+    let introWorld = null, introGlows = [], leftPts = [], rightPts = [];
+    function wallX(pts, y) {
+        for (let i = 1; i < pts.length; i++) if (y <= pts[i][1]) {
+            const a = pts[i - 1], b = pts[i], t = (y - a[1]) / Math.max(1, b[1] - a[1]);
+            return lerp(a[0], b[0], clamp(t, 0, 1));
+        }
+        return pts[pts.length - 1][0];
+    }
+    function bakeIntroWorld() {
+        const r = _rng(31337);
+        introGlows = []; leftPts = []; rightPts = [];
+        for (let y = CH_FLOOR; y <= WH + 36; y += 36) {
+            const k = (y - CH_FLOOR) / (WH - CH_FLOOR);
+            leftPts.push([SHAFT_L - 16 * k + (y === CH_FLOOR ? 0 : (r() - 0.5) * 18), y]);
+            rightPts.push([SHAFT_R + 16 * k + (y === CH_FLOOR ? 0 : (r() - 0.5) * 18), y]);
+        }
+        introWorld = createOffscreen(W, WH, (c) => {
+            const bg = c.createLinearGradient(0, 0, 0, WH);
+            bg.addColorStop(0, '#0b0620'); bg.addColorStop(0.3, '#160b32'); bg.addColorStop(0.62, '#0a0518'); bg.addColorStop(1, '#04020a');
+            c.fillStyle = bg; c.fillRect(0, 0, W, WH);
+            for (let i = 0; i < 110; i++) {
+                const x = r() * W, y = r() * WH, rad = 30 + r() * 80, g = c.createRadialGradient(x, y, 0, x, y, rad);
+                g.addColorStop(0, r() < 0.5 ? 'rgba(2,1,10,0.4)' : 'rgba(120,70,200,0.09)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                c.fillStyle = g; c.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+            }
+            // потолок камеры
+            for (let i = 0; i < 12; i++) cluster(c, 40 + i * 82 + r() * 30, 0, 1, 0.45 + r() * 0.4, COL[(i + 1) % 5]);
+            // дальние кристаллы шахты
+            c.globalAlpha = 0.35;
+            for (let i = 0; i < 10; i++) { const y = 520 + i * 85; cluster(c, SHAFT_L + 70 + r() * 280, y, -1, 0.25 + r() * 0.2, COL[i % 5]); }
+            c.globalAlpha = 1;
+            // стены
+            const drawWall = (pts, left) => {
+                c.save();
+                c.beginPath();
+                c.moveTo(left ? 0 : W, CH_FLOOR);
+                for (const p of pts) c.lineTo(p[0], p[1]);
+                c.lineTo(left ? 0 : W, WH); c.closePath();
+                const g = c.createLinearGradient(left ? 0 : W, 0, left ? SHAFT_L : SHAFT_R, 0);
+                g.addColorStop(0, '#05030c'); g.addColorStop(1, '#1d1040');
+                c.fillStyle = g; c.fill();
+                c.clip();
+                for (let i = 0; i < 160; i++) {
+                    const x = left ? r() * SHAFT_L : SHAFT_R + r() * (W - SHAFT_R), y = CH_FLOOR + r() * (WH - CH_FLOOR), rx = 4 + r() * 16;
+                    c.fillStyle = r() < 0.5 ? 'rgba(0,0,10,0.35)' : 'rgba(150,120,255,0.07)';
+                    c.beginPath(); c.ellipse(x, y, rx, rx * 0.5, r() * 3, 0, TWO_PI); c.fill();
+                }
+                c.restore();
+                c.save(); c.shadowColor = '#a78bfa'; c.shadowBlur = 12; c.strokeStyle = 'rgba(196,170,255,0.8)'; c.lineWidth = 2.4; c.lineJoin = 'round';
+                c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.stroke(); c.restore();
+            };
+            drawWall(leftPts, true); drawWall(rightPts, false);
+            // поверхность камеры
+            c.fillStyle = '#2a1658'; c.fillRect(0, CH_FLOOR - 3, SHAFT_L, 6); c.fillRect(SHAFT_R, CH_FLOOR - 3, W - SHAFT_R, 6);
+            // кристаллы, торчащие из стен
+            for (let i = 0; i < 16; i++) {
+                const y = 470 + r() * 860, sc = 0.28 + r() * 0.3, col = COL[(r() * 5) | 0];
+                if (i % 2 === 0) { const x = wallX(leftPts, y); crystalAt(c, x, y, Math.PI / 2 + (r() - 0.5) * 0.4, sc, col); introGlows.push({ x: x + 30, y, col, r: 90 * sc * 2, ph: r() * 6 }); }
+                else { const x = wallX(rightPts, y); crystalAt(c, x, y, -Math.PI / 2 + (r() - 0.5) * 0.4, sc, col); introGlows.push({ x: x - 30, y, col, r: 90 * sc * 2, ph: r() * 6 }); }
+            }
+            // дно ямы
+            const fg = c.createLinearGradient(0, PIT_FLOOR - 10, 0, WH);
+            fg.addColorStop(0, '#2b1558'); fg.addColorStop(0.3, '#120a28'); fg.addColorStop(1, '#030108');
+            c.fillStyle = fg; c.fillRect(SHAFT_L - 20, PIT_FLOOR, SHAFT_R - SHAFT_L + 40, WH - PIT_FLOOR);
+            c.strokeStyle = 'rgba(196,170,255,0.5)'; c.lineWidth = 2; c.beginPath(); c.moveTo(SHAFT_L - 16, PIT_FLOOR); c.lineTo(SHAFT_R + 16, PIT_FLOOR); c.stroke();
+            for (let i = 0; i < 40; i++) {
+                const x = SHAFT_L + r() * (SHAFT_R - SHAFT_L), y = PIT_FLOOR + 3 + r() * 22, rx = 4 + r() * 12;
+                c.fillStyle = r() < 0.5 ? '#1c0f3c' : '#35206a'; c.beginPath(); c.ellipse(x, y, rx, rx * 0.45, 0, 0, TWO_PI); c.fill();
+            }
+            [[300, 0.35], [650, 0.4]].forEach(([x, sc], i) => { cluster(c, x, PIT_FLOOR + 2, -1, sc, COL[i * 2]); introGlows.push({ x, y: PIT_FLOOR - 30, col: COL[i * 2], r: 100, ph: i }); });
+            // арка дальнего света камеры
+            introGlows.push({ x: 480, y: 120, col: '#c084fc', r: 260, ph: 0 });
+        });
+    }
+
+    let intro = null;
+    const INTRO_LINES = [
+        { a: 75,  b: 160, who: 'fog',  t: 'Наконец-то вы добрались до моего логова, герои!' },
+        { a: 165, b: 250, who: 'zaec', t: 'Отдавай мешок с зубами, ФОГ! Тебе больше некуда бежать!' },
+        { a: 255, b: 345, who: 'fog',  t: 'А я и не бегу. Это я вас сюда ЗАМАНИЛ. Видите красную кнопочку?' },
+        { a: 350, b: 395, who: 'kot',  t: 'Мяу?.. Только не нажимай...' },
+        { a: 398, b: 430, who: 'fog',  t: 'НАЖИМАЮ! Ха-ха-ха!' },
+        { a: 436, b: 470, who: 'che',  t: 'Ой-ой-ой!!!' }
+    ];
+    const PIT_LINES = [
+        { a: 30,  b: 130, who: 'fog',  t: '(эхом, сверху) Ха-ха-ха! Сидите там вечно, а мешок с зубами я заберу себе!', top: true },
+        { a: 140, b: 225, who: 'zaec', t: 'Не допрыгнуть... Тут метров сто высоты!' },
+        { a: 235, b: 320, who: 'kot',  t: 'Мя-ау! Когти скользят по кристаллам!' },
+        { a: 330, b: 410, who: 'che',  t: 'Всё... Мы застряли здесь навсегда...' },
+        { a: 420, b: 490, who: 'che',  t: 'Тихо... Слышите? Кто-то огромный машет крыльями...' },
+        { a: 520, b: 595, who: 'zaec', t: 'Это же МАМА ПТИЦА! Мы спасены!' },
+        { a: 600, b: 690, who: 'mam',  t: 'Держитесь за перья, родные! Выберемся отсюда вместе!' }
+    ];
+
+    function mkHero(key, img, mw, mh) { return { key, img, mw, mh, x: -90, y: CH_FLOOR, vy: 0, flip: false, ox: 0, oy: 0 }; }
+
+    function startIntro() {
+        if (!introWorld) bakeIntroWorld();
+        state = 'intro_cs';
+        startScreen.style.display = 'none'; gameOverScreen.style.display = 'none';
+        fogBossHud.style.display = 'none';
+        skipHintBadge.style.display = 'block';
+        setControls(false);
+        gameHeaderTitle.textContent = '🪨 ЛОВУШКА ФОГА';
+        scoreLabel.textContent = 'Кристаллы'; scoreVal.textContent = '0';
+        updateHeartsUI(3);
+        parts = []; pops = []; fade = 0;
+        intro = {
+            t: 0, phase: 'chamber', pt: 0, camY: 0, trap: 0, btn: 0,
+            fog: { x: 1120, y: CH_FLOOR, flip: true, lean: 0 },
+            h: { che: mkHero('che', imgChe, 58, 66), zaec: mkHero('zaec', imgZaec, 58, 66), kot: mkHero('kot', imgKot, 70, 54) },
+            mam: { x: 480, y: -150, vis: false, flap: 0 },
+            board: 0, rise: 0, parts: [], fallVy: 0, beam: 0.35, landShake: 0
+        };
+        INTRO_TARGET = { che: 330, zaec: 412, kot: 492 };
+    }
+    let INTRO_TARGET = { che: 330, zaec: 412, kot: 492 };
+
+    function skipIntro() { if (state === 'intro_cs') { fade = 0; startFlappy(); } }
+
+    function iBurst(x, y, n, cols, sp, size, g, life) {
+        for (let i = 0; i < n; i++) {
+            const a = Math.random() * TWO_PI, v = Math.random() * sp + sp * 0.3;
+            intro.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1, g: g || 0.1, life: life || 40, max: life || 40, size: Math.random() * size + size * 0.4, color: cols[(Math.random() * cols.length) | 0] });
+        }
+    }
+
+    function updateIntro() {
+        const I = intro;
+        I.t++; tick++; bgT++;
+        const H3 = I.h;
+        if (I.phase === 'chamber') {
+            if (I.t <= 70) for (const k in H3) { H3[k].x += (INTRO_TARGET[k] - H3[k].x) * 0.07; }
+            H3.che.flip = false; H3.zaec.flip = false; H3.kot.flip = false;
+            if (I.t > 30) I.fog.x += (836 - I.fog.x) * 0.06;
+            // нажатие кнопки
+            if (I.t >= 400 && I.t < 416) { I.btn = Math.min(1, (I.t - 400) / 8); I.fog.lean = Math.min(1, (I.t - 398) / 8); }
+            if (I.t === 412) { playSfx('zvukpr.mp3'); shake = 10; fade = 0; }
+            if (I.t === 424) { playSfx('Pres.mp3'); }
+            if (I.t >= 425) { I.trap = clamp((I.t - 425) / 28, 0, 1); shake = 5; }
+            if (I.t >= 452) { I.phase = 'fall'; I.fallVy = 0; playSfx('lose.mp3'); }
+        } else if (I.phase === 'fall') {
+            I.fallVy = Math.min(I.fallVy + 0.55, 23);
+            let anyFalling = false;
+            for (const k in H3) {
+                const hh = H3[k];
+                hh.y += I.fallVy * (k === 'kot' ? 0.98 : 1);
+                hh.x += Math.sin(I.t * 0.2 + hh.mw) * 0.6;
+                if (hh.y >= PIT_FLOOR) hh.y = PIT_FLOOR; else anyFalling = true;
+            }
+            const targetCam = clamp(H3.zaec.y - 270, 0, CAM_MAX);
+            I.camY += (targetCam - I.camY) * 0.14;
+            if (I.t % 3 === 0) iBurst(H3.zaec.x, H3.zaec.y - 30, 2, ['#c4b5fd', '#ffffff'], 2, 3, 0, 14);
+            if (!anyFalling) {
+                I.phase = 'pit'; I.pt = 0; I.camY = CAM_MAX;
+                shake = 20; playSfx('lose.mp3');
+                iBurst(480, PIT_FLOOR - 4, 36, ['#6d5aa8', '#3b2a6b', '#a78bfa'], 5, 6, 0.12, 50);
+                H3.che.x = 470; H3.zaec.x = 545; H3.kot.x = 380;
+                H3.che.flip = false; H3.zaec.flip = true; H3.kot.flip = false;
+            }
+        } else if (I.phase === 'pit') {
+            I.pt++;
+            const pt = I.pt;
+            // Заяц прыгает и падает обратно
+            if (pt >= 140 && pt < 225) H3.zaec.oy = -Math.abs(Math.sin((pt - 140) * 0.085)) * 82; else H3.zaec.oy = 0;
+            if (pt >= 140 && pt < 225 && (pt - 140) % 37 === 36) { playSfx('zvuknorm.mp3'); iBurst(H3.zaec.x, PIT_FLOOR, 5, ['#a78bfa'], 2, 3, 0.1, 20); }
+            // Котость карабкается по стене и сползает
+            if (pt >= 235 && pt < 325) {
+                const k = pt - 235;
+                H3.kot.x += (292 - H3.kot.x) * 0.1;
+                H3.kot.flip = true;
+                H3.kot.oy = k < 55 ? -easeOutCubic(k / 55) * 120 : -120 + easeInOut(clamp((k - 55) / 30, 0, 1)) * 120;
+                if (k === 56) playSfx('lose.mp3');
+            } else if (pt >= 325) { H3.kot.oy = 0; H3.kot.x += (410 - H3.kot.x) * 0.05; H3.kot.flip = false; }
+            // Черемша сникает
+            H3.che.oy = (pt >= 330 && pt < 520) ? Math.sin(pt * 0.05) * 1.5 + 4 : 0;
+            if (pt >= 330) H3.zaec.x += (500 - H3.zaec.x) * 0.04;
+
+            // лучик света становится ярче, прилетает Мама Птица
+            if (pt === 495) { playSfx('Pres.mp3'); }
+            if (pt >= 480) { I.beam = Math.min(1, 0.35 + (pt - 480) / 60 * 0.65); I.mam.vis = true; }
+            if (I.mam.vis && pt < 700) {
+                const k = clamp((pt - 500) / 90, 0, 1);
+                I.mam.y = lerp(I.camY - 130, I.camY + 205, easeOutCubic(k)) + Math.sin(pt * 0.1) * 5 * k;
+                I.mam.x = 480;
+            }
+            // посадка героев на спину
+            if (pt >= 690) {
+                I.board = clamp((pt - 690) / 50, 0, 1);
+            }
+            if (pt >= 750) {
+                I.phase = 'rise'; I.rise = 0;
+            }
+        } else if (I.phase === 'rise') {
+            I.rise++;
+            const k = clamp(I.rise / 150, 0, 1);
+            I.camY = lerp(CAM_MAX, 0, easeInOut(k));
+            I.mam.y = I.camY + 230 + Math.sin(I.rise * 0.12) * 5;
+            if (I.rise > 100) fade = clamp((I.rise - 100) / 45, 0, 1);
+            if (I.rise > 160) { startFlappy(); fade = 1; return; }
+        }
+        for (let i = I.parts.length - 1; i >= 0; i--) {
+            const p = I.parts[i];
+            p.x += p.vx; p.y += p.vy; p.vy += p.g; p.life--;
+            if (p.life <= 0) I.parts.splice(i, 1);
+        }
+        stepSpores(0.2);
+    }
+
+    function heroDrawInfo(I, k) {
+        const hh = I.h[k];
+        let x = hh.x + hh.ox, y = hh.y + hh.oy, mw = hh.mw, mh = hh.mh;
+        if (I.phase === 'pit' || I.phase === 'rise') {
+            const b = I.phase === 'rise' ? 1 : I.board;
+            if (b > 0 && I.mam.vis) {
+                const slot = ON_BIRD[k === 'che' ? 0 : k === 'zaec' ? 1 : 2];
+                const e = easeInOut(b);
+                const tx = I.mam.x + slot.dx * 1.05, ty = I.mam.y + slot.dy + 4;
+                // небольшая дуга прыжка
+                x = lerp(x, tx, e); y = lerp(y, ty, e) - Math.sin(e * Math.PI) * 50;
+                mw = lerp(mw, slot.mw, e); mh = lerp(mh, slot.mh, e);
+            }
+        }
+        return { x, y, mw, mh };
+    }
+
+    function renderIntro() {
+        const I = intro;
+        const camY = Math.round(I.camY);
+        ctx.save();
+        ctx.translate(0, -camY);
+        ctx.drawImage(introWorld, 0, 0);
+
+        // мерцающие свечения кристаллов
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        for (const g of introGlows) {
+            if (g.y < camY - 200 || g.y > camY + H + 200) continue;
+            drawGlow(g.col, g.x, g.y, g.r, 0.2 + 0.1 * Math.sin(bgT * 0.04 + g.ph));
+        }
+        // луч света из отверстия в яме
+        if (I.phase === 'pit' || I.phase === 'rise' || I.phase === 'fall') {
+            const bx = 480, a = 0.1 * I.beam;
+            const lg = ctx.createLinearGradient(0, CH_FLOOR, 0, PIT_FLOOR);
+            lg.addColorStop(0, 'rgba(220,200,255,' + (a * 1.5) + ')'); lg.addColorStop(1, 'rgba(160,140,255,0)');
+            ctx.globalAlpha = 1; ctx.fillStyle = lg;
+            ctx.beginPath(); ctx.moveTo(SHAFT_L + 20, CH_FLOOR); ctx.lineTo(SHAFT_R - 20, CH_FLOOR); ctx.lineTo(bx + 150, PIT_FLOOR); ctx.lineTo(bx - 150, PIT_FLOOR); ctx.closePath(); ctx.fill();
+        }
+        ctx.restore(); ctx.globalAlpha = 1;
+
+        // пьедестал с кнопкой
+        ctx.fillStyle = '#2b1a52'; ctx.fillRect(742, CH_FLOOR - 36, 52, 36);
+        ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2; ctx.strokeRect(742, CH_FLOOR - 36, 52, 36);
+        const btnH = 14 - I.btn * 9;
+        ctx.fillStyle = I.btn > 0.5 ? '#7f1d1d' : '#ef4444';
+        ctx.beginPath(); ctx.roundRect(752, CH_FLOOR - 36 - btnH, 32, btnH, 5); ctx.fill();
+        ctx.strokeStyle = '#fecaca'; ctx.lineWidth = 1.5; ctx.stroke();
+        if (I.phase === 'chamber' && I.btn < 0.5) {
+            ctx.save(); ctx.globalCompositeOperation = 'lighter'; drawGlow('#ef4444', 768, CH_FLOOR - 46, 38, 0.5 + 0.3 * Math.sin(bgT * 0.2)); ctx.restore(); ctx.globalAlpha = 1;
+        }
+
+        // люк (две створки)
+        if (I.phase === 'chamber' || I.phase === 'fall') {
+            const ang = I.trap * 1.35;
+            const half = (SHAFT_R - SHAFT_L) / 2;
+            ctx.fillStyle = '#3a2370'; ctx.strokeStyle = '#c4b5fd'; ctx.lineWidth = 2;
+            ctx.save(); ctx.translate(SHAFT_L, CH_FLOOR); ctx.rotate(ang);
+            ctx.fillRect(0, -2, half, 14); ctx.strokeRect(0, -2, half, 14); ctx.restore();
+            ctx.save(); ctx.translate(SHAFT_R, CH_FLOOR); ctx.rotate(-ang);
+            ctx.fillRect(-half, -2, half, 14); ctx.strokeRect(-half, -2, half, 14); ctx.restore();
+        }
+
+        // ФОГ
+        if (I.phase === 'chamber') {
+            const f = I.fog;
+            const px = f.x - f.lean * 34, bob = Math.sin(bgT * 0.1) * 1.5;
+            drawFit(imgFog, px, f.y + bob, 112, 132, f.flip);
+            drawEpicToothBag(ctx, px + 4, f.y - 60, 0.7);
+        }
+
+        // герои
+        const order = ['kot', 'che', 'zaec'];
+        for (const k of order) {
+            const hh = I.h[k], d = heroDrawInfo(I, k);
+            if (hh.x < -60 && I.phase === 'chamber') continue;
+            let bob = 0;
+            if (I.phase === 'chamber' && I.t < 75) bob = -Math.abs(Math.sin(I.t * 0.3 + hh.mw)) * 5;
+            drawFit(hh.img, d.x, d.y + bob, d.mw, d.mh, hh.flip);
+        }
+        if (I.phase === 'fall') {
+            ctx.save(); ctx.font = '900 22px "Segoe UI", sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(8,4,20,0.9)'; ctx.lineJoin = 'round';
+            const t = 'А-А-А-А-А!!!';
+            ctx.strokeText(t, I.h.zaec.x + 40, I.h.zaec.y - 90 + Math.sin(I.t * 0.5) * 3); ctx.fillStyle = '#fde68a'; ctx.fillText(t, I.h.zaec.x + 40, I.h.zaec.y - 90 + Math.sin(I.t * 0.5) * 3);
+            // линии скорости
+            ctx.strokeStyle = 'rgba(200,190,255,0.25)'; ctx.lineWidth = 2;
+            for (let i = 0; i < 12; i++) { const x = SHAFT_L + 30 + ((i * 97) % (SHAFT_R - SHAFT_L - 60)), y = camY + ((i * 71 + I.t * 22) % H); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 60); ctx.stroke(); }
+            ctx.restore();
+        }
+
+        // Мама Птица
+        if (I.mam.vis) {
+            const rot = I.phase === 'rise' ? -0.05 : Math.sin(bgT * 0.1) * 0.03;
+            ctx.save(); ctx.globalCompositeOperation = 'lighter'; drawGlow('#7dd3fc', I.mam.x, I.mam.y, 150, 0.35 * (I.beam)); ctx.restore(); ctx.globalAlpha = 1;
+            ctx.save(); ctx.translate(0, 0);
+            drawMamBird(I.mam.x, I.mam.y, rot, { heroes: false, w: 150, h: 106 });
+            ctx.restore();
+            // герои на спине рисуются выше, поверх птицы (повторно, т.к. птица рисуется после них)
+            for (const k of order) { const hh = I.h[k], d = heroDrawInfo(I, k); drawFit(hh.img, d.x, d.y, d.mw, d.mh, hh.flip); }
+        }
+
+        for (const p of I.parts) {
+            ctx.globalAlpha = clamp(p.life / p.max, 0, 1); ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, TWO_PI); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        // линии скорости при подъёме
+        if (I.phase === 'rise') {
+            ctx.strokeStyle = 'rgba(220,210,255,0.25)'; ctx.lineWidth = 2;
+            for (let i = 0; i < 14; i++) { const x = SHAFT_L + 20 + ((i * 83) % (SHAFT_R - SHAFT_L - 40)), y = camY + H - ((i * 57 + I.rise * 20) % H); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 70); ctx.stroke(); }
+        }
+        ctx.restore();
+
+        drawSpores();
+
+        // реплики
+        let line = null, list = INTRO_LINES, tt = I.t, phaseShow = I.phase === 'chamber';
+        if (I.phase === 'pit') { list = PIT_LINES; tt = I.pt; phaseShow = true; }
+        if (phaseShow) line = list.find((l) => tt >= l.a && tt < l.b);
+        if (line) {
+            let sx, sy, tx, ty;
+            if (line.top) { sx = 480; sy = 100; tx = 480; ty = 30; }
+            else {
+                let wx, wy;
+                if (line.who === 'fog') { wx = I.fog.x; wy = I.fog.y - 140; }
+                else if (line.who === 'mam') { wx = I.mam.x; wy = I.mam.y - 60; }
+                else { const d = heroDrawInfo(I, line.who); wx = d.x; wy = d.y - d.mh - 6; }
+                tx = wx; ty = wy - camY; sx = wx; sy = ty - 52;
+            }
+            bubble(line.who, line.t, sx, sy, tx, ty);
+        }
+
+        // вспышка при нажатии кнопки
+        if (I.phase === 'chamber' && I.t >= 412 && I.t < 424) {
+            ctx.fillStyle = 'rgba(255,60,80,' + (0.35 * (1 - (I.t - 412) / 12)) + ')'; ctx.fillRect(0, 0, W, H);
+        }
+        ctx.drawImage(vignette, 0, 0);
+    }
+
+    // ============================================================
+    //  ФАЗА 2: ГИГАНТСКИЙ ФОГ (закликивание ~500 раз)
+    // ============================================================
+    const GIANT_MAX_HP = 18000;
+    const BOSS_X = 662, BOSS_FEET = 424, BOSS_MW = 280, BOSS_MH = 320;
+    const BOSS_CX = BOSS_X, BOSS_CY = 262;
+    let giant, heroes, druns, gPickups, gFx, mamG, giantGhost = null, gIntro = null, winCS = null;
+
+    function mkGiant() {
+        return { hp: GIANT_MAX_HP, max: GIANT_MAX_HP, clicks: 0, bonus: 0, flash: 0, shakeB: 0, rage: 0, hearts: 3, combo: 0, lastClickT: -999,
+            surge: 0, bannerT: 0, bannerText: '', ckHp: GIANT_MAX_HP, ckClicks: 0, ckBonus: 0, t: 0, nextHero: 0, pickT: 0 };
+    }
+    function mkHeroes() {
+        return [
+            { key: 'che',  img: imgChe,  bx: 245, y: 440, mw: 74, mh: 84, atk: 0, queue: null, kind: 'wrench' },
+            { key: 'zaec', img: imgZaec, bx: 330, y: 444, mw: 74, mh: 84, atk: 0, queue: null, kind: 'punch' },
+            { key: 'kot',  img: imgKot,  bx: 418, y: 448, mw: 88, mh: 68, atk: 0, queue: null, kind: 'claw' }
+        ];
+    }
+
+    function startGiantIntro() {
+        state = 'giant_intro';
+        setControls(false);
+        fogBossHud.style.display = 'none';
+        skipHintBadge.style.display = 'block';
+        gameHeaderTitle.textContent = '⚡ ЯРОСТЬ ФОГА: ГИГАНТСКИЙ БОСС!';
+        projectiles = []; orbs = []; bats = []; pillars = [];
+        heroes = mkHeroes(); druns = []; gPickups = []; gFx = []; parts = []; pops = [];
+        gIntro = { t: 0, fx: bird ? { x: boss.x, y: boss.y } : { x: 840, y: 230 }, grow: 0, absorbs: [] };
+        playSfx('Pres.mp3'); shake = 14;
+    }
+
+    function startGiantClicker(retry) {
+        state = 'giant_clicker';
+        startScreen.style.display = 'none'; gameOverScreen.style.display = 'none';
+        skipHintBadge.style.display = 'none';
+        setControls(false);
+        fogBossHud.style.display = 'flex';
+        gameHeaderTitle.textContent = '👊 ЗАКЛИКАЙ ФОГА И СБИВАЙ ДРУНОВ!';
+        scoreLabel.textContent = 'Клики';
+        const old = giant;
+        giant = mkGiant();
+        if (retry && old) { giant.hp = old.ckHp; giant.clicks = old.ckClicks; giant.bonus = old.ckBonus; giant.ckHp = old.ckHp; giant.ckClicks = old.ckClicks; giant.ckBonus = old.ckBonus;
+            giant.rage = Math.round((1 - old.ckHp / GIANT_MAX_HP) / 0.25) ; if (giant.rage < 0) giant.rage = 0; }
+        scoreVal.textContent = giant.clicks;
+        heroes = mkHeroes(); druns = []; gPickups = []; gFx = []; parts = []; pops = [];
+        mamG = { x: 150, y: 130 };
+        updateHeartsUI(giant.hearts);
+        setBossHud('ФОГ:', giant.hp, giant.max, true);
+        fade = 0;
+        if (retry) { giant.bannerT = 90; giant.bannerText = 'ЕЩЁ РАЗ! Мама Птица вернула силы'; }
+    }
+
+    function heroAtkOffset(h) {
+        if (h.atk <= 0) return { dx: 0, dy: 0 };
+        const p = 1 - h.atk / 14;
+        const reach = (BOSS_X - BOSS_MW * 0.36) - h.bx - 36;
+        return { dx: Math.sin(p * Math.PI) * reach, dy: -Math.sin(p * Math.PI) * (h.key === 'kot' ? 38 : 22) };
+    }
+
+    function giantAttack(px, py) {
+        const G = giant;
+        G.clicks++;
+        const n = G.clicks;
+        scoreVal.textContent = n;
+        const base = 14 + Math.floor(n * 0.05) + G.bonus;
+        const critChance = Math.min(0.4, 0.08 + n * 0.0006);
+        const critMult = 2.0 + Math.min(1.0, n * 0.002);
+        const crit = Math.random() < critChance;
+        let dmg = Math.round(base * (crit ? critMult : 1) * (G.surge > 0 ? 1.25 : 1));
+        dmg = Math.min(dmg, G.hp);
+        G.hp -= dmg;
+        G.flash = crit ? 10 : 6; G.shakeB = crit ? 12 : 5;
+        shake = Math.max(shake, crit ? 7 : 2);
+        playSfx(crit ? 'Pres.mp3' : 'zvuknorm.mp3');
+        setBossHud('ФОГ:', G.hp, G.max);
+
+        G.combo = (G.t - G.lastClickT < 30) ? G.combo + 1 : 1;
+        G.lastClickT = G.t;
+
+        // кто бьёт: по очереди
+        const h = heroes[G.nextHero % 3]; G.nextHero++;
+        h.atk = 14; h.queue = { dmg, crit };
+
+        // чекпоинты и ярость
+        const frac = G.hp / G.max;
+        const thresholds = [0.75, 0.5, 0.25];
+        while (G.rage < 3 && frac <= thresholds[G.rage]) {
+            const thr = thresholds[G.rage];
+            G.rage++;
+            G.ckHp = Math.round(G.max * thr); G.ckClicks = G.clicks; G.ckBonus = G.bonus;
+            G.bannerT = 130; G.bannerText = 'ФОГ В ЯРОСТИ! ' + G.rage + '/3';
+            if (G.hearts < 3) { G.hearts++; updateHeartsUI(G.hearts); }
+            floatText('Мама Птица лечит команду! ❤️', 480, 200, '#fda4af', 22);
+            playSfx('lose.mp3'); shake = 14;
+        }
+        if (G.clicks % 100 === 0) {
+            G.surge = 180; floatText('СИЛА МАМЫ ПТИЦЫ! +25% урона', 330, 160, '#bae6fd', 22);
+            playSfx('jackpot.mp3');
+            gFx.push({ type: 'ring', x: mamG.x, y: mamG.y, age: 0, max: 40, color: '#7dd3fc' });
+        }
+        if (G.hp <= 0) startWin();
+    }
+
+    function giantTap(px, py) {
+        // сначала Друны
+        for (let i = druns.length - 1; i >= 0; i--) {
+            if (Math.hypot(px - druns[i].x, py - druns[i].y) <= 54) {
+                playSfx('zvuknorm.mp3');
+                floatText('Друн сбит!', druns[i].x, druns[i].y - 20, '#7dd3fc', 20);
+                burst(druns[i].x, druns[i].y, 16, ['#f43f5e', '#fbbf24', '#fff'], 5, 4, 0.05, 26);
+                druns.splice(i, 1);
+                return;
+            }
+        }
+        for (let i = gPickups.length - 1; i >= 0; i--) {
+            if (Math.hypot(px - gPickups[i].x, py - gPickups[i].y) <= 50) {
+                playSfx('Pres.mp3');
+                if (giant.bonus < 24) giant.bonus += 4;
+                floatText('+4 К УРОНУ КЛИКА 🍾', gPickups[i].x, gPickups[i].y - 20, '#ffd166', 20);
+                burst(gPickups[i].x, gPickups[i].y, 16, ['#38bdf8', '#fff', '#ffd166'], 5, 4, 0, 26);
+                gPickups.splice(i, 1);
+                return;
+            }
+        }
+        giantAttack(px, py);
+    }
+
+    function hurtGiantTeam(x, y) {
+        const G = giant;
+        G.hearts--; shake = 16; playSfx('lose.mp3');
+        updateHeartsUI(G.hearts);
+        floatText('ВЗРЫВ! -1 ❤️', x, y - 24, '#ff4d6d', 24);
+        burst(x, y, 30, ['#ff0055', '#ffcc00', '#ff5500'], 7, 6, 0.1, 34);
+        gFx.push({ type: 'ring', x, y, age: 0, max: 24, color: '#ff4d6d' });
+        if (G.hearts <= 0) gameOver('giant', 'drun');
+    }
+
+    function updateGiantIntro() {
+        const I = gIntro;
+        I.t++; tick++;
+        // мелкий ФОГ падает в центр арены, затем растёт
+        if (I.t < 40) { I.fx.x += (BOSS_X - I.fx.x) * 0.14; I.fx.y += (BOSS_FEET - 40 - I.fx.y) * 0.14; }
+        if (I.t >= 70 && I.t <= 190) {
+            I.grow = easeInOut((I.t - 70) / 120);
+            shake = 3 + I.grow * 5;
+            if (I.t % 3 === 0) {
+                const a = Math.random() * TWO_PI, d = 260 + Math.random() * 120;
+                I.absorbs.push({ x: BOSS_X + Math.cos(a) * d, y: BOSS_CY + Math.sin(a) * d * 0.6, col: COL[(Math.random() * 5) | 0], life: 28, max: 28 });
+            }
+        }
+        if (I.t === 190) { shake = 24; playSfx('Pres.mp3'); }
+        for (let i = I.absorbs.length - 1; i >= 0; i--) {
+            const a = I.absorbs[i]; a.x += (BOSS_X - a.x) * 0.12; a.y += (BOSS_CY - a.y) * 0.12; a.life--;
+            if (a.life <= 0) I.absorbs.splice(i, 1);
+        }
+        stepSpores(0); stepParts(); stepPops();
+        if (I.t > 360) { startGiantClicker(false); fade = 1; }
+    }
+    const GI_LINES = [
+        { a: 5,   b: 70,  who: 'zaec', t: 'Он падает! Неужели мы победили?..' },
+        { a: 90,  b: 185, who: 'fog',  t: 'Глупцы! Я вбираю силу ВСЕХ кристаллов пещеры!', fx: true },
+        { a: 210, b: 275, who: 'kot',  t: 'Мяу?! Он размером с гору!' },
+        { a: 280, b: 355, who: 'mam',  t: 'Бейте его все вместе! Я прикрою вас, родные!' }
+    ];
+
+    function updateGiantClicker() {
+        const G = giant;
+        G.t++; tick++;
+        if (G.flash > 0) G.flash--;
+        if (G.shakeB > 0.2) G.shakeB *= 0.82; else G.shakeB = 0;
+        if (G.surge > 0) G.surge--;
+        if (G.bannerT > 0) G.bannerT--;
+        stepSpores(0);
+
+        // герои: атаки и момент удара
+        for (const h of heroes) {
+            if (h.atk > 0) {
+                h.atk--;
+                if (h.atk === 7 && h.queue) {
+                    const q = h.queue; h.queue = null;
+                    const cx = BOSS_X - BOSS_MW * 0.36 + rnd(-10, 14), cy = rnd(BOSS_CY - 40, BOSS_CY + 80);
+                    damagePop(cx, cy - 30, q.dmg, q.crit);
+                    gFx.push({ type: h.kind, x: cx, y: cy, age: 0, max: q.crit ? 20 : 12, crit: q.crit });
+                    burst(cx, cy, q.crit ? 14 : 6, q.crit ? ['#fff7b0', '#ff3355', '#ffb020'] : ['#8fe3ff', '#fff'], q.crit ? 6 : 4, 3, 0.05, 20);
+                    if (q.crit) toothBurst(cx, cy, 2);
+                }
+            }
+        }
+
+        // дрейф: спавн Друнов
+        const interval = [190, 150, 118, 92][G.rage], maxD = G.rage >= 2 ? 3 : 2;
+        if (G.t > 60 && G.t % interval === 0 && druns.length < maxD) {
+            const ang = Math.random() * TWO_PI;
+            druns.push({ ang, rad: rnd(190, 225), spd: (Math.random() < 0.5 ? 1 : -1) * rnd(0.014, 0.024), timer: 120, x: BOSS_CX, y: BOSS_CY });
+        }
+        for (let i = druns.length - 1; i >= 0; i--) {
+            const d = druns[i];
+            d.ang += d.spd;
+            d.x = BOSS_CX + Math.cos(d.ang) * d.rad;
+            d.y = BOSS_CY + Math.sin(d.ang) * d.rad * 0.62;
+            d.x = clamp(d.x, 60, W - 60); d.y = clamp(d.y, 100, 400);
+            d.timer--;
+            if (d.timer <= 0) {
+                const x = d.x, y = d.y;
+                druns.splice(i, 1);
+                hurtGiantTeam(x, y);
+                if (state !== 'giant_clicker') return;
+            }
+        }
+
+        // бонусные чекушки
+        G.pickT++;
+        if (G.pickT > 260 && gPickups.length < 2) {
+            G.pickT = 0;
+            gPickups.push({ x: rnd(150, 800), y: rnd(130, 340), vx: rnd(-1.1, 1.1), vy: rnd(-1.1, 1.1), rot: 0, life: 420 });
+        }
+        for (let i = gPickups.length - 1; i >= 0; i--) {
+            const p = gPickups[i];
+            p.x += p.vx; p.y += p.vy; p.rot += 0.05; p.life--;
+            if (p.x < 90 || p.x > 880) p.vx = -p.vx;
+            if (p.y < 110 || p.y > 380) p.vy = -p.vy;
+            if (p.life <= 0) gPickups.splice(i, 1);
+        }
+
+        for (let i = gFx.length - 1; i >= 0; i--) { gFx[i].age++; if (gFx[i].age >= gFx[i].max) gFx.splice(i, 1); }
+        stepParts(); stepPops();
+    }
+
+    // ---- рисование арены ----
+    function drawArenaBase() {
+        ctx.drawImage(farTile, 0, 0);
+        ctx.drawImage(arenaTile, 0, 0);
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        for (const g of farGlows) drawGlow(g.col, g.x, g.y, g.r * 0.9, 0.2 + 0.1 * Math.sin(bgT * 0.04 + g.ph));
+        ctx.restore(); ctx.globalAlpha = 1;
+        drawSpores();
+    }
+
+    function drawGiantFogBody(scale, opts) {
+        opts = opts || {};
+        const G = giant;
+        const shK = G ? G.shakeB : 0;
+        const sx = (Math.random() - 0.5) * shK, sy = (Math.random() - 0.5) * shK;
+        const breathe = 1 + 0.012 * Math.sin(tick * 0.06);
+        const squash = G && G.flash > 0 ? 1 - 0.035 * (G.flash / 8) : 1;
+        ctx.save();
+        ctx.translate(BOSS_X + sx, BOSS_FEET + sy);
+        ctx.scale(scale * (2 - squash) * 0.5 + scale * 0.5 * (2 - squash) * 0 + scale * 0, scale);
+        // (ширина слегка растёт при ударе, высота сжимается)
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(BOSS_X + sx, BOSS_FEET + sy);
+        ctx.scale(scale * (1 + (1 - squash) * 0.7), scale * breathe * squash);
+        // тень
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.beginPath(); ctx.ellipse(0, 8, BOSS_MW * 0.42, 22, 0, 0, TWO_PI); ctx.fill();
+        // аура ярости
+        if (G && G.rage > 0) {
+            ctx.save(); ctx.globalCompositeOperation = 'lighter';
+            drawGlow('#ff2a6d', 0, -BOSS_MH * 0.5, 230 + Math.sin(tick * 0.2) * 10, 0.18 + G.rage * 0.1);
+            ctx.restore(); ctx.globalAlpha = 1;
+        }
+        const d = fitDims(imgFog, BOSS_MW, BOSS_MH);
+        const clipY = opts.clipTop !== undefined ? opts.clipTop : null;
+        if (clipY !== null) { ctx.beginPath(); ctx.rect(-W, clipY - BOSS_FEET, W * 2, BOSS_MH + 100); ctx.clip(); }
+        if (opts.alpha !== undefined) ctx.globalAlpha = opts.alpha;
+        if (imgOk(imgFog)) ctx.drawImage(imgFog, -d.w / 2, -d.h, d.w, d.h);
+        else { ctx.fillStyle = '#6b21a8'; ctx.fillRect(-d.w / 2, -d.h, d.w, d.h); }
+        if (G && G.flash > 0) {
+            ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = (G.flash / 10) * 0.55;
+            if (imgOk(imgFog)) ctx.drawImage(imgFog, -d.w / 2, -d.h, d.w, d.h);
+        }
+        ctx.restore();
+        return fitDims(imgFog, BOSS_MW, BOSS_MH);
+    }
+    function drawBossBag(opts) {
+        opts = opts || {};
+        ctx.save();
+        ctx.translate(BOSS_X - 150 + (opts.dx || 0), BOSS_FEET - 120 + (opts.dy || 0));
+        drawEpicToothBag(ctx, 0, 0, opts.scale || 1.4);
+        ctx.restore();
+    }
+
+    function drawHeroesArena(winMode) {
+        const G = giant;
+        for (const h of heroes) {
+            const o = winMode && winMode.o ? winMode.o(h) : heroAtkOffset(h);
+            const idle = Math.sin(tick * 0.08 + h.bx) * 2;
+            const x = h.bx + o.dx, y = h.y + o.dy + (h.atk > 0 ? 0 : idle * 0.5);
+            // свечение при усилении
+            if ((G && G.surge > 0) || (winMode && winMode.glow)) {
+                ctx.save(); ctx.globalCompositeOperation = 'lighter'; drawGlow('#7dd3fc', x, y - 36, 70, 0.5 + 0.2 * Math.sin(tick * 0.3)); ctx.restore(); ctx.globalAlpha = 1;
+            }
+            // тень
+            ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(h.bx + o.dx, h.y + 6, h.mw * 0.34, 7, 0, 0, TWO_PI); ctx.fill();
+            // след рывка
+            if (h.atk > 0) {
+                ctx.save(); ctx.globalAlpha = 0.25; drawFit(h.img, x - 26, y, h.mw, h.mh, false); ctx.globalAlpha = 0.12; drawFit(h.img, x - 52, y, h.mw, h.mh, false); ctx.restore();
+            }
+            const tilt = h.atk > 0 ? 0.16 : 0;
+            ctx.save(); ctx.translate(x, y); ctx.rotate(tilt);
+            drawFit(h.img, 0, 0, h.mw * (h.atk > 0 ? 1.06 : 1), h.mh * (h.atk > 0 ? 0.96 : 1), false);
+            ctx.restore();
+        }
+    }
+
+    function drawMamArena(x, y, scale) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter'; drawGlow('#7dd3fc', x, y, 110, 0.22); ctx.restore(); ctx.globalAlpha = 1;
+        const bob = Math.sin(tick * 0.07) * 7;
+        ctx.save(); ctx.translate(x, y + bob);
+        const flap = Math.sin(tick * 0.25);
+        ctx.scale(scale, scale * (1 + flap * 0.04));
+        const d = fitDims(imgMam, 150, 108);
+        if (imgOk(imgMam)) ctx.drawImage(imgMam, -d.w / 2, -d.h / 2, d.w, d.h);
+        else { ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, 0, 70, 46, 0, 0, TWO_PI); ctx.fill(); }
+        ctx.restore();
+    }
+
+    function drawGFx() {
+        for (const f of gFx) {
+            const t = f.age / f.max;
+            ctx.save(); ctx.translate(f.x, f.y); ctx.globalAlpha = 1 - t;
+            if (f.type === 'ring') {
+                ctx.strokeStyle = f.color; ctx.lineWidth = 5 * (1 - t) + 1;
+                ctx.beginPath(); ctx.arc(0, 0, 10 + t * 80, 0, TWO_PI); ctx.stroke();
+            } else if (f.type === 'punch') {
+                ctx.globalCompositeOperation = 'lighter';
+                const R = (f.crit ? 62 : 38) * (0.5 + t * 0.6);
+                ctx.fillStyle = f.crit ? '#ffcf5a' : '#8fe3ff';
+                ctx.beginPath();
+                for (let i = 0; i < 16; i++) { const rr = i % 2 ? R * 0.45 : R, an = i * Math.PI / 8; ctx.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); }
+                ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, R * 0.32, 0, TWO_PI); ctx.fill();
+            } else if (f.type === 'claw') {
+                ctx.strokeStyle = f.crit ? '#fff0a8' : '#c8f1ff'; ctx.lineCap = 'round';
+                ctx.shadowColor = f.crit ? '#ff3355' : '#38bdf8'; ctx.shadowBlur = 12;
+                const L = (f.crit ? 78 : 56) * Math.min(1, t * 3 + 0.35);
+                for (let k = -1; k <= 1; k++) {
+                    ctx.lineWidth = (f.crit ? 6 : 4) * (1 - t * 0.5);
+                    ctx.beginPath(); ctx.moveTo(-L * 0.5 + k * 11, -L * 0.6 + k * 4); ctx.lineTo(L * 0.5 + k * 11, L * 0.6 + k * 4); ctx.stroke();
+                }
+            } else if (f.type === 'wrench') {
+                ctx.strokeStyle = f.crit ? '#ffd166' : '#a7f3d0'; ctx.lineCap = 'round';
+                ctx.shadowColor = f.crit ? '#ff7a00' : '#10b981'; ctx.shadowBlur = 12;
+                ctx.lineWidth = (f.crit ? 9 : 6) * (1 - t * 0.6);
+                const R = (f.crit ? 66 : 46);
+                ctx.beginPath(); ctx.arc(0, 0, R, -2.4 + t * 0.9, -0.5 + t * 0.9); ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, 6 * (1 - t), 0, TWO_PI); ctx.fill();
+            }
+            ctx.restore();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    function drawDruns() {
+        for (const d of druns) {
+            ctx.save(); ctx.translate(d.x, d.y);
+            const sec = Math.max(0, d.timer / 60);
+            const k = d.timer / 120;
+            // таймер-кольцо
+            ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+            ctx.beginPath(); ctx.arc(0, 0, 40, 0, TWO_PI); ctx.stroke();
+            ctx.strokeStyle = k > 0.4 ? '#facc15' : '#ff2a6d'; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.arc(0, 0, 40, -Math.PI / 2, -Math.PI / 2 + TWO_PI * k); ctx.stroke();
+            const pulse = 1 + Math.sin(tick * 0.4) * (k < 0.4 ? 0.1 : 0.04);
+            ctx.scale(pulse, pulse);
+            drawFit(imgDrun, 0, 26, 52, 52, false);
+            ctx.scale(1 / pulse, 1 / pulse);
+            ctx.fillStyle = k > 0.4 ? '#ffd166' : '#ff4d6d'; ctx.font = '900 15px sans-serif'; ctx.textAlign = 'center';
+            ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(8,4,20,0.9)'; ctx.lineJoin = 'round';
+            ctx.strokeText(sec.toFixed(1) + 'с', 0, -48); ctx.fillText(sec.toFixed(1) + 'с', 0, -48);
+            ctx.restore();
+        }
+    }
+    function drawGPickups() {
+        for (const p of gPickups) {
+            ctx.save(); ctx.translate(p.x, p.y);
+            const a = p.life < 90 ? (Math.floor(p.life / 6) % 2 ? 0.4 : 1) : 1;
+            ctx.globalAlpha = a;
+            ctx.globalCompositeOperation = 'lighter'; drawGlow('#38bdf8', 0, 0, 44, 0.6); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = a;
+            ctx.rotate(Math.sin(p.rot) * 0.5);
+            drawFit(imgChekuwka, 0, 20, 32, 42, false);
+            ctx.rotate(-Math.sin(p.rot) * 0.5);
+            ctx.fillStyle = '#ffd166'; ctx.font = '900 12px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(8,4,20,0.9)';
+            ctx.strokeText('+4 СИЛЫ', 0, 38); ctx.fillText('+4 СИЛЫ', 0, 38);
+            ctx.restore();
+        }
+    }
+
+    function drawGiantHud() {
+        const G = giant;
+        // индикатор силы клика и комбо
+        const n = G.clicks;
+        const base = 14 + Math.floor(n * 0.05) + G.bonus;
+        ctx.save();
+        ctx.textAlign = 'right'; ctx.lineJoin = 'round';
+        ctx.font = '900 14px "Segoe UI", sans-serif'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(8,4,20,0.9)';
+        const t1 = 'Сила клика: ' + base + (G.surge > 0 ? ' ×1.25' : '');
+        ctx.strokeText(t1, W - 16, 28); ctx.fillStyle = G.surge > 0 ? '#bae6fd' : '#ffd166'; ctx.fillText(t1, W - 16, 28);
+        const cc = Math.round(Math.min(0.4, 0.08 + n * 0.0006) * 100);
+        const t2 = 'Шанс крита: ' + cc + '%';
+        ctx.strokeText(t2, W - 16, 48); ctx.fillStyle = '#ff8fa3'; ctx.fillText(t2, W - 16, 48);
+        if (G.combo >= 5 && G.t - G.lastClickT < 40) {
+            ctx.textAlign = 'left'; ctx.font = `900 ${Math.min(34, 18 + G.combo * 0.2)}px "Segoe UI", sans-serif`;
+            const t3 = 'КОМБО ×' + G.combo;
+            ctx.strokeText(t3, 18, 44); ctx.fillStyle = '#fde68a'; ctx.fillText(t3, 18, 44);
+        }
+        ctx.restore();
+        if (G.bannerT > 0) {
+            const k = G.bannerT / 130;
+            ctx.save();
+            ctx.globalAlpha = Math.min(1, k * 4, (1 - k) * 8 + 0.2);
+            ctx.textAlign = 'center'; ctx.font = '900 32px "Segoe UI", sans-serif'; ctx.lineWidth = 8; ctx.lineJoin = 'round';
+            ctx.strokeStyle = 'rgba(40,0,20,0.95)'; ctx.strokeText(G.bannerText, W / 2, 120);
+            const g = ctx.createLinearGradient(0, 95, 0, 130); g.addColorStop(0, '#fff7b0'); g.addColorStop(1, '#ff3355');
+            ctx.fillStyle = g; ctx.fillText(G.bannerText, W / 2, 120);
+            ctx.restore();
+            if (G.rage > 0) { ctx.fillStyle = 'rgba(255,30,70,' + (0.09 * k) + ')'; ctx.fillRect(0, 0, W, H); }
+        }
+        if (G.clicks < 3) {
+            ctx.save(); ctx.textAlign = 'center'; ctx.font = '900 20px "Segoe UI", sans-serif'; ctx.lineWidth = 5; ctx.lineJoin = 'round';
+            const t = touchDevice ? 'ТАПАЙ ПО ЭКРАНУ — ГЕРОИ БЬЮТ ФОГА!' : 'КЛИКАЙ — ГЕРОИ БЬЮТ ФОГА! (Пробел / A / D тоже работают)';
+            ctx.globalAlpha = 0.6 + 0.4 * Math.sin(tick * 0.12);
+            ctx.strokeStyle = 'rgba(8,4,20,0.9)'; ctx.strokeText(t, W / 2, 478); ctx.fillStyle = '#e9d5ff'; ctx.fillText(t, W / 2, 478);
+            ctx.restore();
+        }
+    }
+
+    function renderGiantClicker() {
+        drawArenaBase();
+        drawMamArena(mamG.x, mamG.y, 1);
+        drawGiantFogBody(1);
+        drawBossBag();
+        drawHeroesArena();
+        drawDruns();
+        drawGPickups();
+        drawGFx();
+        drawParts();
+        drawPops();
+        drawGiantHud();
+    }
+
+    function renderGiantIntro() {
+        const I = gIntro;
+        drawArenaBase();
+        drawMamArena(150 + Math.min(1, I.t / 60) * 0, 130, 1);
+        // герои
+        tick = tick;
+        drawHeroesArena();
+        // поглощаемые осколки
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        for (const a of I.absorbs) drawGlow(a.col, a.x, a.y, 22, a.life / a.max);
+        ctx.restore(); ctx.globalAlpha = 1;
+        // сам ФОГ
+        if (I.t < 70) {
+            const fy = I.fx.y;
+            drawFit(imgFog, I.fx.x, fy + 40, 80, 92, true);
+        } else {
+            const sc = lerp(0.3, 1, I.grow);
+            const saveG = giant; giant = null;
+            ctx.save();
+            ctx.translate(BOSS_X, BOSS_FEET); ctx.scale(sc, sc);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(0, 8, BOSS_MW * 0.42, 22, 0, 0, TWO_PI); ctx.fill();
+            ctx.save(); ctx.globalCompositeOperation = 'lighter'; drawGlow('#ff2a6d', 0, -BOSS_MH * 0.5, 240, 0.12 + I.grow * 0.25); ctx.restore(); ctx.globalAlpha = 1;
+            drawFit(imgFog, 0, 0, BOSS_MW, BOSS_MH, false);
+            ctx.restore();
+            giant = saveG;
+            ctx.save(); ctx.translate(BOSS_X - 150 * sc, BOSS_FEET - 120 * sc); drawEpicToothBag(ctx, 0, 0, 1.4 * sc); ctx.restore();
+        }
+        if (I.t >= 190 && I.t < 200) { ctx.fillStyle = 'rgba(255,255,255,' + (0.5 * (1 - (I.t - 190) / 10)) + ')'; ctx.fillRect(0, 0, W, H); }
+        drawParts(); drawPops();
+        const line = GI_LINES.find((l) => I.t >= l.a && I.t < l.b);
+        if (line) {
+            let tx, ty;
+            if (line.who === 'fog') { tx = BOSS_X; ty = 150; }
+            else if (line.who === 'mam') { tx = 150; ty = 160; }
+            else if (line.who === 'kot') { tx = 418; ty = 400; }
+            else { tx = 330; ty = I.t < 40 ? 400 : 400; }
+            bubble(line.who, line.t, line.who === 'zaec' ? 330 : (line.who === 'kot' ? 420 : (line.who === 'mam' ? 230 : 640)), line.who === 'fog' ? 90 : 230, tx, ty);
+        }
+    }
+
+    // ============================================================
+    //  ПОБЕДНАЯ КАТСЦЕНА: ВСЕ УДАРЯЮТ РАЗОМ, ФОГ ИСЧЕЗАЕТ НАВСЕГДА
+    // ============================================================
+    const WIN_LINES = [
+        { a: 8,   b: 85,  who: 'fog',  t: 'Невозможно... Я же ВЕЛИКИЙ ФОГ!..' },
+        { a: 90,  b: 150, who: 'zaec', t: 'Ребята, добиваем! Все вместе — сейчас или никогда!' },
+        { a: 152, b: 195, who: 'kot',  t: 'МЯ-А-А-АУ! ВМЕСТЕ!', },
+        { a: 248, b: 335, who: 'fog',  t: 'Нет... Я исчезаю... Не-е-ет!..' },
+        { a: 400, b: 470, who: 'che',  t: 'Мешок! Все зубы на месте, ни одного не потерял!' },
+        { a: 475, b: 555, who: 'mam',  t: 'ФОГ больше не вернётся. Вы — настоящие герои, родные!' }
+    ];
+
+    function startWin() {
+        state = 'win_cs';
+        fogBossHud.style.display = 'none';
+        skipHintBadge.style.display = 'none';
+        druns = []; gPickups = [];
+        gameHeaderTitle.textContent = '🏆 ПОБЕДА! ФОГ ИСЧЕЗАЕТ НАВСЕГДА';
+        winCS = { t: 0, bag: { x: BOSS_X - 150 + 28, y: BOSS_FEET - 120 + 18, vy: 0, falling: false, landed: false, bounces: 0 }, dissolveDone: false, flashT: 0 };
+        playSfx('Pres.mp3'); shake = 14;
+    }
+    const DISS_A = 205, DISS_B = 330;
+
+    function updateWin() {
+        const C = winCS;
+        if (freeze > 0) { freeze--; return; }
+        C.t++; tick++;
+        stepSpores(0);
+        const t = C.t;
+        // шатающийся ФОГ
+        giant.shakeB = t < DISS_A ? (t < 90 ? 3 : 1.2) : 0;
+        // подготовка героев (притягиваются ближе)
+        if (t === 100 || t === 150) playSfx('zvukpr.mp3');
+        // синхронный удар
+        const HIT_START = 168, HIT_LEN = 28;
+        if (t >= HIT_START && t < HIT_START + HIT_LEN) {
+            for (const h of heroes) h.atk = Math.max(1, 14 * (1 - (t - HIT_START) / HIT_LEN)) | 0;
+        }
+        if (t === HIT_START + 15) {
+            freeze = 7; shake = 32; C.flashT = 22;
+            playSfx('Pres.mp3'); playSfx('jackpot.mp3'); playSfx('lose.mp3');
+            gFx.push({ type: 'ring', x: BOSS_X - 90, y: BOSS_CY + 20, age: 0, max: 40, color: '#ffffff' });
+            gFx.push({ type: 'ring', x: BOSS_X - 90, y: BOSS_CY + 20, age: 0, max: 28, color: '#ffd166' });
+            for (const [i, h] of heroes.entries()) {
+                gFx.push({ type: h.kind, x: BOSS_X - BOSS_MW * 0.36 + (i - 1) * 14, y: BOSS_CY + 10 + (i - 1) * 46, age: 0, max: 26, crit: true });
+            }
+            burst(BOSS_X - 90, BOSS_CY + 20, 50, ['#fff7b0', '#ff3355', '#ffb020', '#fff'], 9, 5, 0.05, 40);
+            toothBurst(BOSS_X - 90, BOSS_CY, 8);
+            pops.push({ kind: 'text', text: 'ВСЕ ВМЕСТЕ!', x: 480, y: 170, color: '#fff7b0', size: 44, age: 0, max: 80, rise: 30, wig: 0, seed: 0 });
+        }
+        // растворение
+        if (t === DISS_A) { playSfx('Pres.mp3'); shake = 8; }
+        if (t >= DISS_A && t < DISS_B) {
+            const d = (t - DISS_A) / (DISS_B - DISS_A);
+            const clipY = (BOSS_FEET - BOSS_MH) + d * (BOSS_MH + 20);
+            for (let i = 0; i < 4; i++) {
+                const px = BOSS_X + rnd(-BOSS_MW * 0.4, BOSS_MW * 0.4);
+                parts.push({ x: px, y: clipY + rnd(-8, 8), vx: rnd(-1.2, 1.2), vy: rnd(-3.2, -0.8), g: -0.01, life: 50, max: 50, size: rnd(3, 7), color: ['#ec4899', '#c084fc', '#ffffff', '#7dd3fc'][(Math.random() * 4) | 0], shape: 'c' });
+            }
+            if (t % 6 === 0) shake = Math.max(shake, 3);
+        }
+        if (t === DISS_B) { C.dissolveDone = true; shake = 14; playSfx('lose.mp3'); C.bag.falling = true; C.bag.vy = -2; }
+        // мешок падает и подпрыгивает
+        if (C.bag.falling && !C.bag.landed) {
+            const b = C.bag;
+            b.vy += 0.6; b.y += b.vy; b.x += 0.4;
+            if (b.y >= BOSS_FEET - 22) {
+                b.y = BOSS_FEET - 22;
+                if (b.bounces < 2) { b.vy = -b.vy * 0.45; b.bounces++; shake = 6; toothBurst(b.x + 20, b.y, 3); playSfx('zvuknorm.mp3'); }
+                else { b.landed = true; toothBurst(b.x + 20, b.y, 10); playSfx('jackpot.mp3'); }
+            }
+        }
+        // Мама Птица подлетает к мешку
+        if (t > 395) { mamG.x += (BOSS_X - 120 - mamG.x) * 0.03; mamG.y += (300 - mamG.y) * 0.03; }
+        // награда
+        if (t === 480) { pops.push({ kind: 'text', text: '+100 🦷', x: 480, y: 210, color: '#fde68a', size: 52, age: 0, max: 120, rise: 50, wig: 0, seed: 0 }); toothBurst(480, 260, 18); playSfx('jackpot.mp3'); }
+        if (t > 480 && t % 14 === 0) toothBurst(rnd(200, 760), 440, 2);
+        if (C.flashT > 0) C.flashT--;
+        for (const h of heroes) if (h.atk > 0 && !(t >= HIT_START && t < HIT_START + HIT_LEN)) h.atk = 0;
+        for (let i = gFx.length - 1; i >= 0; i--) { gFx[i].age++; if (gFx[i].age >= gFx[i].max) gFx.splice(i, 1); }
+        stepParts(); stepPops();
+        if (t > 590) finishVictory();
+    }
+
+    function renderWin() {
+        const C = winCS, t = C.t;
+        drawArenaBase();
+        drawMamArena(mamG.x, mamG.y, 1);
+        // ФОГ
+        if (t < DISS_A) {
+            const wob = t < 150 ? Math.sin(t * 0.6) * 3 : 0;
+            ctx.save(); ctx.translate(wob, 0);
+            drawGiantFogBody(1, { alpha: 1 });
+            ctx.restore();
+            if (t < DISS_A) {
+                ctx.save(); ctx.globalCompositeOperation = 'lighter'; drawGlow('#ff2a6d', BOSS_X, BOSS_CY, 200, 0.15 + 0.1 * Math.sin(t * 0.3)); ctx.restore(); ctx.globalAlpha = 1;
+            }
+        } else if (t < DISS_B) {
+            const d = (t - DISS_A) / (DISS_B - DISS_A);
+            const clipY = (BOSS_FEET - BOSS_MH) + d * (BOSS_MH + 20);
+            drawGiantFogBody(1, { clipTop: clipY, alpha: 1 - d * 0.45 });
+            // светящаяся линия распада
+            ctx.save(); ctx.globalCompositeOperation = 'lighter';
+            const lg = ctx.createLinearGradient(BOSS_X - BOSS_MW * 0.5, 0, BOSS_X + BOSS_MW * 0.5, 0);
+            lg.addColorStop(0, 'rgba(236,72,153,0)'); lg.addColorStop(0.5, 'rgba(255,255,255,0.95)'); lg.addColorStop(1, 'rgba(236,72,153,0)');
+            ctx.fillStyle = lg; ctx.fillRect(BOSS_X - BOSS_MW * 0.55, clipY - 2, BOSS_MW * 1.1, 4);
+            ctx.restore(); ctx.globalAlpha = 1;
+        }
+        // мешок
+        if (!C.bag.falling) {
+            if (t < DISS_B) drawBossBag({});
+        } else {
+            ctx.save(); ctx.translate(C.bag.x, C.bag.y);
+            ctx.globalCompositeOperation = 'lighter'; drawGlow('#fde68a', 30, 20, 80 + Math.sin(t * 0.2) * 6, 0.45); ctx.restore(); ctx.globalAlpha = 1;
+            ctx.save(); ctx.translate(C.bag.x, C.bag.y); drawEpicToothBag(ctx, 0, 0, 1.4); ctx.restore();
+        }
+
+        // герои
+        const HIT_START = 168, HIT_LEN = 28;
+        let winMode = { glow: t >= 100 && t < HIT_START + HIT_LEN };
+        winMode.o = (h) => {
+            if (t >= HIT_START && t < HIT_START + HIT_LEN) return heroAtkOffsetWin(h, (t - HIT_START) / HIT_LEN);
+            if (t >= 100 && t < HIT_START) { const k = (t - 100) / 68; return { dx: easeOutCubic(k) * 26, dy: Math.sin(t * 0.7) * 2 }; }
+            return { dx: 0, dy: 0 };
+        };
+        // кольца сбора силы
+        if (t >= 100 && t < HIT_START) {
+            const k = (t - 100) / 68;
+            ctx.save(); ctx.globalCompositeOperation = 'lighter';
+            for (const h of heroes) { ctx.strokeStyle = 'rgba(125,211,252,' + (1 - k) * 0.9 + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(h.bx + 26, h.y - 36, 80 * (1 - k) + 12, 0, TWO_PI); ctx.stroke(); }
+            ctx.restore();
+        }
+        drawHeroesArena(winMode);
+        drawGFx();
+        drawParts();
+        drawPops();
+        if (C.flashT > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (C.flashT / 22 * 0.9) + ')'; ctx.fillRect(0, 0, W, H); }
+        const line = WIN_LINES.find((l) => t >= l.a && t < l.b);
+        if (line) {
+            const pos = { fog: [BOSS_X, 120, BOSS_X, 190], zaec: [330, 250, 330, 380], kot: [430, 300, 418, 400], che: [260, 320, 245, 385], mam: [mamG.x + 80, mamG.y + 110, mamG.x, mamG.y + 40] }[line.who];
+            bubble(line.who, line.t, pos[0], pos[1], pos[2], pos[3]);
+        }
+    }
+    function heroAtkOffsetWin(h, p) {
+        const reach = (BOSS_X - BOSS_MW * 0.36) - h.bx - 30;
+        const e = p < 0.55 ? easeOutCubic(p / 0.55) : 1 - easeInOut((p - 0.55) / 0.45) * 0.0;
+        return { dx: (p < 0.55 ? e : lerp(1, 0.9, (p - 0.55) / 0.45)) * reach, dy: -Math.sin(Math.min(1, p / 0.55) * Math.PI) * 30 };
+    }
+
+    function finishVictory() {
+        state = 'win';
+        setControls(false);
+        victoryScreen.style.display = 'flex';
+        if (!EMBED) {
+            try {
+                const s = JSON.parse(localStorage.getItem('mello_clicker_save') || '{}');
+                s.storyProgress = s.storyProgress || {};
+                if (!s.storyProgress.l4) { s.teeth = (s.teeth || 0) + 100; s.totalTeethEarned = (s.totalTeethEarned || 0) + 100; }
+                s.storyProgress.l4 = true;
+                localStorage.setItem('mello_clicker_save', JSON.stringify(s));
+            } catch (e) {}
+        }
+        // награда (100 зубов) и достижение «Мама Птица» выдаёт основная игра
+        storyNotify({ type: 'story-complete', level: 4 });
+    }
+
+    // ============================================================
+    //  ПОРАЖЕНИЕ
+    // ============================================================
+    function gameOver(phase, reason) {
+        state = 'gameover';
+        lastDeath = phase;
+        setControls(false);
+        playSfx('lose.mp3');
+        fogBossHud.style.display = 'none';
+        gameOverScreen.style.display = 'flex';
+        if (phase === 'giant') {
+            gameOverTitle.textContent = 'ДРУНЫ ВЗОРВАЛИ КОМАНДУ!';
+            gameOverDesc.textContent = 'Нажимай на Друнов до того, как кончится таймер 2 секунды. Прогресс боя сохранён по контрольной точке (75% / 50% / 25% HP ФОГа).';
+        } else {
+            gameOverTitle.textContent = 'МАМА ПТИЦА ВЫБИЛАСЬ ИЗ СИЛ!';
+            gameOverDesc.textContent = 'Лавируйте между кристаллов, сбивайте летучих мышей и шары ФОГа чекушками. ' + (reason ? '(' + reason + ')' : '');
+        }
+    }
+
+    $('startCutsceneBtn').addEventListener('click', (e) => { e.stopPropagation(); startIntro(); });
+    $('restartBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        gameOverScreen.style.display = 'none';
+        if (lastDeath === 'giant') startGiantClicker(true); else startFlappy();
+    });
+
+    // ============================================================
+    //  ВВОД
+    // ============================================================
+    function toCanvas(e) {
+        const r = canvas.getBoundingClientRect();
+        return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
+    }
+    canvas.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') { touchDevice = true; }
+        e.preventDefault();
+        if (state === 'intro_cs') { skipIntro(); return; }
+        if (state === 'giant_intro') { startGiantClicker(false); return; }
+        if (state === 'playing') {
+            if (e.pointerType === 'mouse' && e.button === 2) shootAuto(); else flap();
+            return;
+        }
+        if (state === 'giant_clicker') { const p = toCanvas(e); giantTap(p.x, p.y); }
+    });
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    $('canvasContainer').addEventListener('contextmenu', (e) => e.preventDefault());
+
+    function bindBtn(el, fn) {
+        el.addEventListener('pointerdown', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            el.classList.add('pressed'); fn();
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => el.addEventListener(t, () => el.classList.remove('pressed')));
+        el.addEventListener('click', (e) => e.stopPropagation());
+    }
+    bindBtn($('btnMobileFlap'), () => flap());
+    bindBtn($('btnMobileShootL'), () => shoot(-1));
+    bindBtn($('btnMobileShootR'), () => shoot(1));
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyH' && e.shiftKey) { showHitbox = !showHitbox; return; }
+        const flapKey = e.code === 'Space' || e.code === 'KeyW' || e.code === 'ArrowUp';
+        const leftKey = e.code === 'KeyA' || e.code === 'ArrowLeft';
+        const rightKey = e.code === 'KeyD' || e.code === 'ArrowRight';
+        const autoKey = e.code === 'KeyF' || e.code === 'KeyS' || e.code === 'ArrowDown';
+        if (!(flapKey || leftKey || rightKey || autoKey)) return;
+        e.preventDefault();
+        if (e.repeat) return;
+        if (state === 'playing') {
+            if (flapKey) flap(); else if (leftKey) shoot(-1); else if (rightKey) shoot(1); else shootAuto();
+        } else if (state === 'giant_clicker') {
+            const p = { x: BOSS_X - 90 + rnd(-20, 20), y: BOSS_CY + rnd(-30, 50) };
+            giantAttack(p.x, p.y);
+        } else if (state === 'intro_cs') skipIntro();
+        else if (state === 'giant_intro') startGiantClicker(false);
+    });
+
+    // ============================================================
+    //  ЦИКЛ 60 FPS (фиксированный шаг — не ускоряется на мониторах 120/144 Гц)
+    // ============================================================
+    const STEP_MS = 1000 / 60;
+    let _lastT = 0, _acc = 0;
+
+    function stepGame(st) {
+        if (st === 'playing') updatePlaying();
+        else if (st === 'intro_cs') updateIntro();
+        else if (st === 'giant_intro') updateGiantIntro();
+        else if (st === 'giant_clicker') updateGiantClicker();
+        else if (st === 'win_cs') updateWin();
+        else if (st === 'menu' || st === 'gameover' || st === 'win') { tick++; stepSpores(0.3); stepParts(); stepPops(); }
+        if (fade > 0 && st !== 'intro_cs') fade = Math.max(0, fade - 0.04);
+    }
+
+    function drawGame(st) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+        ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        if (shake > 0.3) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= 0.88; } else shake = 0;
+        if (st === 'playing') renderPlaying();
+        else if (st === 'intro_cs') renderIntro();
+        else if (st === 'giant_intro') renderGiantIntro();
+        else if (st === 'giant_clicker') renderGiantClicker();
+        else if (st === 'win_cs') renderWin();
+        else if (st === 'win') { drawArenaBase(); drawMamArena(560, 200, 1); drawParts(); }
+        else if (st === 'gameover') {
+            if (lastDeath === 'giant' && giant) { drawArenaBase(); drawGiantFogBody(1); } else { drawTile(farTile, bgScrollFar); drawSpores(); }
+        } else { drawTile(farTile, bgScrollFar); drawFarGlows(bgScrollFar); drawSpores(); }
+        ctx.restore();
+        if (st === 'playing' || st === 'giant_clicker') ctx.drawImage(vignette, 0, 0);
+        if (fade > 0) { ctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, fade) + ')'; ctx.fillRect(0, 0, W, H); }
+    }
+
+    function gameLoop(now) {
+        requestAnimationFrame(gameLoop);
+        if (portraitMQ.matches || document.hidden) { _lastT = 0; return; }
+        if (typeof now !== 'number') now = performance.now();
+        if (!_lastT) _lastT = now;
+        let dt = now - _lastT;
+        _lastT = now;
+        if (dt > 250 || dt < 0) dt = STEP_MS;
+        _acc += dt;
+        let steps = 0;
+        while (_acc >= STEP_MS * 0.94 && steps < 3) {
+            _acc -= STEP_MS;
+            steps++;
+            stepGame(state);
+        }
+        if (_acc > STEP_MS * 2) _acc = 0;
+        if (steps > 0) drawGame(state);
+    }
+
+    // ============================================================
+    //  МАСШТАБ
+    // ============================================================
+    function fitGame() {
+        const vv = window.visualViewport;
+        const w = vv ? vv.width : window.innerWidth, h = vv ? vv.height : window.innerHeight;
+        const s = Math.min(w / 960, h / 560);
+        gameCard.style.transform = 'translate(' + ((w - 960 * s) / 2) + 'px,' + ((h - 560 * s) / 2) + 'px) scale(' + s + ')';
+    }
+    window.addEventListener('resize', fitGame);
+    window.addEventListener('orientationchange', () => setTimeout(fitGame, 200));
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitGame);
+    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    window.addEventListener('touchstart', () => { touchDevice = true; if (state === 'playing') setControls(true); }, { passive: true, once: true });
+    fitGame();
+
+    // ---- старт ----
+    bird = { x: 300, y: H / 2, rot: 0, inv: 0 }; boss = { x: -999, y: 0 };
+    ammo = 4; score = 0; pillars = []; pickups = []; bats = []; orbs = []; projectiles = [];
+    updateAmmoUI(); updateHeartsUI(3);
+    requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

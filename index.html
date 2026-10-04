@@ -9,6 +9,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <title>Симулятор Стримера: Меллстрой</title>
+    <script>
+    window.IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (window.IS_IOS) document.documentElement.classList.add('ios');
+</script>
+    <script src="/sdk.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
@@ -442,8 +447,7 @@
         }
 
         .mello-button.disabled-cooldown {
-            filter: grayscale(1) brightness(0.6);
-            cursor: not-allowed !important;
+            filter: grayscale(1) brightness(0.7);
         }
 
         .drun-floor-barrier {
@@ -1550,6 +1554,10 @@
         .tab-content::-webkit-scrollbar-thumb, .achievements-list::-webkit-scrollbar-thumb, .bunny-skins-screen::-webkit-scrollbar-thumb, .info-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 99px; }
         .tab-content::-webkit-scrollbar-track, .achievements-list::-webkit-scrollbar-track, .bunny-skins-screen::-webkit-scrollbar-track, .info-list::-webkit-scrollbar-track { background: transparent; }
         button:focus-visible, input:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+        /* Зелёная рамка вокруг Меллстроя: это был focus-visible-контур кнопки (охватывает всю невидимую область кнопки, а не сам скин) */
+        .mello-button, .mello-button:focus, .mello-button:focus-visible,
+        .desktop-decoration, .desktop-decoration:focus, .desktop-decoration:focus-visible,
+        .mello-button *, .desktop-decoration * { outline: none !important; -webkit-tap-highlight-color: transparent; }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 
         @media (max-width: 860px) {
@@ -1670,7 +1678,7 @@
         .upgrade-card.disabled::before { content: ""; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 3px; border-radius: 3px;
             background: linear-gradient(90deg, var(--mint-2) calc(var(--p, 0) * 1%), rgba(255,255,255,.08) 0); }
         .upgrade-card.best-buy { border-color: var(--gold) !important; }
-        .upgrade-card.best-buy::after { content: "🔥 выгодно"; position: absolute; top: -8px; left: 14px; font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: var(--ink); }
+        .upgrade-card.best-buy::after { content: "🔥 лучшая покупка"; position: absolute; top: -8px; left: 14px; font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: var(--ink); }
         .level-banner { position: absolute; left: 50%; top: 38%; z-index: 90; pointer-events: none; text-align: center; transform: translate(-50%, -50%);
             padding: 14px 26px; border-radius: 22px; background: rgba(6,16,11,.82); border: 1px solid var(--line-mint); backdrop-filter: blur(12px);
             box-shadow: 0 0 50px rgba(61,255,160,.35); animation: lvlIn 2.6s var(--ease) forwards; max-width: 90%; }
@@ -1765,7 +1773,24 @@
         .mw-tile.locked { opacity: .4; filter: grayscale(.8); cursor: default; }
         .mw-tile.active { background: rgba(61,255,160,.14); box-shadow: 0 0 0 1px #3dffa0 inset; }
         .mw-tile.active .mw-state { color: #3dffa0; }
-</style>
+
+        /* ===== iOS: облегчённый рендер (меньше нагрев и расход заряда) ===== */
+        html.ios { --glass: rgba(14, 22, 18, 0.93); }
+        html.ios *, html.ios *::before, html.ios *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+        html.ios .modal-overlay { background: rgba(3, 7, 5, .92); }
+        html.ios .desktop-decoration img { filter: none; }
+        html.ios .main-balance { filter: none; }
+        html.ios .click-stage::before { display: none; }
+        html.ios .main-chest-btn.ready, html.ios .mystery-timer-badge, html.ios .prestige-top-btn { animation: none; }
+        html.ios .corner-icon-btn, html.ios .main-chest-btn, html.ios .mystery-timer-badge, html.ios .level-status-bottom, html.ios .cpc-badge,
+        html.ios .currency-row > div, html.ios .cps-indicator, html.ios .booster-timer-tag, html.ios .deco-controls { box-shadow: none; }
+        html.ios .corner-icon-btn { background: rgba(20, 30, 25, .85); }
+        html.ios .upgrade-card:not(.disabled) { box-shadow: none; }
+        html.ios .upgrade-card { transition: none; }
+        html.ios .level-banner, html.ios .falling-coin, html.ios .game-wrapper { box-shadow: none; }
+        html.ios .floating-text { text-shadow: none; }
+        html.ios .fx-coin { display: none; }
+    </style>
 </head>
 <body>
 <div class="game-wrapper">
@@ -1843,7 +1868,7 @@
                     <div>🚀 Открытие <b>11–20 элитных уровней</b>!</div>
                     <div>👑 Эксклюзивный скин <b>«Султан Всея Интернета»</b>!</div>
                     <div>💎 <b>+50 Алмазов</b> бонусом прямо сейчас!</div>
-                    <div>🪙 <b>Меллкоин</b> за каждый уровень с 11-го — для рулетки скинов!</div>
+                    <div>🪙 <b>Меллкоин</b> за каждый уровень с 10-го — для рулетки скинов!</div>
                 </div>
                 <button class="prestige-btn" id="doPrestigeBtn">Сделать Престиж (Сброс до 1 уровня)</button>
                 <button class="jump-cancel-btn" id="cancelPrestigeBtn">Пока не хочу</button>
@@ -2111,6 +2136,13 @@
                         <button class="remove-deco-btn" onclick="removeDecoration('cheremsha')" title="Убрать с экрана">×</button>
                     </div>
                 </div>
+                <div class="desktop-decoration" id="desktopDecorationMamabird" data-key="mamabird">
+                    <img src="mam.png" alt="Мама Птица" id="decoImg_mamabird">
+                    <div class="deco-controls">
+                        <input type="range" class="decoSizeRange" min="40" max="140" value="95" title="Изменить размер">
+                        <button class="remove-deco-btn" onclick="removeDecoration('mamabird')" title="Убрать с экрана">×</button>
+                    </div>
+                </div>
                 <button class="mello-button" id="melloBtn">
                     <img src="mell1.png" alt="Mellstroy" id="melloImg">
                 </button>
@@ -2200,7 +2232,7 @@
                                 <div class="upgrade-effect" id="bossWardStatus">Авто-откуп босса навсегда</div>
                             </div>
                         </div>
-                        <div class="upgrade-cost" id="bossWardPrice" style="color: #00ff88;">200 ₽</div>
+                        <div class="upgrade-cost" id="bossWardPrice" style="color: #00ff88;">199 ₽</div>
                     </div>
 
                     <div class="upgrade-card" id="drunShieldCard" onclick="handleDrunShieldClick()">
@@ -2324,7 +2356,7 @@
                             <button class="spin-btn pay-teeth" id="mellSpinTeeth">100 🦷</button>
                             <button class="spin-btn pay-coin" id="mellSpinCoin">1 🪙</button>
                         </div>
-                        <div class="mr-hint">🪙 Меллкоины дают за каждый уровень с 11-го после престижа.<br>Повторный скин даёт 10 💎.</div>
+                        <div class="mr-hint">🪙 Меллкоины дают за каждый уровень с 10-го и сундук за 1 час в игре.<br>Повторный скин даёт 10 💎.</div>
                     </div>
                     <div class="mell-wardrobe-title"><span>Скины рулетки</span><span id="mellWardrobeCount">0/19</span></div>
                     <div class="mell-wardrobe" id="mellWardrobe"></div>
@@ -2353,6 +2385,7 @@
             <button class="modal-close-btn" id="closeDogCasinoBtn" style="width: 100%; margin-top: 8px; background: rgba(255,75,75,0.2); color: #ff4b4b; border: 1px solid rgba(255,75,75,0.4);">Закрыть</button>
         </div>
     </div>
+<div id="sdkLoader" style="position:fixed;inset:0;z-index:99999;background:#070a09;display:flex;align-items:center;justify-content:center;color:#00ff88;font:800 16px Manrope,sans-serif;">Загрузка…</div>
 <script>
         // ========================================================
         // ФОРМАТИРОВАНИЕ ЧИСЕЛ (ОТ 100 000 000 -> 100M, 1B, 1T, 1Qa...)
@@ -2635,7 +2668,18 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         let alertResolveCallback = null;
 
+        // Если диалог уже открыт — закрываем его перед показом нового, иначе первый promise
+        // зависал навсегда, а кнопки в игре переставали реагировать.
+        function flushPendingAlert() {
+            if (alertResolveCallback) {
+                const cb = alertResolveCallback;
+                alertResolveCallback = null;
+                try { cb(false); } catch (e) {}
+            }
+        }
+
         window.alert = function(msg, title = 'Уведомление') {
+            flushPendingAlert();
             return new Promise((resolve) => {
                 customAlertTitle.textContent = title;
                 customAlertMessage.textContent = msg;
@@ -2651,6 +2695,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         };
 
         window.confirm = function(msg, title = 'Подтверждение') {
+            flushPendingAlert();
             return new Promise((resolve) => {
                 customAlertTitle.textContent = title;
                 customAlertMessage.textContent = msg;
@@ -2718,6 +2763,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let survivedDrunInvasionsCount = 0;
         let tookDrunDamageInCurrentWave = false;
         let perfectDrunInvasionsCount = 0;
+        let drunHitsInWave = 0;            // сколько Друнов попало в игрока за текущую волну
+        let halfDodgedDrunWaves = 0;       // волны, где увернулся минимум от половины Друнов
 
         let specialSkins = {
             skindon: { unlocked: false, cost: 100, name: 'Мелл судья', img: 'skindon.png' },
@@ -2728,7 +2775,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let activeSpecialSkin = null;
 
         // ===== Рулетка Меллов: скины и валюта «Меллкоин» =====
-        const MELL_COIN_START_LEVEL = 11;   // с какого уровня (после престижа) дают монету
+        const MELL_COIN_START_LEVEL = 10;   // с какого уровня (после престижа) дают монету
         const MELL_COINS_PER_LEVEL = 1;
         const MELL_SPIN_COST = { diamonds: 50, teeth: 100, coins: 1 };
         let mellCoins = 0;
@@ -2784,6 +2831,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let maxSeenSkinIndex = 0;
 
         let mellTiltCooldown = 0;
+        // первое появление событий: срабатывают сразу при достижении уровня + показывается инструкция
+        let bossIntroDone = false, drunIntroDone = false, bossTutorialSeen = false, drunTutorialSeen = false, eventIntroOpen = false;
         let mysterySecondsLeft = 60;
         let isMysteryTimerVisible = false;
         let nextBossScheduledTime = 0;
@@ -2801,6 +2850,362 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         const resumeJumpBtn = document.getElementById('resumeJumpBtn');
         const bossPauseOverlay = document.getElementById('bossPauseOverlay');
         const resumeBossBtn = document.getElementById('resumeBossBtn');
+
+        // ========================================================
+        // YANDEX GAMES SDK v2: СОХРАНЕНИЯ, РЕКЛАМА, ПОКУПКИ, ЛИДЕРБОРД
+        // ========================================================
+        const SAVE_KEY = 'mello_clicker_save';
+        const LB_SENT_KEY = 'mello_jump_cloud_sent';
+        const LB_CLOUD_NAME = 'jump_leaderboard';
+        const IS_LOCAL_DEV = location.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
+
+        let ysdk = null, yaPlayer = null, yaPayments = null, yaLeaderboards = null;
+        let sdkReady = false;
+        let playerAuthorized = false;
+        let gameLoaded = false;
+        let resetInProgress = false;
+        let grantedPurchaseTokens = [];
+
+        function withTimeout(promise, ms) {
+            return new Promise((resolve, reject) => {
+                const t = setTimeout(() => reject(new Error('timeout')), ms);
+                Promise.resolve(promise).then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+            });
+        }
+
+        // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+        async function initYandexSDK() {
+            if (typeof YaGames === 'undefined') { console.warn('[YSDK] sdk.js не загружен — локальный режим'); return false; }
+            try {
+                ysdk = await withTimeout(YaGames.init(), 6000);
+                sdkReady = !!ysdk;
+// Определение языка платформы (требование Яндекса п. 2.14)
+        if (ysdk && ysdk.environment && ysdk.environment.i18n) {
+            document.documentElement.lang = ysdk.environment.i18n.lang || 'ru';
+        }
+            } catch (e) { console.warn('[YSDK] init failed', e); ysdk = null; sdkReady = false; return false; }
+
+            // Игрок (гость — допустимо)
+            try {
+                yaPlayer = await withTimeout(ysdk.getPlayer({ scopes: false }), 5000);
+                try {
+                    if (typeof yaPlayer.isAuthorized === 'function') playerAuthorized = !!yaPlayer.isAuthorized();
+                    else if (typeof yaPlayer.getMode === 'function') playerAuthorized = yaPlayer.getMode() !== 'lite';
+                } catch (e) { playerAuthorized = false; }
+            } catch (e) { console.warn('[YSDK] getPlayer failed — гостевой режим', e); yaPlayer = null; playerAuthorized = false; }
+
+            // Платежи
+            try { yaPayments = await withTimeout(ysdk.getPayments({ signed: false }), 5000); }
+            catch (e) { console.warn('[YSDK] getPayments failed', e); yaPayments = null; }
+
+            // Лидерборды
+            try { yaLeaderboards = await withTimeout(ysdk.getLeaderboards(), 5000); }
+            catch (e) { console.warn('[YSDK] getLeaderboards failed', e); yaLeaderboards = null; }
+            return true;
+        }
+
+        function signalGameReady() {
+            try { if (ysdk && ysdk.features && ysdk.features.LoadingAPI) ysdk.features.LoadingAPI.ready(); } catch (e) { console.warn(e); }
+        }
+
+        // ---------- ГИБРИДНЫЕ СОХРАНЕНИЯ ----------
+        const CLOUD_DEBOUNCE_MS = 4000;     // отправка через 4 с после последнего saveGame()
+        const CLOUD_MAX_WAIT_MS = 30000;    // страховка: при непрерывной игре всё равно уйдёт не реже раза в 30 с (лимит Яндекса 100/5 мин)
+        let cloudSaveTimer = null, cloudDirty = false, cloudDirtySince = 0;
+
+        function saveGame() {
+            if (!gameLoaded || resetInProgress) return;
+            scheduleLocalSave();
+            scheduleCloudSave();
+        }
+
+        let localSaveTimer = null;
+        function scheduleLocalSave() {
+            if (localSaveTimer) return;
+            localSaveTimer = setTimeout(flushLocalSave, 2000);
+        }
+        function flushLocalSave() {
+            clearTimeout(localSaveTimer); localSaveTimer = null;
+            if (!gameLoaded || resetInProgress) return;
+            try { localStorage.setItem(SAVE_KEY, JSON.stringify(getSavePayload())); } catch (e) {}
+        }
+
+        function scheduleCloudSave() {
+            if (!yaPlayer || resetInProgress) return;
+            const now = Date.now();
+            if (!cloudDirty) { cloudDirty = true; cloudDirtySince = now; }
+            clearTimeout(cloudSaveTimer);
+            const wait = Math.max(0, Math.min(CLOUD_DEBOUNCE_MS, CLOUD_MAX_WAIT_MS - (now - cloudDirtySince)));
+            cloudSaveTimer = setTimeout(() => flushCloudSave(false), wait);
+        }
+
+        function flushCloudSave(immediate) {
+            clearTimeout(cloudSaveTimer); cloudSaveTimer = null;
+            if (resetInProgress || !cloudDirty || !yaPlayer || !gameLoaded) return;
+            cloudDirty = false; cloudDirtySince = 0;
+            let payload;
+            try { payload = getSavePayload(); } catch (e) { return; }
+            const retryLater = () => {
+                cloudDirty = true; cloudDirtySince = Date.now();
+                if (!resetInProgress) { clearTimeout(cloudSaveTimer); cloudSaveTimer = setTimeout(() => flushCloudSave(false), 20000); }
+            };
+            try {
+                const p = yaPlayer.setData({ mello_save: payload }, !!immediate);
+                if (p && typeof p.catch === 'function') p.catch(err => { console.warn('[YSDK] setData failed', err); retryLater(); });
+            } catch (e) { console.warn('[YSDK] setData threw', e); retryLater(); }
+        }
+
+        function commitPurchase() { saveGame(); flushLocalSave(); flushCloudSave(true); }
+
+        async function fetchCloudSave() {
+            if (!yaPlayer) return null;
+            try {
+                const d = await withTimeout(yaPlayer.getData(['mello_save']), 5000);
+                const v = d && d.mello_save;
+                if (v && typeof v === 'object') return JSON.stringify(v);
+                if (typeof v === 'string' && v.length > 2) return v;
+            } catch (e) { console.warn('[YSDK] getData failed', e); }
+            return null;
+        }
+
+        async function resetAllProgress() {
+            resetInProgress = true;
+            clearTimeout(cloudSaveTimer); cloudDirty = false;
+            clearTimeout(localSaveTimer); localSaveTimer = null;
+            if (yaPlayer) {
+                try { await withTimeout(yaPlayer.setData({ mello_save: null }, true), 5000); }
+                catch (e) {
+                    console.warn('[YSDK] cloud reset failed', e);
+                    resetInProgress = false;
+                    await alert('Не удалось очистить облачное сохранение. Проверьте соединение и повторите сброс.', 'СБРОС');
+                    return false;
+                }
+            }
+            // Сбрасываем и использованные промокоды (локально и в облаке)
+            try { promoUsed = {}; } catch (e) {}
+            if (yaPlayer) {
+                try { await withTimeout(yaPlayer.setData({ mello_promo: null }, true), 5000); } catch (e) { console.warn('[YSDK] promo reset failed', e); }
+            }
+            try {
+                localStorage.removeItem('mello_promo_used');
+                localStorage.removeItem(SAVE_KEY);
+                localStorage.removeItem('mello_jump_leaderboard');
+                localStorage.removeItem(LB_SENT_KEY);
+            } catch (e) {}
+            return true;
+        }
+
+        // ---------- ЗВУК / ПАУЗА НА ВРЕМЯ РЕКЛАМЫ ----------
+        let adActive = false;      // реклама открыта
+        let adPending = false;     // реклама запрошена
+        let lastFullscreenAdTime = Date.now();
+        const FULLSCREEN_AD_INTERVAL = 240 * 1000;
+
+        // Пока идёт реклама — любые попытки запустить звук блокируются
+        (function () {
+            const origPlay = HTMLMediaElement.prototype.play;
+            HTMLMediaElement.prototype.play = function () {
+                if (adActive) return Promise.reject(new DOMException('Muted during ad', 'NotAllowedError'));
+                return origPlay.apply(this, arguments);
+            };
+        })();
+
+        function adBegin() {
+            if (adActive) return;
+            try { pauseGame(); } catch (e) {}
+            adActive = true;
+            [mainBgMusic, jumpBgMusic, sirenaSound, spinSound, clickSound, jackpotSound, prestigeSound, loseSound].forEach(a => { try { a.pause(); } catch (e) {} });
+            isClickSoundPlaying = false;
+        }
+
+        function adEnd() {
+            adPending = false;
+            if (!adActive) return;
+            adActive = false;
+            const inJumpModal = (typeof jumpModal !== 'undefined' && jumpModal && jumpModal.classList.contains('active'));
+            if (musicEnabled && !jumpGameActive && !inJumpModal && !isDrunInvasionActive && hasStartedMainBgMusic) {
+                mainBgMusic.play().catch(() => {});
+            }
+        }
+
+        // ---------- МЕЖСТРАНИЧНАЯ РЕКЛАМА ----------
+        function showFullscreenAd() {
+            if (noAdsPurchased || !sdkReady || !ysdk || !ysdk.adv) return;
+            if (adActive || adPending) return;
+            if (Date.now() - lastFullscreenAdTime < FULLSCREEN_AD_INTERVAL) return;
+            adPending = true;
+            try {
+                ysdk.adv.showFullscreenAdv({
+                    callbacks: {
+                        onOpen: () => { adBegin(); },
+                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); },
+                        onError: (err) => { console.warn('[YSDK] fullscreen ad error', err); adEnd(); lastFullscreenAdTime = Date.now(); }
+                    }
+                });
+            } catch (e) { console.warn(e); adEnd(); lastFullscreenAdTime = Date.now(); }
+        }
+
+        // ---------- РЕКЛАМА ЗА ВОЗНАГРАЖДЕНИЕ ----------
+        // onRewarded вызывается строго из колбэка SDK. Без SDK — локальная заглушка (награда сразу).
+        function showRewardedAd(onRewarded) {
+            if (!sdkReady || !ysdk || !ysdk.adv) { try { onRewarded(); } catch (e) { console.error(e); } return; }
+            if (adActive || adPending) return;
+            adPending = true;
+            try {
+                ysdk.adv.showRewardedVideo({
+                    callbacks: {
+                        onOpen: () => { adBegin(); },
+                        onRewarded: () => { try { onRewarded(); } catch (e) { console.error(e); } },
+                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); },
+                        onError: (err) => {
+                            console.warn('[YSDK] rewarded ad error', err);
+                            adEnd();
+                            alert('📺 Реклама сейчас недоступна. Попробуйте позже.', 'РЕКЛАМА');
+                        }
+                    }
+                });
+            } catch (e) { console.warn(e); adEnd(); }
+        }
+
+        // ---------- ПОКУПКИ ----------
+        const PERMANENT_PRODUCTS = ['boss_ward', 'drun_shield', 'skin_casual', 'no_ads'];
+        const CONSUMABLE_PRODUCTS = {
+            tickets_3:    { type: 'tickets', count: 3 },
+            tickets_10:   { type: 'tickets', count: 10 },
+            tickets_30:   { type: 'tickets', count: 30 },
+            diamonds_50:  { type: 'diamonds', count: 50 },
+            diamonds_150: { type: 'diamonds', count: 150 },
+            diamonds_500: { type: 'diamonds', count: 500 }
+        };
+
+        async function runPurchase(productId, mockText) {
+            if (yaPayments) {
+                try { return { ok: true, purchase: await yaPayments.purchase({ id: productId }) }; }
+                catch (e) { console.warn('[YSDK] purchase cancelled/failed', e); return { ok: false }; }
+            }
+            if (IS_LOCAL_DEV && !sdkReady) {   // тестовая заглушка только при локальном запуске
+                const ok = await confirm(mockText || 'Подтвердить покупку (тестовый режим)?', 'ПОКУПКА');
+                return { ok, purchase: null };
+            }
+            await alert('Покупки сейчас недоступны. Проверьте соединение и перезагрузите игру.', 'ПОКУПКИ');
+            return { ok: false };
+        }
+
+        function recordGrantedToken(token) {
+            if (!token || grantedPurchaseTokens.includes(token)) return;
+            grantedPurchaseTokens.push(token);
+            if (grantedPurchaseTokens.length > 50) grantedPurchaseTokens.shift();
+        }
+
+        async function consumePurchaseSafe(purchase) {
+            if (!purchase || !yaPayments || !purchase.purchaseToken) return;
+            try { await yaPayments.consumePurchase(purchase.purchaseToken); }
+            catch (e) { console.warn('[YSDK] consumePurchase failed — повторим при restorePurchases()', e); }
+        }
+
+        function grantConsumable(productId) {
+            const c = CONSUMABLE_PRODUCTS[productId];
+            if (!c) return false;
+            if (c.type === 'tickets') tickets += c.count;
+            else { diamonds += c.count; totalDiamondsEarned += c.count; }
+            return true;
+        }
+
+        function applyPermanentPurchase(id) {
+            switch (id) {
+                case 'no_ads':      if (!noAdsPurchased)       { noAdsPurchased = true; return true; } break;
+                case 'boss_ward':   if (!bossWardPurchased)    { bossWardPurchased = true; bossWardEnabled = true; return true; } break;
+                case 'drun_shield': if (!drunShieldPurchased)  { drunShieldPurchased = true; drunShieldEnabled = true; return true; } break;
+                case 'skin_casual': if (!donSkin3Unlocked)     { donSkin3Unlocked = true; return true; } break;
+            }
+            return false;
+        }
+
+        async function restorePurchases() {
+            if (!yaPayments) return;
+            let list = [];
+            try {
+                const res = await withTimeout(yaPayments.getPurchases(), 8000);
+                list = Array.isArray(res) ? res : ((res && res.purchases) || []);
+            } catch (e) { console.warn('[YSDK] getPurchases failed', e); return; }
+
+            let changed = false, restoredText = [];
+            for (const p of list) {
+                const id = p && p.productID;
+                if (!id) continue;
+                if (PERMANENT_PRODUCTS.includes(id)) {
+                    if (applyPermanentPurchase(id)) changed = true;     // постоянные НЕ потребляем
+                } else if (CONSUMABLE_PRODUCTS[id]) {
+                    const token = p.purchaseToken;
+                    if (!grantedPurchaseTokens.includes(token)) {       // «зависшая» покупка: оплачено, но не начислено
+                        grantConsumable(id);
+                        recordGrantedToken(token);
+                        const c = CONSUMABLE_PRODUCTS[id];
+                        restoredText.push(`+${c.count} ${c.type === 'tickets' ? '🎫' : '💎'}`);
+                        changed = true;
+                        commitPurchase();                               // сначала фиксируем начисление, затем списываем
+                    }
+                    await consumePurchaseSafe(p);
+                }
+            }
+            if (changed) {
+                updateUI();
+                try { if (typeof renderSkinsList === 'function') renderSkinsList(); } catch (e) {}
+                commitPurchase();
+                if (restoredText.length) await alert('Восстановлены ваши покупки: ' + restoredText.join(', '), 'ПОКУПКИ');
+            }
+        }
+
+        // ---------- ОБЛАЧНЫЙ ЛИДЕРБОРД ----------
+        let lbCloudSent = 0;            // лучший результат, уже отправленный в облако
+        try { lbCloudSent = Math.floor(Number(localStorage.getItem(LB_SENT_KEY)) || 0); } catch (e) {}
+        let lbCloudRows = null;         // null → показываем локальный топ
+        let lbCloudUserRank = 0;
+        let lbLastPlace = 0;
+
+        async function lbCloudSubmit(score) {
+            score = Math.floor(score || 0);
+            if (!yaLeaderboards || !playerAuthorized || score <= 0 || score <= lbCloudSent) return false;
+            try {
+                await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
+                lbCloudSent = score;
+                try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
+                return true;
+            } catch (e) { console.warn('[YSDK] setLeaderboardScore failed', e); return false; }
+        }
+
+        async function syncBestScoreToCloud() {
+            if (!yaLeaderboards || !playerAuthorized) return;
+            try {
+                const e = await withTimeout(yaLeaderboards.getLeaderboardPlayerEntry(LB_CLOUD_NAME), 6000);
+                if (e && e.score > lbCloudSent) lbCloudSent = e.score;
+            } catch (e) { /* записи ещё нет или сеть недоступна */ }
+            if (maxHeight > lbCloudSent) await lbCloudSubmit(maxHeight);
+        }
+
+        async function loadCloudLeaderboard() {
+            if (!yaLeaderboards) return;
+            let res = null;
+            try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(LB_CLOUD_NAME, { quantityTop: 10, includeUser: true }), 7000); }
+            catch (e) {
+                try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(LB_CLOUD_NAME, { quantityTop: 10, includeUser: false }), 7000); }
+                catch (e2) { console.warn('[YSDK] getLeaderboardEntries failed', e2); lbCloudRows = null; renderLeaderboard(lbLastPlace); return; }
+            }
+            let myId = null;
+            try { myId = yaPlayer && yaPlayer.getUniqueID && yaPlayer.getUniqueID(); } catch (e) {}
+            const entries = (res && Array.isArray(res.entries)) ? res.entries : [];
+            lbCloudUserRank = (res && res.userRank) || 0;
+            lbCloudRows = entries.slice().sort((a, b) => a.rank - b.rank).slice(0, 20).map(en => {
+                const pl = en.player || {};
+                return {
+                    rank: en.rank,
+                    name: (pl.publicName && String(pl.publicName).trim()) || 'Игрок',
+                    score: en.score,
+                    mine: !!(myId && pl.uniqueID === myId) || (lbCloudUserRank > 0 && en.rank === lbCloudUserRank)
+                };
+            });
+            renderLeaderboard(lbLastPlace);
+        }
 
         function pauseGame() {
             if (jumpGameActive && !isJumpPaused) {
@@ -2820,6 +3225,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             isClickSoundPlaying = false;
 
             saveGame();
+            flushLocalSave();
         }
 
         function resumeJumpGame() {
@@ -2854,7 +3260,9 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         });
 
         window.addEventListener('blur', pauseGame);
-        window.addEventListener('beforeunload', saveGame);
+        window.addEventListener('beforeunload', () => { saveGame(); flushLocalSave(); flushCloudSave(true); });
+        window.addEventListener('pagehide', () => { saveGame(); flushLocalSave(); flushCloudSave(true); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden) { flushLocalSave(); flushCloudSave(true); } });
 
         const bunnySkinsConfig = [
             { id: 'common', name: 'Обычный Заяц-доходяга', rarity: 'Обычный', color: '#a3b8b0', img: 'zaec.png', weight: 0, unlocked: true, dupReward: 1 },
@@ -2877,15 +3285,17 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             { id: 'box5', name: 'Сундук 5 мин', timeReq: 300, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 3, tickets: 0 }) },
             { id: 'box10', name: 'Сундук 10 мин', timeReq: 600, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 8) + 3, tickets: 0 }) },
             { id: 'box20', name: 'Сундук 20 мин', timeReq: 1200, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 6) + 10, tickets: 0 }) },
-            { id: 'box30', name: 'Сундук 30 мин', timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 2 }) }
+            { id: 'box30', name: 'Сундук 30 мин', timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 2 }) },
+            { id: 'box60', name: 'Сундук 1 час', timeReq: 3600, claimed: false, getReward: () => ({ diamonds: 30, tickets: 3, mellCoins: 1 }) }
         ];
 
         let melloPosX = null;
         let melloPosY = null;
         let highestDecoZIndex = 45;
 
-        let storyProgress = { l1: false, l2: false, l3: false };
+        let storyProgress = { l1: false, l2: false, l3: false, l4: false };
         let cheremshaClicksCount = 0;
+        let mamabirdClicksCount = 0;
 
         let achievements = {
             catness: { name: 'Котость', desc: 'Сделайте 25 кликов для кошачьей концентрации', icon: '🐱', unlocked: false, claimedDeco: false, check: () => totalClicks >= 25 },
@@ -2894,7 +3304,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             burm: { name: 'Космический Бурмалдаец', desc: 'Соберите 250 зубов в мини-игре', icon: '🐰', unlocked: false, claimedDeco: false, check: () => totalTeethEarned >= 250 },
             dog: { name: 'Собачка', desc: 'Соберите полностью 2 золотых дождя без единого пропуска монет', icon: '🐶', unlocked: false, claimedDeco: false, check: () => perfectGoldenRains >= 2 },
             cheremsha: { name: 'Черемша', desc: 'Пройдите 3 уровень сюжетной мини-игры', icon: '<img src="che.png" alt="Черемша">', unlocked: false, claimedDeco: false, check: () => !!storyProgress.l3 },
-            drun: { name: 'Друн', desc: 'Переживите 3 нашествия Друнов без единого попадания', icon: '👾', unlocked: false, claimedDeco: false, check: () => perfectDrunInvasionsCount >= 3 }
+            mamabird: { name: 'Мама Птица', desc: 'Пройдите 4 уровень сюжетной мини-игры', icon: '<img src="mam.png" alt="Мама Птица">', unlocked: false, claimedDeco: false, check: () => !!storyProgress.l4 },
+            drun: { name: 'Друн', desc: 'Переживите 3 нашествия Друнов (увернитесь минимум от половины Друнов в волне)', icon: '👾', unlocked: false, claimedDeco: false, check: () => halfDodgedDrunWaves >= 3 }
         };
 
         let decos = {
@@ -2904,7 +3315,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             burm: { unlockedOnScreen: false, size: 95, posX: 430, posY: 40, zIndex: 43 },
             dog: { unlockedOnScreen: false, size: 75, posX: 160, posY: 40, zIndex: 44 },
             drun: { unlockedOnScreen: false, size: 95, posX: 220, posY: 40, zIndex: 45 },
-            cheremsha: { unlockedOnScreen: false, size: 95, posX: 360, posY: 40, zIndex: 46 }
+            cheremsha: { unlockedOnScreen: false, size: 95, posX: 360, posY: 40, zIndex: 46 },
+            mamabird: { unlockedOnScreen: false, size: 95, posX: 490, posY: 40, zIndex: 47 }
         };
         const wrapIdMap = {
             catness: 'desktopDecorationCatness',
@@ -2913,7 +3325,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             burm: 'desktopDecorationBurm',
             dog: 'desktopDecorationDog',
             drun: 'desktopDecorationDrun',
-            cheremsha: 'desktopDecorationCheremsha'
+            cheremsha: 'desktopDecorationCheremsha',
+            mamabird: 'desktopDecorationMamabird'
         };
 
         function bringDecoToTop(key) {
@@ -3016,7 +3429,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         // Уровни 11–20 требуют на 60% больше заработка
         levels.forEach((l, i) => { if (i >= 10) l.threshold = Math.round(l.threshold * 1.6); });
 
-        const SKIN_UNLOCK_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; // скины за уровни после 10-го убраны
+        const SKIN_UNLOCK_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // скины за 10-й и выше уровни убраны
         const skins = SKIN_UNLOCK_LEVELS.map(l => ({
             unlockLevel: l,
             name: levels[l - 1].name,
@@ -3157,6 +3570,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         doPrestigeBtn.addEventListener('click', async () => {
             rebirths++;
+            bossIntroDone = true; drunIntroDone = true;
             balance = 0;
             totalEarned = 0;
             baseCpc = 1;
@@ -3175,8 +3589,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             levelBg.style.backgroundImage = `url('${levels[0].bg}')`;
             melloImg.src = 'skinpres.png';
 
-            nextBossScheduledTime = Date.now() + (240 + Math.floor(Math.random() * 240)) * 1000;
-            nextDrunScheduledTime = Date.now() + (480 + Math.floor(Math.random() * 360)) * 1000;
+            nextBossScheduledTime = Date.now() + (180 + Math.floor(Math.random() * 240)) * 1000;
+            nextDrunScheduledTime = Date.now() + (360 + Math.floor(Math.random() * 300)) * 1000;
 
             prestigeModal.classList.remove('active');
 
@@ -3185,10 +3599,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 prestigeSound.play().catch(() => playJackpotSound());
             }
 
-            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все 10 скинов доступны!\n🪙 Теперь за каждый уровень с 11-го ты получаешь Меллкоин для рулетки скинов!`, 'ПЕРЕРОЖДЕНИЕ');
+            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все скины доступны!\n🪙 За каждый уровень с 10-го ты получаешь Меллкоин для рулетки скинов!`, 'ПЕРЕРОЖДЕНИЕ');
             
             updateUI();
             saveGame();
+            showFullscreenAd();
         });
 
         // Возврат в вертикаль после горизонтальных мини-игр
@@ -3259,17 +3674,23 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const note = document.getElementById('lbNewRecord');
             const input = document.getElementById('lbNameInput');
             if (input && document.activeElement !== input) input.value = lbData.name;
-            const rows = lbSorted();
+            const nameRow = document.querySelector('.lb-name-row');
+            if (nameRow) nameRow.style.display = (lbCloudRows !== null) ? 'none' : '';
+            lbLastPlace = newPlace || 0;
+            const rows = (lbCloudRows !== null) ? lbCloudRows : lbSorted();
             const medals = ['🥇', '🥈', '🥉'];
             const cls = ['gold', 'silver', 'bronze'];
-            list.innerHTML = rows.map((e, i) =>
-                `<div class="lb-row ${e.mine ? 'me' : ''} ${cls[i] || ''}"><div class="lb-pos">${medals[i] || (i + 1)}</div><div class="lb-nm">${lbEscape(e.name)}</div><div class="lb-sc">${Number(e.score).toLocaleString('ru-RU')} м</div></div>`
-            ).join('') || '<div style="text-align:center; color:#7a8a84; font-size:13px;">Пока пусто — станьте первым!</div>';
-            if (newPlace) { note.style.display = 'block'; note.textContent = `🎉 Ваш результат попал в таблицу: ${newPlace}-е место!`; }
+            list.innerHTML = rows.map((e, i) => {
+                const pos = e.rank || (i + 1);
+                return `<div class="lb-row ${e.mine ? 'me' : ''} ${cls[pos - 1] || ''}"><div class="lb-pos">${medals[pos - 1] || pos}</div><div class="lb-nm">${lbEscape(e.name)}</div><div class="lb-sc">${Number(e.score).toLocaleString('ru-RU')} м</div></div>`;
+            }).join('') || '<div style="text-align:center; color:#7a8a84; font-size:13px;">Пока пусто — станьте первым!</div>';
+            const shownPlace = (lbCloudRows !== null) ? (newPlace ? lbCloudUserRank : 0) : newPlace;
+            if (shownPlace) { note.style.display = 'block'; note.textContent = `🎉 Ваш результат попал в таблицу: ${shownPlace}-е место!`; }
+            else if (lbCloudRows !== null && yaPlayer && !playerAuthorized) { note.style.display = 'block'; note.textContent = '🔑 Войдите в аккаунт Яндекса, чтобы ваш рекорд попал в общий рейтинг.'; }
             else note.style.display = 'none';
         }
         const leaderboardScreen = document.getElementById('leaderboardScreen');
-        document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; });
+        document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; loadCloudLeaderboard(); });
         document.getElementById('closeLeaderboardBtn').addEventListener('click', () => { leaderboardScreen.style.display = 'none'; });
         function lbApplyName() {
             const v = document.getElementById('lbNameInput').value.trim().slice(0, 16) || 'Игрок';
@@ -3346,6 +3767,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (activeContent) activeContent.classList.add('active');
 
             activeTabId = targetTab;
+            updateUI();
 
             if (targetTab === 'tab-skins') {
                 let activeLvlIdx = 0;
@@ -3364,6 +3786,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         let isArturClaimed = false;
         function spawnArtur() {
+            if (typeof storyModal !== 'undefined' && storyModal.classList.contains('active')) return;
             isArturClaimed = false;
             const stageW = clickStage.clientWidth;
             const stageH = clickStage.clientHeight;
@@ -3523,10 +3946,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             const ok = await confirm('Посмотреть короткую рекламу, чтобы активировать буст бесплатно?', 'РЕКЛАМА');
             if (ok) {
-                await alert('📺 Реклама просмотрена! Буст активирован.', 'БОНУС');
-                activateBoosterEffect(boostType, item.lvl);
-                updateUI();
-                saveGame();
+                showRewardedAd(async () => {
+                    activateBoosterEffect(boostType, item.lvl);
+                    updateUI();
+                    saveGame();
+                    await alert('📺 Реклама просмотрена! Буст активирован.', 'БОНУС');
+                });
             }
         };
 
@@ -3743,34 +4168,30 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 saveGame();
                 return;
             }
-
-            const ok = await confirm(`Купить скин «Кэжуал Мелл в худи» за ${priceRub} ₽?`);
-            if (ok) {
-                donSkin3Unlocked = true;
-                activeSpecialSkin = 'skindon3';
-                melloImg.src = 'skindon3.png';
-                applySkinHitbox();
-                await alert('Скин успешно разблокирован!', 'УСПЕХ');
-                updateUI();
-                renderSkinsList();
-                saveGame();
-            }
+            const r = await runPurchase('skin_casual', `Купить скин «Кэжуал Мелл в худи» за ${priceRub} ₽?`);
+            if (!r.ok) return;
+            donSkin3Unlocked = true;
+            activeSpecialSkin = 'skindon3';
+            melloImg.src = 'skindon3.png';
+            applySkinHitbox();
+            updateUI();
+            renderSkinsList();
+            commitPurchase();
+            await alert('Скин успешно разблокирован!', 'УСПЕХ');
         };
 
+        // Расходники: tickets_3/10/30, diamonds_50/150/500
         window.buyPack = async function(type, count, rubPrice) {
-            const ok = await confirm(`Подтвердить покупку: ${count} ${type === 'tickets' ? 'билетов' : 'алмазов'} за ${rubPrice} ₽?`);
-            if (ok) {
-                if (type === 'tickets') {
-                    tickets += count;
-                    await alert(`Начислено +${count} билетов 🎫.`, 'ПОКУПКА');
-                } else if (type === 'diamonds') {
-                    diamonds += count;
-                    totalDiamondsEarned += count;
-                    await alert(`Начислено +${count} алмазов 💎.`, 'ПОКУПКА');
-                }
-                updateUI();
-                saveGame();
-            }
+            const productId = `${type}_${count}`;
+            if (!CONSUMABLE_PRODUCTS[productId]) return;
+            const r = await runPurchase(productId, `Подтвердить покупку: ${count} ${type === 'tickets' ? 'билетов' : 'алмазов'} за ${rubPrice} ₽?`);
+            if (!r.ok) return;
+            grantConsumable(productId);
+            recordGrantedToken(r.purchase && r.purchase.purchaseToken);
+            updateUI();
+            commitPurchase();                       // сначала фиксируем начисление...
+            await consumePurchaseSafe(r.purchase);  // ...затем списываем покупку у Яндекса
+            await alert(type === 'tickets' ? `Начислено +${count} билетов 🎫.` : `Начислено +${count} алмазов 💎.`, 'ПОКУПКА');
         };
 
         window.buyNoAds = async function(rubPrice) {
@@ -3778,25 +4199,23 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 await alert('Реклама уже отключена!', 'ИНФОРМАЦИЯ');
                 return;
             }
-            const ok = await confirm(`Отключить всю рекламу за ${rubPrice} ₽ навсегда?`);
-            if (ok) {
-                noAdsPurchased = true;
-                await alert('Реклама полностью отключена.', 'ИНФОРМАЦИЯ');
-                updateUI();
-                saveGame();
-            }
+            const r = await runPurchase('no_ads', `Отключить всю рекламу за ${rubPrice} ₽ навсегда?`);
+            if (!r.ok) return;
+            noAdsPurchased = true;
+            updateUI();
+            commitPurchase();
+            await alert('Реклама полностью отключена.', 'ИНФОРМАЦИЯ');
         };
 
         window.handleBossWardClick = async function() {
             if (!bossWardPurchased) {
-                const ok = await confirm('Купить «Оберег от босса» за 200 ₽ навсегда?\nБоссы перестанут нападать, а за каждого пропущенного вам будет приходить награда как от откупа!');
-                if (ok) {
-                    bossWardPurchased = true;
-                    bossWardEnabled = true;
-                    await alert('🧿 Оберег активирован! Боссы отключены, награды будут начисляться автоматически.', 'ОБЕРЕГ');
-                    updateUI();
-                    saveGame();
-                }
+                const r = await runPurchase('boss_ward', 'Купить «Оберег от босса» за 199 ₽ навсегда?\nБоссы перестанут нападать, а за каждого пропущенного вам будет приходить награда как от откупа!');
+                if (!r.ok) return;
+                bossWardPurchased = true;
+                bossWardEnabled = true;
+                updateUI();
+                commitPurchase();
+                await alert('🧿 Оберег активирован! Боссы отключены, награды будут начисляться автоматически.', 'ОБЕРЕГ');
             } else {
                 bossWardEnabled = !bossWardEnabled;
                 await alert(bossWardEnabled ? '🧿 Оберег ВКЛЮЧЕН: боссы отключены.' : '⚔️ Оберег ВЫКЛЮЧЕН: боссы снова будут нападать!', 'ОБЕРЕГ');
@@ -3807,14 +4226,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         window.handleDrunShieldClick = async function() {
             if (!drunShieldPurchased) {
-                const ok = await confirm('Купить «Щит от Друнов» за 149 ₽ навсегда?\nДруны будут автоматически сбиваться ПВО, а вы будете получать награду без риска!');
-                if (ok) {
-                    drunShieldPurchased = true;
-                    drunShieldEnabled = true;
-                    await alert('🛡️ Щит активирован! Друны будут уничтожаться на подлёте.', 'ЩИТ');
-                    updateUI();
-                    saveGame();
-                }
+                const r = await runPurchase('drun_shield', 'Купить «Щит от Друнов» за 149 ₽ навсегда?\nДруны будут автоматически сбиваться ПВО, а вы будете получать награду без риска!');
+                if (!r.ok) return;
+                drunShieldPurchased = true;
+                drunShieldEnabled = true;
+                updateUI();
+                commitPurchase();
+                await alert('🛡️ Щит активирован! Друны будут уничтожаться на подлёте.', 'ЩИТ');
             } else {
                 drunShieldEnabled = !drunShieldEnabled;
                 await alert(drunShieldEnabled ? '🛡️ Щит ВКЛЮЧЕН: налёты Друнов отражаются автоматически.' : '⚠️ Щит ВЫКЛЮЧЕН: Друны снова будут атаковать Меллстроя!', 'ЩИТ');
@@ -3884,77 +4302,184 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             musicVolumeVal.textContent = `${Math.round(musicVolume * 100)}%`;
         }
 
+        // ---------- ЛИМИТЫ ПРОМОКОДОВ ----------
+        // perPlayer — сколько раз один игрок может активировать код (0 = без ограничений)
+        // global    — общий лимит активаций на всех игроков (0 = без ограничений, нужен PROMO_SERVER_URL, см. ниже)
+        const PROMO_USED_KEY = 'mello_promo_used';
+        const PROMO_CLOUD_KEY = 'mello_promo';
+        const PROMO_COOLDOWN_MS = 3000;       // антиспам: не чаще раза в 3 с
+        const PROMO_SERVER_URL = '';          // например 'https://example.com/promo' — без него общий лимит не работает
+        const PROMO_CONFIG = {
+            'timewarp7':    { id: 'vremechko', perPlayer: 1, global: 0 },   // +30 мин сундуков и дохода
+            'gemrain':      { id: 'fogchan',   perPlayer: 1, global: 0 },   // +200 алмазов
+            'cashgrab':     { id: 'dengoi',    perPlayer: 1, global: 0 },   // +$10,000
+            'toothfairy':   { id: 'zubez',     perPlayer: 1, global: 0 },   // +100 зубов
+            'summonarthur': { id: 'artur',     perPlayer: 3, global: 0 },   // Артур на экране
+            'maniacnight':  { id: 'manyachk',  perPlayer: 1, global: 0 },   // бой с маньяком
+            'luckydog':     { id: 'casino',    perPlayer: 1, global: 0 },   // казино (общий счётчик с dogjackpot)
+            'dogjackpot':   { id: 'casino',    perPlayer: 1, global: 0 },
+            'dronestorm':   { id: 'drune',     perPlayer: 1, global: 0 },   // нашествие друнов
+            'wildgarlic':   { id: 'cheremsha', perPlayer: 1, global: 0 }    // достижение «Черемша»
+        };
+        let promoUsed = {};
+        let lastPromoTry = 0;
+        let promoBusy = false;
+
+        function mergePromoUsed(a, b) {
+            const out = {};
+            [a, b].forEach(src => {
+                if (!src || typeof src !== 'object') return;
+                Object.keys(src).forEach(k => {
+                    const n = Math.floor(Number(src[k]) || 0);
+                    if (n > (out[k] || 0)) out[k] = n;
+                });
+            });
+            return out;
+        }
+        function loadPromoUsedLocal() {
+            try { promoUsed = mergePromoUsed(promoUsed, JSON.parse(localStorage.getItem(PROMO_USED_KEY) || '{}')); } catch (e) {}
+        }
+        // Облачная копия хранится под отдельным ключом, поэтому «Сброс прогресса» её не стирает
+        async function loadPromoUsedCloud() {
+            if (!yaPlayer) return;
+            try {
+                const d = await withTimeout(yaPlayer.getData([PROMO_CLOUD_KEY]), 5000);
+                promoUsed = mergePromoUsed(promoUsed, d && d[PROMO_CLOUD_KEY]);
+                savePromoUsed();
+            } catch (e) { console.warn('[YSDK] promo getData failed', e); }
+        }
+        function savePromoUsed() {
+            try { localStorage.setItem(PROMO_USED_KEY, JSON.stringify(promoUsed)); } catch (e) {}
+            if (yaPlayer) {
+                try {
+                    const p = yaPlayer.setData({ [PROMO_CLOUD_KEY]: promoUsed }, false);
+                    if (p && typeof p.catch === 'function') p.catch(() => {});
+                } catch (e) {}
+            }
+        }
+        loadPromoUsedLocal();
+        (async function () {
+            const wait = () => new Promise(r => setTimeout(r, 300));
+            for (let i = 0; i < 40 && !gameLoaded; i++) await wait();   // ждём инициализации SDK
+            await loadPromoUsedCloud();
+        })();
+
+        // Общий лимит: нужен сервер, который считает активации. Без PROMO_SERVER_URL проверка пропускается.
+        async function claimPromoGlobally(cfg) {
+            if (!cfg.global || !PROMO_SERVER_URL) return { ok: true };
+            try {
+                const r = await withTimeout(fetch(PROMO_SERVER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: cfg.id, limit: cfg.global })
+                }), 6000);
+                const j = await r.json();
+                return { ok: !!j.ok, left: j.left };
+            } catch (e) { return { ok: false, offline: true }; }
+        }
+
         applyPromoBtn.addEventListener('click', async () => {
+            if (promoBusy) return;
+            const now = Date.now();
+            if (now - lastPromoTry < PROMO_COOLDOWN_MS) {
+                await alert('Не так быстро! Подожди пару секунд.', 'ПРОМОКОД');
+                return;
+            }
+            lastPromoTry = now;
+
             const code = promoInput.value.trim().toLowerCase();
-            if (code === 'времечко') {
-                playTimeSeconds += 1800;
-                let basePassive = getBasePassiveCps();
-                let addedMoney = basePassive * 1800;
-                if (addedMoney > 0) { balance += addedMoney; totalEarned += addedMoney; }
-                promoInput.value = '';
-                await alert(`Промокод «времечко» активирован! +30 мин сундуков, начислено +$${formatCompactNumber(addedMoney)} дохода.`, 'ПРОМОКОД');
-            } else if (code === 'фогчан') {
-                diamonds += 200;
-                totalDiamondsEarned += 200;
-                promoInput.value = '';
-                await alert('Промокод «фогчан» активирован! Получено +200 💎 алмазов!', 'ПРОМОКОД');
-            } else if (code === 'деньги') {
-                balance += 10000;
-                totalEarned += 10000;
-                promoInput.value = '';
-                await alert('Промокод «деньги» активирован! Получено +$10,000!', 'ПРОМОКОД');
-            } else if (code === 'зубы') {
-                teeth += 100;
-                totalTeethEarned += 100;
-                promoInput.value = '';
-                await alert('Промокод «зубы» активирован! Получено +100 🦷 зубов!', 'ПРОМОКОД');
-            } else if (code === 'артур') {
-                spawnArtur();
-                promoInput.value = '';
-                settingsModal.classList.remove('active');
-                await alert('Артур призван на экран!', 'ПРОМОКОД');
-            } else if (code === 'маньяк') {
-                promoInput.value = '';
-                settingsModal.classList.remove('active');
-                startBossBattle();
-            } else if (code === 'собака' || code === 'казино') {
-                dogCasinoResult.textContent = 'Удача улыбнулась! Нажмите «Крутить», чтобы забрать выигрыш!';
-                spinDogCasinoBtn.style.display = 'block';
-                slot1.textContent = '🐶';
-                slot2.textContent = '💎';
-                slot3.textContent = '🦷';
-                
-                currentPresetResult = generatePresetResult();
-                
-                dogCasinoModal.classList.add('active');
-                promoInput.value = '';
-                settingsModal.classList.remove('active');
-                if (sfxEnabled) {
-                    jackpotSound.currentTime = 0;
-                    jackpotSound.play().catch(()=>{});
-                }
-            } else if (code === 'друн') {
-                promoInput.value = '';
-                settingsModal.classList.remove('active');
-                startDrunInvasion();
-            } else if (code === 'черемша') {
-                promoInput.value = '';
-                if (achievements.cheremsha.unlocked) {
-                    await alert('Достижение «Черемша» уже получено!', 'ПРОМОКОД');
-                } else {
-                    achievements.cheremsha.unlocked = true;
-                    saveGame();
-                    await alert('Промокод «черемша» активирован! Достижение «Черемша» разблокировано — забери его в разделе 🏆 Достижения.', 'ПРОМОКОД');
-                }
-            } else {
+            const cfg = PROMO_CONFIG[code];
+            if (!cfg) {
                 await alert('Неверный промокод!', 'ОШИБКА');
                 return;
             }
 
-            updateChestButtonUI();
-            checkAchievements();
-            updateUI();
-            saveGame();
+            promoBusy = true;
+            try {
+                // Лимит на игрока
+                const used = promoUsed[cfg.id] || 0;
+                if (cfg.perPlayer && used >= cfg.perPlayer) {
+                    promoInput.value = '';
+                    await alert('Ты уже использовал этот промокод максимальное число раз.', 'ПРОМОКОД');
+                    return;
+                }
+                // Коды, которые нельзя применить прямо сейчас (не тратим попытку)
+                if ((code === 'maniacnight' && (inBattle || isDrunInvasionActive)) || (code === 'dronestorm' && (isDrunInvasionActive || inBattle))) {
+                    await alert('Сейчас идёт событие — активируй промокод после его окончания.', 'ПРОМОКОД');
+                    return;
+                }
+                if (code === 'wildgarlic' && achievements.cheremsha.unlocked) {
+                    promoInput.value = '';
+                    await alert('Достижение «Черемша» уже получено!', 'ПРОМОКОД');
+                    return;
+                }
+                // Общий лимит
+                const g = await claimPromoGlobally(cfg);
+                if (!g.ok) {
+                    await alert(g.offline ? 'Не удалось проверить промокод. Проверь соединение и попробуй ещё раз.'
+                                          : 'Этот промокод закончился — лимит активаций исчерпан.', 'ПРОМОКОД');
+                    return;
+                }
+
+                // Засчитываем использование ДО выдачи награды, чтобы нельзя было успеть нажать повторно
+                promoUsed[cfg.id] = used + 1;
+                savePromoUsed();
+                promoInput.value = '';
+
+                if (code === 'timewarp7') {
+                    playTimeSeconds += 1800;
+                    let basePassive = getBasePassiveCps();
+                    let addedMoney = basePassive * 1800;
+                    if (addedMoney > 0) { balance += addedMoney; totalEarned += addedMoney; }
+                    await alert(`Промокод активирован! +30 мин сундуков, начислено +$${formatCompactNumber(addedMoney)} дохода.`, 'ПРОМОКОД');
+                } else if (code === 'gemrain') {
+                    diamonds += 200;
+                    totalDiamondsEarned += 200;
+                    await alert('Промокод активирован! Получено +200 💎 алмазов!', 'ПРОМОКОД');
+                } else if (code === 'cashgrab') {
+                    balance += 10000;
+                    totalEarned += 10000;
+                    await alert('Промокод активирован! Получено +$10,000!', 'ПРОМОКОД');
+                } else if (code === 'toothfairy') {
+                    teeth += 100;
+                    totalTeethEarned += 100;
+                    await alert('Промокод активирован! Получено +100 🦷 зубов!', 'ПРОМОКОД');
+                } else if (code === 'summonarthur') {
+                    spawnArtur();
+                    settingsModal.classList.remove('active');
+                    await alert('Артур призван на экран!', 'ПРОМОКОД');
+                } else if (code === 'maniacnight') {
+                    settingsModal.classList.remove('active');
+                    startBossBattle();
+                } else if (code === 'luckydog' || code === 'dogjackpot') {
+                    dogCasinoResult.textContent = 'Удача улыбнулась! Нажмите «Крутить», чтобы забрать выигрыш!';
+                    spinDogCasinoBtn.style.display = 'block';
+                    slot1.textContent = '🐶';
+                    slot2.textContent = '💎';
+                    slot3.textContent = '🦷';
+                    currentPresetResult = generatePresetResult();
+                    dogCasinoModal.classList.add('active');
+                    settingsModal.classList.remove('active');
+                    if (sfxEnabled) {
+                        jackpotSound.currentTime = 0;
+                        jackpotSound.play().catch(()=>{});
+                    }
+                } else if (code === 'dronestorm') {
+                    settingsModal.classList.remove('active');
+                    startDrunInvasion();
+                } else if (code === 'wildgarlic') {
+                    achievements.cheremsha.unlocked = true;
+                    saveGame();
+                    await alert('Промокод активирован! Достижение «Черемша» разблокировано — забери его в разделе 🏆 Достижения.', 'ПРОМОКОД');
+                }
+
+                updateChestButtonUI();
+                checkAchievements();
+                updateUI();
+                saveGame();
+            } finally {
+                promoBusy = false;
+            }
         });
 
         function checkTimedRewards() {
@@ -4040,16 +4565,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
             }
 
-            if (mellTiltCooldown > 0) {
-                showFloatingText(`ТИЛЬТ (${mellTiltCooldown}c)`, touchOrEvent, false, true);
-                return;
-            }
             playContinuousClickSound();
             doClick(touchOrEvent);
         }
 
         function startMelloDrag(e) {
-            if (mellTiltCooldown > 0) return;
             if (isDrunInvasionActive && e.touches) return; // на телефоне во время нашествия двигаем свайпом по сцене
             const touch = e.touches ? e.touches[0] : e;
             const clientX = touch.clientX;
@@ -4257,6 +4777,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         updateUI();
                         saveGame();
                     }
+                } else if (key === 'mamabird') {
+                    mamabirdClicksCount++;
+                    if (mamabirdClicksCount >= 20) {
+                        mamabirdClicksCount = 0;
+                        giveMamaBirdReward(e);
+                    }
                 } else if (key === 'dog') {
                     triggerDogJackpot(e);
                 } else {
@@ -4443,14 +4969,14 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             else notifDot.style.display = 'none';
         }
 
-        function saveGame() {
+        function getSavePayload() {
             const gameData = {
                 balance, diamonds, teeth, tickets, mellCoins, coinLevelsClaimed, rebirths, rebirthSkinUnlocked, donSkin3Unlocked, activeSpecialSkin, specialSkins,
-                noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, storyProgress,
+                noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, mamabirdClicksCount, storyProgress,
                 lastFreeTicketTime, totalDiamondsEarned, totalDiamondsSpent, totalEarned, totalSpent, totalClicks,
-                selectedBunnySkinId, bossKillsCount, mellTiltCooldown, nextBossScheduledTime, nextDrunScheduledTime, survivedDrunInvasionsCount, perfectDrunInvasionsCount,
+                selectedBunnySkinId, bossKillsCount, mellTiltCooldown, bossIntroDone, drunIntroDone, bossTutorialSeen, drunTutorialSeen, nextBossScheduledTime, nextDrunScheduledTime, survivedDrunInvasionsCount, perfectDrunInvasionsCount, halfDodgedDrunWaves,
                 bunnySkinsUnlocked: bunnySkinsConfig.map(s => ({ id: s.id, unlocked: s.unlocked })),
-                baseCpc, upgrades, claimedLevelBonuses,
+                baseCpc, upgrades, claimedLevelBonuses, grantedPurchaseTokens,
                 sfxEnabled, sfxVolume, musicEnabled, musicVolume, selectedSkinIndex, userManuallySelectedSkin,
                 maxSeenSkinIndex, skinFmt: 2, priceFmt: 5, melloPosX, melloPosY, playTimeSeconds, lastDayString,
                 boxesClaimedState: boxesConfig.map(b => b.claimed),
@@ -4462,10 +4988,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     burm: { unlocked: achievements.burm.unlocked, claimedDeco: achievements.burm.claimedDeco },
                     dog: { unlocked: achievements.dog.unlocked, claimedDeco: achievements.dog.claimedDeco },
                     drun: { unlocked: achievements.drun.unlocked, claimedDeco: achievements.drun.claimedDeco },
-                    cheremsha: { unlocked: achievements.cheremsha.unlocked, claimedDeco: achievements.cheremsha.claimedDeco }
+                    cheremsha: { unlocked: achievements.cheremsha.unlocked, claimedDeco: achievements.cheremsha.claimedDeco },
+                    mamabird: { unlocked: achievements.mamabird.unlocked, claimedDeco: achievements.mamabird.claimedDeco }
                 }
             };
-            localStorage.setItem('mello_clicker_save', JSON.stringify(gameData));
+            return gameData;
         }
 
         function loadGame() {
@@ -4490,12 +5017,20 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 mellTiltCooldown = data.mellTiltCooldown || 0;
                 nextBossScheduledTime = data.nextBossScheduledTime || 0;
                 nextDrunScheduledTime = data.nextDrunScheduledTime || 0;
+                // старые сохранения: если расписание уже было — «первый раз» уже прошёл
+                bossIntroDone = data.bossIntroDone !== undefined ? !!data.bossIntroDone : (nextBossScheduledTime > 0 || rebirths > 0);
+                drunIntroDone = data.drunIntroDone !== undefined ? !!data.drunIntroDone : (nextDrunScheduledTime > 0 || rebirths > 0);
+                bossTutorialSeen = !!data.bossTutorialSeen;
+                drunTutorialSeen = !!data.drunTutorialSeen;
                 survivedDrunInvasionsCount = data.survivedDrunInvasionsCount || 0;
                 perfectDrunInvasionsCount = data.perfectDrunInvasionsCount || 0;
+                // старые сохранения: чистые победы точно считаются «пережитыми»
+                halfDodgedDrunWaves = data.halfDodgedDrunWaves !== undefined ? (data.halfDodgedDrunWaves || 0) : perfectDrunInvasionsCount;
                 perfectGoldenRains = data.perfectGoldenRains || 0;
                 dogClicksCount = data.dogClicksCount || 0;
                 cheremshaClicksCount = data.cheremshaClicksCount || 0;
-                storyProgress = Object.assign({ l1: false, l2: false, l3: false }, data.storyProgress || {});
+                mamabirdClicksCount = data.mamabirdClicksCount || 0;
+                storyProgress = Object.assign({ l1: false, l2: false, l3: false, l4: false }, data.storyProgress || {});
                 highestDecoZIndex = Math.min(58, data.highestDecoZIndex || 45);
 
                 if (data.specialSkins) {
@@ -4505,6 +5040,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
 
                 noAdsPurchased = data.noAdsPurchased || false;
+                grantedPurchaseTokens = Array.isArray(data.grantedPurchaseTokens) ? data.grantedPurchaseTokens.slice(-50) : [];
                 totalTeethEarned = data.totalTeethEarned !== undefined ? data.totalTeethEarned : teeth;
                 totalTeethSpent = data.totalTeethSpent || 0;
                 maxHeight = data.maxHeight || 0;
@@ -4637,13 +5173,14 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 clearInterval(hypeStormTimer);
                 clearInterval(luckMellTimer);
 
-                localStorage.removeItem('mello_clicker_save');
-                localStorage.removeItem('mello_jump_leaderboard');
+                const cleared = await resetAllProgress();
+                if (!cleared) return;
                 upgrades = JSON.parse(JSON.stringify(defaultUpgrades));
                 location.reload();
             }
         });
 
+        function setChestHtml(h) { if (mainChestBtn._h !== h) { mainChestBtn._h = h; mainChestBtn.innerHTML = h; } }
         function updateChestButtonUI() {
             let nextBox = boxesConfig.find(b => !b.claimed);
             if (!nextBox) {
@@ -4654,13 +5191,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (mainChestBtn.style.display === 'none') mainChestBtn.style.display = '';
 
             if (playTimeSeconds >= nextBox.timeReq) {
-                mainChestBtn.innerHTML = `🎁 ${nextBox.name} (Забрать!)`;
+                setChestHtml(`🎁 ${nextBox.name} (Забрать!)`);
                 mainChestBtn.classList.add('ready');
             } else {
                 let remSec = nextBox.timeReq - playTimeSeconds;
                 let m = Math.floor(remSec / 60);
                 let s = remSec % 60;
-                mainChestBtn.innerHTML = `🎁 ${m}:${s < 10 ? '0' : ''}${s}`;
+                setChestHtml(`🎁 ${m}:${s < 10 ? '0' : ''}${s}`);
                 mainChestBtn.classList.remove('ready');
             }
         }
@@ -4678,6 +5215,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (reward.tickets > 0) {
                     tickets += reward.tickets;
                 }
+                if (reward.mellCoins > 0) {
+                    mellCoins += reward.mellCoins;
+                }
 
                 mainChestBtn.classList.add('chest-anim');
                 setTimeout(() => mainChestBtn.classList.remove('chest-anim'), 400);
@@ -4685,6 +5225,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 const stageRect = clickStage.getBoundingClientRect();
                 let floatText = `+${reward.diamonds} 💎`;
                 if (reward.tickets > 0) floatText += ` +${reward.tickets} 🎫`;
+                if (reward.mellCoins > 0) floatText += ` +${reward.mellCoins} 🪙`;
                 showFloatingTextExplicit(floatText, stageRect.width / 2 - 40, stageRect.height / 2 - 30, false, false, true);
 
                 updateChestButtonUI();
@@ -4702,7 +5243,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             const newLevelNum = activeLvlIdx + 1;
             currentLevel = newLevelNum;
-            if (rebirths > 0) {
+            {
                 let gainedCoins = 0;
                 for (let lv = MELL_COIN_START_LEVEL; lv <= newLevelNum; lv++) {
                     if (!coinLevelsClaimed.includes(lv)) { coinLevelsClaimed.push(lv); gainedCoins += MELL_COINS_PER_LEVEL; }
@@ -4718,7 +5259,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
             }
             const lvlData = levels[activeLvlIdx];
-            levelBg.style.backgroundImage = `url('${lvlData.bg}')`;
+            const bgUrl = `url('${lvlData.bg}')`;
+            if (levelBg.dataset.bg !== bgUrl) { levelBg.dataset.bg = bgUrl; levelBg.style.backgroundImage = bgUrl; }
 
             if (!userManuallySelectedSkin && !activeSpecialSkin) selectedSkinIndex = skinIndexForLevelIdx(activeLvlIdx);
 
@@ -4728,11 +5270,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }
 
             if ((activeLvlIdx >= 5 || rebirths > 0) && (nextBossScheduledTime === 0 || nextBossScheduledTime < Date.now()) && !inBattle) {
-                nextBossScheduledTime = Date.now() + (480 + Math.floor(Math.random() * 360)) * 1000;
+                nextBossScheduledTime = Date.now() + bossGapMs();
             }
 
-            if ((activeLvlIdx >= 8 || rebirths > 0) && (nextDrunScheduledTime === 0 || nextDrunScheduledTime < Date.now()) && !isDrunInvasionActive) {
-                nextDrunScheduledTime = Date.now() + (960 + Math.floor(Math.random() * 600)) * 1000;
+            if ((activeLvlIdx >= 7 || rebirths > 0) && (nextDrunScheduledTime === 0 || nextDrunScheduledTime < Date.now()) && !isDrunInvasionActive) {
+                nextDrunScheduledTime = Date.now() + drunGapMs();
             }
 
             if (activeLvlIdx >= 9 && rebirths === 0) {
@@ -4753,15 +5295,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             if (skinIndexForLevelIdx(activeLvlIdx) > maxSeenSkinIndex && activeTabId !== 'tab-skins') skinNotifDot.style.display = 'block';
 
-            if (activeSpecialSkin === 'skinpres') {
-                melloImg.src = 'skinpres.png';
-            } else if (activeSpecialSkin && specialSkins[activeSpecialSkin]) {
-                melloImg.src = specialSkins[activeSpecialSkin].img;
-            } else if (activeSpecialSkin === 'skindon3') {
-                melloImg.src = 'skindon3.png';
-            } else {
-                melloImg.src = skins[Math.min(selectedSkinIndex, skins.length - 1)].img;
-            }
+            let wantedSrc;
+            if (activeSpecialSkin === 'skinpres') wantedSrc = 'skinpres.png';
+            else if (activeSpecialSkin && specialSkins[activeSpecialSkin]) wantedSrc = specialSkins[activeSpecialSkin].img;
+            else if (activeSpecialSkin === 'skindon3') wantedSrc = 'skindon3.png';
+            else wantedSrc = skins[Math.min(selectedSkinIndex, skins.length - 1)].img;
+            if (melloImg.getAttribute('src') !== wantedSrc) melloImg.src = wantedSrc;
 
             let currentThreshold = levels[activeLvlIdx].threshold;
             let nextThreshold = activeLvlIdx < levels.length - 1 ? levels[activeLvlIdx + 1].threshold : currentThreshold * 2;
@@ -4770,7 +5309,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             let percent = Math.min(100, Math.max(0, (earnedInLevel / progressSpan) * 100));
 
             levelProgressBar.style.width = `${percent}%`;
-            levelStatusText.textContent = `Ур. ${currentLevel}/${levels.length}: ${levels[activeLvlIdx].name} (${Math.floor(percent)}%)`;
+            const lvlTxt = `Ур. ${currentLevel}/${levels.length}: ${levels[activeLvlIdx].name} (${Math.floor(percent)}%)`;
+            if (levelStatusText.textContent !== lvlTxt) levelStatusText.textContent = lvlTxt;
         }
 
         function renderSkinsList(maxUnlockedIdx) {
@@ -4918,7 +5458,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const cost = MELL_SPIN_COST[pay];
             if (pay === 'diamonds' && diamonds < cost) { await alert(`Не хватает алмазов 💎! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
             if (pay === 'teeth' && teeth < cost) { await alert(`Не хватает зубов 🦷! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
-            if (pay === 'coins' && mellCoins < cost) { await alert('Не хватает Меллкоинов 🪙! Их дают за каждый уровень с 11-го после престижа.', 'РУЛЕТКА'); return; }
+            if (pay === 'coins' && mellCoins < cost) { await alert('Не хватает Меллкоинов 🪙! Их дают за каждый уровень с 10-го и за сундук за 1 час в игре.', 'РУЛЕТКА'); return; }
 
             if (pay === 'diamonds') { diamonds -= cost; totalDiamondsSpent += cost; }
             else if (pay === 'teeth') { teeth -= cost; totalTeethSpent += cost; }
@@ -5048,6 +5588,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             setTimeout(() => { if (coin.parentNode) coin.remove(); }, randomDuration * 1000);
         }
 
+        const TILT_INCOME_MULT = 0.2;   // в тильте доход режется на 80%
+        function getTiltMult() { return mellTiltCooldown > 0 ? TILT_INCOME_MULT : 1; }
         function getCpc() { 
             let val = baseCpc * cpcMultiplier;
             if (rebirths > 0) val *= (1 + rebirths * PRESTIGE_BONUS);
@@ -5082,16 +5624,29 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const now = Date.now();
             clickTimes = clickTimes.filter(time => now - time <= 1000);
             let currentClickCps = clickTimes.length * getCpc();
-            cps = basePassive + currentClickCps;
+            cps = (basePassive + currentClickCps) * getTiltMult();
         }
 
+        let uiQueued = false, lastUiTime = 0;
         function updateUI() {
+            if (uiQueued) return;
+            uiQueued = true;
+            const wait = Math.max(0, 100 - (performance.now() - lastUiTime));
+            setTimeout(() => requestAnimationFrame(() => {
+                uiQueued = false;
+                lastUiTime = performance.now();
+                updateUIImmediate();
+            }), wait);
+        }
+
+        function updateUIImmediate() {
             balanceEl.textContent = formatCompactNumber(balance);
             diamondsEl.textContent = diamonds.toLocaleString();
             teethEl.textContent = teeth.toLocaleString();
             ticketsEl.textContent = tickets.toLocaleString();
             updateMellCoinsUI();
 
+            if (infoModal.classList.contains('active')) {
             infoTotalEarned.textContent = '$' + formatCompactNumber(totalEarned);
             infoTotalSpent.textContent = '$' + formatCompactNumber(totalSpent);
             infoTotalClicks.textContent = totalClicks.toLocaleString();
@@ -5102,9 +5657,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             infoBossKills.textContent = bossKillsCount.toLocaleString();
             infoTotalRebirths.textContent = rebirths;
             infoTotalTime.textContent = formatGameTime(playTimeSeconds);
+            }
 
-            cpsEl.textContent = mellTiltCooldown > 0 ? '0 (ТИЛЬТ)' : formatCompactNumber(cps);
-            cpcEl.textContent = mellTiltCooldown > 0 ? '$0 (ТИЛЬТ)' : '$' + formatCompactNumber(getCpc());
+            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + ' (ТИЛЬТ −80%)' : formatCompactNumber(cps);
+            cpcEl.textContent = mellTiltCooldown > 0 ? '$' + formatCompactNumber(getCpc() * getTiltMult()) + ' (ТИЛЬТ)' : '$' + formatCompactNumber(getCpc());
 
             const noAdsStatusEl = document.getElementById('noAdsStatus');
             const noAdsPriceEl = document.getElementById('noAdsPrice');
@@ -5144,6 +5700,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             checkAchievements();
             updateChestButtonUI();
 
+            if (activeTabId === 'tab-clicks') {
             updateUpgradeCard('ClickPower', 'upgClickPower', 'costClickPower', 'cntClickPower');
             updateUpgradeCard('Mouse', 'upgMouse', 'costMouse', 'cntMouse');
             updateUpgradeCard('Grip', 'upgGrip', 'costGrip', 'cntGrip');
@@ -5160,7 +5717,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             updateUpgradeCard('DivineTouch', 'upgDivineTouch', 'costDivineTouch', 'cntDivineTouch');
             updateUpgradeCard('TrueSingularity', 'upgTrueSingularity', 'costTrueSingularity', 'cntTrueSingularity');
             updateUpgradeCard('MultiverseLord', 'upgMultiverseLord', 'costMultiverseLord', 'cntMultiverseLord');
+            }
 
+            if (activeTabId === 'tab-passive') {
             updateUpgradeCard('Mic', 'upgMic', 'costMic', 'cntMic');
             updateUpgradeCard('Webcam', 'upgWebcam', 'costWebcam', 'cntWebcam');
             updateUpgradeCard('Raffle', 'upgRaffle', 'costRaffle', 'cntRaffle');
@@ -5177,8 +5736,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             updateUpgradeCard('GalaxyEmpire', 'upgGalaxyEmpire', 'costGalaxyEmpire', 'cntGalaxyEmpire');
             updateUpgradeCard('QuantumFarm', 'upgQuantumFarm', 'costQuantumFarm', 'cntQuantumFarm');
             updateUpgradeCard('MultiverseEmpire', 'upgMultiverseEmpire', 'costMultiverseEmpire', 'cntMultiverseEmpire');
+            }
 
-            updateBoosterCards();
+            if (activeTabId === 'tab-boosters') updateBoosterCards();
             updateTimerOverlay();
         }
 
@@ -5245,8 +5805,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         });
 
         function doClick(event = null) {
-            if (mellTiltCooldown > 0) return;
-            let currentCpc = getCpc();
+            let currentCpc = getCpc() * getTiltMult();
             let isCrit = false;
 
             if (luckMellTimeLeft > 0 && Math.random() < 0.15) {
@@ -5486,9 +6045,14 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             playerSoul.y = Math.max(0, Math.min(utCanvas.height - playerSoul.h, ty));
         }
 
+        function bossGapMs() { return (360 + Math.floor(Math.random() * 180)) * 1000; }   // 6–9 мин
+        function drunGapMs() { return (540 + Math.floor(Math.random() * 180)) * 1000; }   // 9–12 мин
         async function startBossBattle() {
+            if (inBattle || isDrunInvasionActive || eventIntroOpen) return;
+            // переносим следующий запуск сразу, чтобы таймер не мог стартовать событие повторно
+            nextBossScheduledTime = Date.now() + bossGapMs();
             if (bossWardPurchased && bossWardEnabled) {
-                nextBossScheduledTime = Date.now() + (480 + Math.floor(Math.random() * 360)) * 1000;
+                nextBossScheduledTime = Date.now() + bossGapMs();
                 isMysteryTimerVisible = false;
                 mysteryTimerBadge.style.display = 'none';
 
@@ -5499,6 +6063,19 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 await alert(`🧿 Оберег защитил вас от Маньяка (${phantomHp} HP)!\nВам начислена награда откупа: ${singleReward.text}`, 'ОБЕРЕГ');
                 finishBossFightClean();
                 return;
+            }
+
+            if (!bossTutorialSeen) {
+                bossTutorialSeen = true;
+                eventIntroOpen = true;
+                saveGame();
+                try {
+                    await alert('⚠️ НА ТЕБЯ НАПАЛ МАНЬЯК!\n\n' +
+                        '⚔️ Атака: полоска бегает туда-сюда — нажми, когда она на зелёной зоне (КРИТ), жёлтая — обычный удар, фиолетовый центр — мега-удар.\n' +
+                        '🛡️ Защита: уворачивайся от летящих пуль, двигая сердечко пальцем (или WASD).\n' +
+                        '🥺 Можно умолять о пощаде, сбежать (потеряешь 15% денег) или откупиться за 20 💎.\n' +
+                        '💀 Проиграешь — Меллстрой уйдёт в тильт: доход упадёт на 80%.', 'МАНЬЯК');
+                } finally { eventIntroOpen = false; }
             }
 
             inBattle = true;
@@ -5645,23 +6222,28 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 finishBossFightClean();
             } else {
                 const ok = await confirm('Посмотреть короткую рекламу для безопасного пропуска босса?', 'РЕКЛАМА');
-                if (ok) {
+                if (!ok || !inBattle) return;
+                // Награда (пропуск босса) — строго внутри onRewarded
+                showRewardedAd(async () => {
                     inBattle = false;
+                    isBossPaused = false;
+                    if (bossPauseOverlay) bossPauseOverlay.style.display = 'none';
                     bossModal.classList.remove('active');
                     await alert('📺 Реклама просмотрена! Маньяк ушел.', 'ПРОПУСК');
                     finishBossFightClean();
-                }
+                });
             }
         });
 
         function finishBossFightClean() {
-            nextBossScheduledTime = Date.now() + (480 + Math.floor(Math.random() * 360)) * 1000;
+            nextBossScheduledTime = Date.now() + bossGapMs();
             isMysteryTimerVisible = false;
             mysteryTimerBadge.style.display = 'none';
             bullets = [];
             utCtx.clearRect(0, 0, utCanvas.width, utCanvas.height);
             updateUI();
             saveGame();
+            showFullscreenAd();   // естественная пауза: бой окончен
         }
 
         attackTargetBar.addEventListener('click', () => {
@@ -5730,8 +6312,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (delta > 100) delta = 100;
 
             battleTimeAcc += delta;
+            let battleSteps = 0;
 
             while (battleTimeAcc >= BATTLE_STEP_60) {
+                battleSteps++;
                 if (battlePhase === 'attack' && sliderActive) {
                     let barW = attackTargetBar.clientWidth;
                     sliderX += sliderSpeed * sliderDir;
@@ -5746,7 +6330,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 battleTimeAcc -= BATTLE_STEP_60;
             }
 
-            drawBattleCanvas();
+            if (battleSteps > 0) drawBattleCanvas();
             requestAnimationFrame(battleLoop);
         }
 
@@ -5847,7 +6431,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     };
                     if (b.type === 'knife') {
                         utCtx.rotate(b.rot);
-                        utCtx.shadowColor = 'rgba(54, 230, 255, 0.7)'; utCtx.shadowBlur = 7;
+                        utCtx.shadowColor = 'rgba(54, 230, 255, 0.7)'; utCtx.shadowBlur = IS_IOS ? 0 : 7;
                         utCtx.fillStyle = '#ff9f43';
                         utCtx.beginPath(); utCtx.arc(-12, 0, 4.2, 0, 6.3); utCtx.fill();
                         utCtx.fillRect(-14, -3.5, 8, 7);
@@ -5859,7 +6443,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         utCtx.shadowBlur = 0;
                         face(4, -1.5, 2.8, 2.2, 1.2, '#16323a');
                     } else if (b.type === 'saw') {
-                        utCtx.shadowColor = 'rgba(255, 204, 77, 0.7)'; utCtx.shadowBlur = 8;
+                        utCtx.shadowColor = 'rgba(255, 204, 77, 0.7)'; utCtx.shadowBlur = IS_IOS ? 0 : 8;
                         utCtx.rotate(b.rot);
                         utCtx.fillStyle = '#ffd84d'; utCtx.strokeStyle = '#ff9f1a'; utCtx.lineWidth = 1.6; utCtx.lineJoin = 'round';
                         utCtx.beginPath();
@@ -5876,7 +6460,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         face(0, -2, 3, 3, 1.3, '#4a2a00');
                     } else if (b.type === 'drop') {
                         utCtx.rotate(Math.sin(b.y * 0.1) * 0.2);
-                        utCtx.shadowColor = 'rgba(255, 77, 125, 0.7)'; utCtx.shadowBlur = 7;
+                        utCtx.shadowColor = 'rgba(255, 77, 125, 0.7)'; utCtx.shadowBlur = IS_IOS ? 0 : 7;
                         utCtx.fillStyle = '#ff4d7d'; utCtx.strokeStyle = '#ffd0dc'; utCtx.lineWidth = 1.2;
                         utCtx.beginPath();
                         utCtx.moveTo(0, -10); utCtx.bezierCurveTo(2, -5, 7, -1, 7, 3.5);
@@ -5983,7 +6567,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             mellTiltCooldown = Math.round(60 - ratio * 30);
 
             melloBtn.classList.add('disabled-cooldown');
-            await alert(`💀 МАНЬЯК ПОБЕДИЛ ВАС!\nМеллстрой ушел в тильт: доход и клики отключены на ${mellTiltCooldown} секунд!`, 'ПОРАЖЕНИЕ');
+            await alert(`💀 МАНЬЯК ПОБЕДИЛ ВАС!\nМеллстрой ушел в тильт: доход и клики урезаны на 80% на ${mellTiltCooldown} секунд!`, 'ПОРАЖЕНИЕ');
 
             finishBossFightClean();
         }
@@ -6010,7 +6594,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         drunImg.src = 'drun.png';
 
        async function  startDrunInvasion() {
-            if (isDrunInvasionActive || inBattle || jumpGameActive) return;
+            if (isDrunInvasionActive || inBattle || jumpGameActive || eventIntroOpen) return;
+            nextDrunScheduledTime = Date.now() + drunGapMs();   // сразу переносим следующий запуск
 
             mainBgMusic.pause();
 
@@ -6025,7 +6610,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 sirenaSound.currentTime = 0;
                 if (musicEnabled && !jumpGameActive && hasStartedMainBgMusic) mainBgMusic.play().catch(()=>{});
 
-                nextDrunScheduledTime = Date.now() + (960 + Math.floor(Math.random() * 600)) * 1000;
+                nextDrunScheduledTime = Date.now() + drunGapMs();
                 let autoDia = Math.floor(Math.random() * 5) + 3;
                 diamonds += autoDia;
                 totalDiamondsEarned += autoDia;
@@ -6035,12 +6620,26 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 return;
             }
 
+            if (!drunTutorialSeen) {
+                drunTutorialSeen = true;
+                eventIntroOpen = true;
+                saveGame();
+                try {
+                    await alert('🚨 НАШЕСТВИЕ ДРУНОВ!\n\n' +
+                        '⬇️ С неба летят Друны — уворачивайся: ' + (drunMobile() ? 'води пальцем по экрану, Мелл двигается за ним.' : 'двигай Меллстроя мышкой.') + '\n' +
+                        '💥 Попадание Друна отнимает 5% денег.\n' +
+                        '💎 Друны, упавшие на пол, разбиваются и оставляют алмазы — чем больше пропустишь мимо себя, тем лучше.\n' +
+                        '🏆 Волна засчитана, если увернулся минимум от половины Друнов. 3 таких волны — достижение «Друн».', 'ДРУНЫ');
+                } finally { eventIntroOpen = false; }
+                if (isDrunInvasionActive || inBattle) { try { sirenaSound.pause(); sirenaSound.currentTime = 0; } catch (e) {} return; }
+            }
             isDrunInvasionActive = true;
             drunsList = [];
             drunExplosionParticles = [];
             drunsSpawnedCount = 0;
             drunDiamondsCollected = 0;
             tookDrunDamageInCurrentWave = false;
+            drunHitsInWave = 0;
 
             totalDrunsInWave = Math.floor(Math.random() * 7) + 12;
             drunInvasionTimer = drunMobile() ? 850 : 650;
@@ -6131,6 +6730,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (!d.hit && isColliding) {
                     d.hit = true;
                     tookDrunDamageInCurrentWave = true;
+                    drunHitsInWave++;
                     createDrunExplosion(drunCenterX, drunCenterY);
                     let lost = Math.floor(balance * 0.05);
                     balance = Math.max(0, balance - lost);
@@ -6209,18 +6809,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (delta > 100) delta = 100;
 
             drunTimeAcc += delta;
+            let drunSteps = 0;
             while (drunTimeAcc >= DRUN_STEP_60) {
+                drunSteps++;
                 stepDrunPhysics();
                 drunTimeAcc -= DRUN_STEP_60;
                 if (!isDrunInvasionActive) return;
             }
 
-            drawDrunInvasion();
+            if (drunSteps > 0) drawDrunInvasion();
             requestAnimationFrame(drunInvasionLoop);
         }
 
         async function endDrunInvasion() {
             isDrunInvasionActive = false;
+            nextDrunScheduledTime = Date.now() + drunGapMs();
 
             sirenaSound.pause();
             sirenaSound.currentTime = 0;
@@ -6233,17 +6836,29 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             melloBtn.classList.remove('mello-mini');
 
             survivedDrunInvasionsCount++;
+            const needDodged = Math.ceil(totalDrunsInWave / 2);
+            const dodgedCount = Math.max(0, totalDrunsInWave - drunHitsInWave);
+            const waveSurvived = dodgedCount >= needDodged;
+            if (waveSurvived) {
+                halfDodgedDrunWaves++;
+                if (tookDrunDamageInCurrentWave) {
+                    showFloatingText(`ВОЛНА ПЕРЕЖИТА! Увернулся от ${dodgedCount}/${totalDrunsInWave}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
+                }
+            } else {
+                showFloatingText(`Волна не засчитана: увернулся от ${dodgedCount}/${totalDrunsInWave}, нужно ${needDodged}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, false, true, false);
+            }
             if (!tookDrunDamageInCurrentWave) {
                 perfectDrunInvasionsCount++;
                 showFloatingText('ЧИСТАЯ ПОБЕДА! (БЕЗ УРОНА)', { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
             }
 
             playJackpotSound();
-            await alert(`🎉 НАШЕСТВИЕ ДРУНОВ ЗАВЕРШЕНО!\nСобрано алмазов с разбитых Друнов: +${drunDiamondsCollected} 💎!`, 'ПОБЕДА');
+            await alert(`🎉 НАШЕСТВИЕ ДРУНОВ ЗАВЕРШЕНО!\nУвернулся от Друнов: ${dodgedCount}/${totalDrunsInWave}` + (waveSurvived ? ' — волна засчитана!' : ` — для зачёта нужно минимум ${needDodged}.`) + `\nСобрано алмазов с разбитых Друнов: +${drunDiamondsCollected} 💎!`, 'ПОБЕДА');
 
-            nextDrunScheduledTime = Date.now() + (960 + Math.floor(Math.random() * 600)) * 1000;
+            nextDrunScheduledTime = Date.now() + drunGapMs();
             updateUI();
             saveGame();
+            showFullscreenAd();   // естественная пауза: волна Друнов завершена
         }
 
         // ========================================================
@@ -6753,7 +7368,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (delta > 100) delta = 100;
 
             jumpTimeAccumulator += delta;
+            let jumpSteps = 0;
             while (jumpTimeAccumulator >= FIXED_STEP) {
+                jumpSteps++;
                 if (cutsceneActive) {
                     stepCutscene();
                 } else {
@@ -6762,6 +7379,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 jumpTimeAccumulator -= FIXED_STEP;
                 if (!jumpGameActive) return;
             }
+
+            if (jumpSteps === 0) { requestAnimationFrame(updateJumpGame); return; }
 
             if (scoreHeight !== lastRenderedScore) {
                 jumpScoreEl.textContent = scoreHeight;
@@ -7163,7 +7782,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 startScreen.style.display = 'flex';
                 const lbPlace = lbSubmit(scoreHeight);
                 if (lbPlace) { renderLeaderboard(lbPlace); leaderboardScreen.style.display = 'flex'; }
+                lbCloudSubmit(scoreHeight).then(() => {
+                    if (lbPlace || leaderboardScreen.style.display === 'flex') loadCloudLeaderboard();
+                });
                 saveGame();
+                showFullscreenAd();   // естественная пауза: заяц упал, экран старта
             }
         }
 
@@ -7216,7 +7839,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 ctx.fillStyle = 'rgba(0,0,0,0.16)';
                 for (let b = -2; b <= 2; b++) ctx.fillRect(pl.x - pl.r, pl.y + b * pl.r * 0.32, pl.r * 2, pl.r * 0.11);
                 ctx.restore();
-                ctx.save(); ctx.strokeStyle = pl.color; ctx.globalAlpha = 0.45; ctx.lineWidth = 2; ctx.shadowColor = pl.color; ctx.shadowBlur = 14;
+                ctx.save(); ctx.strokeStyle = pl.color; ctx.globalAlpha = 0.45; ctx.lineWidth = 2; ctx.shadowColor = pl.color; ctx.shadowBlur = IS_IOS ? 0 : 14;
                 ctx.beginPath(); ctx.arc(pl.x, pl.y, pl.r + 1, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
 
                 if (pl.ring) {
@@ -7264,7 +7887,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 const hue = (265 + scoreHeight * 0.06) % 360;
                 const tg = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 tg.addColorStop(0, `hsla(${hue},90%,58%,0.12)`); tg.addColorStop(1, `hsla(${(hue + 70) % 360},90%,58%,0)`);
-                ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = tg; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.restore();
+                if (!IS_IOS) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = tg; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.restore(); }
             }
             for (let i = 0; i < platforms.length; i++) {
                 const p = platforms[i];
@@ -7328,7 +7951,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         const sq = Math.max(-0.12, Math.min(0.2, -bunny.vy * 0.012)), sw = bunny.width * (1 - sq * 0.5), sh = bunny.height * (1 + sq);
                         ctx.save(); ctx.translate(bunny.x + bunny.width / 2, bunny.y + bunny.height);
                         ctx.rotate(Math.max(-0.3, Math.min(0.3, bunny.vx * 0.035)));
-                        ctx.shadowColor = 'rgba(0,255,190,0.6)'; ctx.shadowBlur = 14;
+                        ctx.shadowColor = 'rgba(0,255,190,0.6)'; ctx.shadowBlur = IS_IOS ? 0 : 14;
                         ctx.drawImage(zaecImg, -sw / 2, -sh, sw, sh); ctx.restore();
                     } else {
                         ctx.fillStyle = '#ffffff';
@@ -7345,7 +7968,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 ctx.font = '900 16px "Segoe UI", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0, 255, 136, 0.7)';
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = IS_IOS ? 0 : 8;
                 ctx.fillText(rocket.stage === 'flying' ? '🚀 ВЫСАДКА ДЕСАНТА...' : '⚡ ПОГНАЛИ!', canvas.width / 2, 75);
                 
                 ctx.font = '600 12px "Segoe UI", sans-serif';
@@ -7508,7 +8131,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             ctx.translate(rocket.x, rocket.y);
             if (rocket.stage === 'flying' || rocket.stage === 'eject') paintRocketFlame(ctx, 14);
             ctx.shadowColor = '#ff7a00';
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = IS_IOS ? 0 : 10;
             paintRocketBody(ctx);
             ctx.restore();
         }
@@ -7516,7 +8139,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         function drawActiveRocketSprite() {
             paintRocketFlame(ctx, 16);
             ctx.shadowColor = '#ff7a00';
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = IS_IOS ? 0 : 12;
             paintRocketBody(ctx);
         }
 
@@ -7524,6 +8147,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         // ОСНОВНОЙ ТАЙМЕР ИГРЫ
         // ========================================================
         setInterval(() => {
+            if (!gameLoaded) return;
             checkTimedRewards();
             playTimeSeconds++;
             updateChestButtonUI();
@@ -7548,7 +8172,15 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             let isAnyMinigameOpen = jumpModal.classList.contains('active') || storyModal.classList.contains('active');
 
-            if ((activeLvlIdx >= 5 || rebirths > 0) && !inBattle && !isDrunInvasionActive && nextBossScheduledTime > 0) {
+            // Первое появление: событие стартует сразу, как только игрок дошёл до его уровня
+            const introBlocked = inBattle || isDrunInvasionActive || jumpGameActive || isAnyMinigameOpen || eventIntroOpen ||
+                customAlertOverlay.classList.contains('active');
+            if (!introBlocked) {
+                if (!bossIntroDone && activeLvlIdx >= 5) { bossIntroDone = true; startBossBattle(); return; }
+                if (!drunIntroDone && activeLvlIdx >= 7) { drunIntroDone = true; startDrunInvasion(); return; }
+            }
+
+            if ((activeLvlIdx >= 5 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !eventIntroOpen && nextBossScheduledTime > 0) {
                 let timeLeftMs = nextBossScheduledTime - Date.now();
                 
                 if (isAnyMinigameOpen) {
@@ -7572,7 +8204,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 mysteryTimerBadge.style.display = 'none';
             }
 
-            if ((activeLvlIdx >= 8 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !isAnyMinigameOpen && nextDrunScheduledTime > 0) {
+            if ((activeLvlIdx >= 7 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !isAnyMinigameOpen && !eventIntroOpen && nextDrunScheduledTime > 0) {
                 if (Date.now() >= nextDrunScheduledTime) {
                     startDrunInvasion();
                 }
@@ -7580,8 +8212,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         }, 1000);
 
         setInterval(() => {
-            if (mellTiltCooldown <= 0) {
-                let basePassive = getBasePassiveCps();
+            if (!gameLoaded) return;
+            {
+                let basePassive = getBasePassiveCps() * getTiltMult();
                 if (basePassive > 0) {
                     balance += basePassive;
                     totalEarned += basePassive;
@@ -7592,9 +8225,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         }, 1000);
 
         setInterval(() => {
+            if (document.hidden) return;
             recalculateCps();
-            cpsEl.textContent = mellTiltCooldown > 0 ? '0 (ТИЛЬТ)' : formatCompactNumber(cps);
-        }, 100);
+            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + ' (ТИЛЬТ −80%)' : formatCompactNumber(cps);
+        }, 250);
 
         // ==========================================
         // СЮЖЕТНАЯ МИНИ-ИГРА (runner.html: ур.1-2, level3.html: ур.3)
@@ -7614,8 +8248,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
               desc: 'След ведёт в город. Бегите по крышам и остановите ФОГа.' },
             { n: 3, title: 'Уровень 3: В поисках Черемши', url: 'level3.html?embed=1', reqAch: [], reqPrev: 2,
               desc: 'Бешеная погоня на машинах. Награда: достижение «Черемша».' },
-            { n: 4, title: 'Уровень 4: Хрустальная пещера', url: '', reqAch: [], reqPrev: 3, comingSoon: true,
-              desc: 'ФОГ заманил героев в пещеру. Боссфайт ещё в работе — продолжение следует.' }
+            { n: 4, title: 'Уровень 4: Гнездо Мамы Птицы', url: 'level4.html?embed=1', reqAch: [], reqPrev: 3,
+              desc: 'ФОГ добрался до гнезда. Босс-файт с Мамой Птицей! Награда: 100 🦷 и достижение «Мама Птица».' }
         ];
 
         function getStoryAccess(lvl) {
@@ -7727,29 +8361,81 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         closeStoryBtn.addEventListener('click', closeStory);
         storyBackBtn.addEventListener('click', showStoryMenu);
 
-        window.addEventListener('message', async (ev) => {
+        // Клики по кнопкам «в меню» / «следующий уровень» приходят сюда сообщениями из iframe.
+        // Раньше любое исключение или ожидание alert() молча «съедало» команду — теперь переходы
+        // выполняются первыми и не зависят от наград, а при недоступном уровне игрок возвращается в меню.
+        function goBackToStoryMenuSafe() {
+            try { showStoryMenu(); }
+            catch (e) {
+                console.warn('showStoryMenu failed', e);
+                try { document.body.classList.remove('story-game-open'); storyModal.classList.remove('story-fullscreen'); } catch (e2) {}
+                storyFrame.src = 'about:blank';
+                storyPlay.style.display = 'none';
+                storyMenu.style.display = 'flex';
+                try { renderStoryMenu(); } catch (e3) {}
+            }
+        }
+
+        window.addEventListener('message', (ev) => {
             if (ev.source !== storyFrame.contentWindow) return;
             const d = ev.data || {};
-            if (d.type === 'story-complete' && d.level >= 1 && d.level <= 3) {
-                storyProgress['l' + d.level] = true;
-                const wasUnlocked = achievements.cheremsha.unlocked;
-                saveGame();
-                checkAchievements();
-                updateUI();
-                if (d.level === 3 && !wasUnlocked && achievements.cheremsha.unlocked) {
-                    await alert('🌿 Получено достижение «Черемша»!\nЗабери его на главный экран в разделе 🏆 Достижения.', 'ДОСТИЖЕНИЕ');
+            try {
+                if (d.type === 'story-complete' && d.level >= 1 && d.level <= 4) {
+                    const firstL4 = d.level === 4 && !storyProgress.l4;
+                    if (firstL4) { teeth += 100; totalTeethEarned += 100; }   // награда за 1-е прохождение 4 уровня
+                    storyProgress['l' + d.level] = true;
+                    const wasUnlocked = achievements.cheremsha.unlocked;
+                    const wasMamaUnlocked = achievements.mamabird.unlocked;
+                    try { saveGame(); checkAchievements(); updateUI(); } catch (e) { console.warn(e); }
+                    if (d.level === 3 && !wasUnlocked && achievements.cheremsha.unlocked) {
+                        // alert() не блокирует переходы: показываем с задержкой, когда игрок уже вышел из полноэкранного режима
+                        setTimeout(() => {
+                            alert('🌿 Получено достижение «Черемша»!\nЗабери его на главный экран в разделе 🏆 Достижения.', 'ДОСТИЖЕНИЕ');
+                        }, 400);
+                    }
+                    if (d.level === 4 && achievements.mamabird.unlocked && (!wasMamaUnlocked || firstL4)) {
+                        setTimeout(() => {
+                            alert('🐦 Получено достижение «Мама Птица»!' + (firstL4 ? '\n+100 🦷 за победу!' : '') + '\nЗабери его на главный экран в разделе 🏆 Достижения.', 'ДОСТИЖЕНИЕ');
+                        }, 400);
+                    }
+                } else if (d.type === 'story-exit') {
+                    goBackToStoryMenuSafe();
+                } else if (d.type === 'story-goto') {
+                    const lvl = STORY_LEVELS.find(l => l.n === d.level);
+                    if (lvl && !lvl.comingSoon && getStoryAccess(lvl).open) launchStoryLevel(d.level);
+                    else goBackToStoryMenuSafe();   // уровень закрыт / «скоро» — не оставляем игрока на мёртвом экране
                 }
-            } else if (d.type === 'story-exit') {
-                showStoryMenu();
-            } else if (d.type === 'story-goto') {
-                launchStoryLevel(d.level);
+            } catch (e) {
+                console.warn('story message error', e);
+                goBackToStoryMenuSafe();
             }
         });
 
-        loadGame();
-        updateUI();
-        clampAllDecos();
-        setTimeout(clampAllDecos, 400);
+        async function bootGame() {
+            const loaderEl = document.getElementById('sdkLoader');
+            const hideLoader = () => { if (loaderEl) loaderEl.remove(); };
+            setTimeout(hideLoader, 12000);   // страховка
+            try { await initYandexSDK(); } catch (e) { console.warn('[YSDK] init error', e); }
+
+            // Облако -> localStorage (если в облаке пусто, loadGame возьмёт локальное)
+            try {
+                const cloud = await fetchCloudSave();
+                if (cloud) { JSON.parse(cloud); localStorage.setItem(SAVE_KEY, cloud); }
+            } catch (e) { console.warn('[YSDK] cloud save invalid, using local', e); }
+
+            try { loadGame(); } catch (e) { console.error('loadGame failed', e); }
+            gameLoaded = true;
+            updateUI();
+            clampAllDecos();
+            setTimeout(clampAllDecos, 400);
+            lastFullscreenAdTime = Date.now();
+            hideLoader();
+            if (yaPlayer) saveGame();          // первичная синхронизация local -> cloud
+            signalGameReady();                 // LoadingAPI.ready()
+            try { await restorePurchases(); } catch (e) { console.warn(e); }
+            try { await syncBestScoreToCloud(); } catch (e) { console.warn(e); }
+        }
+        bootGame();
         window.addEventListener('load', () => setTimeout(clampAllDecos, 200));
 
         // ========================================================
@@ -7771,6 +8457,54 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         let dogFreeRound = false;
         let currentPresetResult = null;
         let isDogCasinoSpinning = false;
+
+        // Награда «Мамы Птицы» (каждые 20 кликов): алмазы / зубы / деньги / билет / фриспин
+        function giveMamaBirdReward(e) {
+            const r = Math.floor(Math.random() * 5);
+            if (r === 0) {
+                const n = Math.floor(Math.random() * 5) + 1;          // 1-5 алмазов
+                diamonds += n; totalDiamondsEarned += n;
+                showFloatingText(`МАМА ПТИЦА! +${n} 💎`, e, false, false, true);
+            } else if (r === 1) {
+                const n = Math.floor(Math.random() * 10) + 1;         // 1-10 зубов
+                teeth += n; totalTeethEarned += n;
+                showFloatingText(`МАМА ПТИЦА! +${n} 🦷`, e, true, false, false);
+            } else if (r === 2) {
+                const k = Math.floor(Math.random() * 91) + 10;        // 10-100 кликов
+                const money = Math.floor(getCpc() * k);
+                balance += money; totalEarned += money;
+                showFloatingText(`МАМА ПТИЦА! +$${formatCompactNumber(money)} (${k} кликов)`, e, true, false, false);
+            } else if (r === 3) {
+                tickets += 1;
+                showFloatingText('МАМА ПТИЦА! +1 🎫', e, true, false, false);
+            } else {
+                showFloatingText('МАМА ПТИЦА! ФРИСПИН 🎰', e, true, false, false);
+                playJackpotSound();
+                updateUI();
+                saveGame();
+                startMamaBirdFreeSpin();
+                return;
+            }
+            playJackpotSound();
+            updateUI();
+            saveGame();
+        }
+
+        function startMamaBirdFreeSpin() {
+            if (dogCasinoModal.classList.contains('active') || isDogCasinoSpinning) {
+                dogFreeSpins += 1;   // казино уже открыто — просто добавляем фриспин
+                return;
+            }
+            dogFreeSpins = 1;
+            dogFreeRound = true;
+            currentPresetResult = generatePresetResult();
+            dogCasinoResult.textContent = 'Мама Птица дарит бесплатное вращение! Нажмите «Фриспин».';
+            slot1.textContent = '🐶'; slot2.textContent = '💎'; slot3.textContent = '🦷';
+            spinDogCasinoBtn.textContent = `🦴 Фриспин (осталось: ${dogFreeSpins})`;
+            spinDogCasinoBtn.style.display = 'block';
+            closeDogCasinoBtn.style.display = 'none';
+            dogCasinoModal.classList.add('active');
+        }
 
         function triggerDogJackpot(e) {
             dogClicksCount++;
@@ -8059,16 +8793,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         var tab = document.querySelector('.tab-content.active');
         if (!tab || (tab.id !== 'tab-clicks' && tab.id !== 'tab-passive')) return;
         var best = null, bv = 0, cards = tab.querySelectorAll('.upgrade-card');
+        var isClick = tab.id === 'tab-clicks', base = 0;
+        if (isClick) base = baseCpc;
+        else cards.forEach(function (c) { var it = upgrades[c.id.replace(/^upg/, '')]; if (it && it.power) base += it.lvl * it.power; });
+        base = Math.max(1, base);
         cards.forEach(function (c) {
-            var cost = num((c.querySelector('.upgrade-cost') || {}).textContent), eff = num((c.querySelector('.upgrade-effect') || {}).textContent);
-            if (!cost) return;
+            var it = upgrades[c.id.replace(/^upg/, '')];
+            if (!it || !it.power) return;
             var dis = c.classList.contains('disabled');
-            c.style.setProperty('--p', dis ? Math.min(100, balance / cost * 100) : 100);
+            c.style.setProperty('--p', dis ? Math.min(100, balance / it.cost * 100) : 100);
             c.classList.remove('best-buy');
-            if (!dis && eff / cost > bv) { bv = eff / cost; best = c; }
+            // «лучшая покупка» только если прирост заметен (>=5% от текущей базы)
+            if (!dis && it.power / base >= 0.05 && it.power / it.cost > bv) { bv = it.power / it.cost; best = c; }
         });
         if (best) best.classList.add('best-buy');
-    }, 600);
+    }, 1500);
 })();
 </script>
 <script>

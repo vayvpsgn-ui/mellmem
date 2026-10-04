@@ -289,7 +289,7 @@
                 </div>
                 <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
                     <button class="action-btn" id="startCutsceneBtn">НАЧАТЬ ПОГОНЮ 🏁</button>
-                    <button class="action-btn purple-btn" onclick="window.location.href='level4.html'">ХРУСТАЛЬНАЯ ПЕЩЕРА (УР. 4) 💎</button>
+                    <button class="action-btn purple-btn" id="menuBtnStart">В ГЛАВНОЕ МЕНЮ</button>
                 </div>
             </div>
 
@@ -298,7 +298,10 @@
                 <div style="font-size: 14.5px; color: #d1d5db; max-width: 520px; line-height: 1.6;">
                     Следите за отстрелами огня из выхлопной перед тараном и знаком [!] перед пилами! В холмистом лесу жмите Нитро от дронов!
                 </div>
-                <button class="action-btn" id="restartBtn" style="background: linear-gradient(135deg, #ff7a45, #ff5252);">ПОПРОБОВАТЬ СНОВА</button>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+                    <button class="action-btn" id="restartBtn" style="background: linear-gradient(135deg, #ff7a45, #ff5252);">ПОПРОБОВАТЬ СНОВА</button>
+                    <button class="action-btn" id="menuBtnOver" style="background: rgba(255,255,255,0.15); box-shadow: none;">В ГЛАВНОЕ МЕНЮ</button>
+                </div>
             </div>
 
             <div class="overlay-screen" id="caveScreen" style="display: none; background: rgba(3, 7, 18, 0.96);">
@@ -310,10 +313,10 @@
                 </div>
                 <div style="font-size: 14.5px; color: #cbd5e1; max-width: 560px; line-height: 1.6;">
                     ФОГ скрылся среди кристаллов с мешком зубов... Героям предстоит решающая битва в пещере!<br><br>
-                    ⚔️ <b>УРОВЕНЬ 4 ГОТОВ К ЗАПУСКУ!</b>
+                    ⚔️ <b>Уровень 4 уже в разработке — продолжение следует!</b>
                 </div>
                 <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
-                    <button class="action-btn purple-btn" onclick="window.location.href='level4.html'">ПЕРЕЙТИ К БОССФАЙТУ (УР. 4) ⚔️️</button>
+                    <button class="action-btn purple-btn" id="menuBtnCave">В ГЛАВНОЕ МЕНЮ</button>
                     <button class="action-btn" id="replayBtn" style="background: rgba(255,255,255,0.15); box-shadow: none;">ИГРАТЬ ПОГОНЮ СНОВА 🏎️</button>
                 </div>
             </div>
@@ -376,7 +379,7 @@
             }
             return p;
         }
-        ['Pres.mp3', 'zvukpr.mp3', 'zvuknorm.mp3', 'lose.mp3', 'sirena.mp3'].forEach(_getSfx);
+        ['Pres.mp3', 'zvukpr.mp3', 'zvuknorm.mp3', 'lose.mp3'].forEach(_getSfx);
         function playSfx(file) {
             try {
                 const now = performance.now();
@@ -1034,6 +1037,18 @@
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); gameOverScreen.style.display = 'none'; startLevel3Gameplay(); });
         replayBtn.addEventListener('click', (e) => { e.stopPropagation(); caveScreen.style.display = 'none'; startCutsceneLevel3(); });
 
+        // ===== СВЯЗЬ С ГЛАВНОЙ ИГРОЙ (index.html) =====
+        const EMBED = location.search.indexOf('embed=1') !== -1 && window.parent !== window;
+        function storyNotify(msg) { if (EMBED) { try { window.parent.postMessage(msg, '*'); } catch (e) {} } }
+        function leaveToMain() {
+            if (EMBED) { storyNotify({ type: 'story-exit' }); return; }
+            window.location.href = 'index.html';
+        }
+        ['menuBtnStart', 'menuBtnCave', 'menuBtnOver'].forEach(id => {
+            const b = document.getElementById(id);
+            if (b) b.addEventListener('click', (e) => { e.stopPropagation(); leaveToMain(); });
+        });
+
         function drawRealisticFlame(c, x, y, size, dirX = -1) {
             c.save();
             c.translate(x, y);
@@ -1416,8 +1431,7 @@
 
             if (csTimer === 30) playSfx('zvuknorm.mp3');
             if (csTimer === 85) playSfx('zvukpr.mp3');
-            if (csTimer === 150) playSfx('sirena.mp3');
-
+            
             if (csTimer >= 165) csGateLift = Math.min(260, csGateLift + 4);
             if (csTimer >= 195) csCarDriveOff += 9.0;
             if (csTimer > 250) startLevel3Gameplay();
@@ -1427,7 +1441,7 @@
             ctx.save();
             ctx.font = options.font || '900 13.5px "Segoe UI", sans-serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            const padX = 14, padY = 9, lh = 18, maxW = Math.min(440, canvas.width - 64 - padX * 2);
+            const padX = 14, padY = 9, lh = 18, mg = options.margin || 16, mgY = options.marginY || 14, maxW = Math.min(options.maxW || 440, canvas.width - mg * 2 - padX * 2);
             const words = text.split(' '), lines = []; let cur = '';
             for (const w of words) {
                 const t = cur ? cur + ' ' + w : w;
@@ -1436,8 +1450,8 @@
             if (cur) lines.push(cur);
             let textW = 0; for (const l of lines) textW = Math.max(textW, ctx.measureText(l).width);
             const bw = textW + padX * 2, bh = lines.length * lh + padY * 2;
-            const bx = Math.max(16, Math.min(canvas.width - bw - 16, x - bw / 2));
-            const by = Math.max(14, Math.min(canvas.height - bh - 14, y - bh / 2));
+            const bx = Math.max(mg, Math.min(canvas.width - bw - mg, x - bw / 2));
+            const by = Math.max(mgY, Math.min(canvas.height - bh - mgY, y - bh / 2));
 
             ctx.fillStyle = options.bg || 'rgba(12, 17, 32, 0.95)';
             ctx.strokeStyle = options.border || '#ffaa5e';
@@ -1718,7 +1732,6 @@
                             if (pick < 0.5) {
                                 l3Fog.actionState = 'ram_warn';
                                 l3Fog.actionTimer = 55;
-                                playSfx('sirena.mp3');
                             } else {
                                 l3Fog.actionState = 'saw_warn';
                                 l3Fog.actionTimer = 40;
@@ -1728,7 +1741,6 @@
                             if (pick < 0.45) {
                                 l3Fog.actionState = 'ram_warn';
                                 l3Fog.actionTimer = 55;
-                                playSfx('sirena.mp3');
                             } else if (pick < 0.85) {
                                 l3Fog.actionState = 'saw_warn';
                                 l3Fog.actionTimer = 40;
@@ -1744,7 +1756,6 @@
                             if (pick < 0.5) {
                                 l3Fog.actionState = 'ram_warn';
                                 l3Fog.actionTimer = 50;
-                                playSfx('sirena.mp3');
                             } else {
                                 l3Fog.actionState = 'saw_warn';
                                 l3Fog.actionTimer = 35;
@@ -1757,7 +1768,6 @@
                             } else if (pick < 0.70) {
                                 l3Fog.actionState = 'ram_warn';
                                 l3Fog.actionTimer = 50;
-                                playSfx('sirena.mp3');
                             } else {
                                 l3Fog.actionState = 'saw_warn';
                                 l3Fog.actionTimer = 35;
@@ -1819,7 +1829,6 @@
             } else if (l3Fog.actionState === 'drone') {
                 l3Fog.actionTimer--;
                 if (l3Fog.actionTimer <= 0) {
-                    playSfx('sirena.mp3');
                     l3Drones.push({
                         x: l3Fog.x + 50, y: 70, targetX: l3Car.x + 30,
                         timer: 160, diving: false, diveSpeed: 8.5, r: 42
@@ -1840,7 +1849,7 @@
                 let currentGroundUnderDrone = getL3GroundY(dr.x);
                 if (!dr.diving) {
                     dr.x += 1.6; dr.timer--; dr.targetX = l3Car.x + 30;
-                    if (dr.timer <= 0) { dr.diving = true; playSfx('sirena.mp3'); }
+                    if (dr.timer <= 0) { dr.diving = true; }
                 } else {
                     let angle = Math.atan2(currentGroundUnderDrone - dr.y, dr.targetX - dr.x);
                     dr.x += Math.cos(angle) * dr.diveSpeed;
@@ -2127,7 +2136,6 @@
 
                 if (caveCS.bottleX >= caveCS.fogX + 40) {
                     caveCS.fogExploded = true;
-                    playSfx('sirena.mp3');
                     screenShake = 24;
                     for (let i = 0; i < 65; i++) {
                         caveCS.explosionParticles.push({
@@ -2394,18 +2402,28 @@
 
             drawCaveFore();
 
+            ctx.restore();
+
             if (caveCS.fogExploded) {
+                // Реплики рисуем в экранных координатах (вне зума камеры), ближе к центру и внутри рамок
+                const z = caveCS.cameraZoom, fx = (caveCS.heroX + caveCS.fogX) / 2 + 30, fy = groundY - 45;
+                const toScr = (px, py) => ({ x: fx + (px - fx) * z, y: fy + (py - fy) * z });
+                const cx = canvas.width / 2;
+                const say = (ax, text, opt) => {
+                    const a = toScr(ax, groundY - 60);
+                    const bx = cx + (a.x - cx) * 0.55;
+                    drawSpeechBubble(bx, 215, text, a.x, a.y - 8, Object.assign({ margin: 70, marginY: 56, maxW: 340 }, opt));
+                };
                 switch (caveCS.step) {
-                    case 0: drawSpeechBubble(caveCS.fogX + 130, groundY - 95, 'ФОГ: «Ха-ха! Думали, поймали? Я сам заманил вас сюда!»', caveCS.fogX + 130, groundY - 60, { border: '#c084fc', color: '#c084fc' }); break;
-                    case 1: drawSpeechBubble(caveCS.heroX + 70, groundY - 95, 'БУРМАЛДАЕЦ: «Ты свою тачку в хлам разнёс, гений тактики!»', caveCS.heroX + 50, groundY - 60, { border: '#ffaa5e', color: '#ffaa5e' }); break;
-                    case 2: drawSpeechBubble(caveCS.heroX + 70, groundY - 95, 'ЧЕРЕМША: «Ты мне бампер поцарапал! Щас монтировкой огребёшь!»', caveCS.heroX + 70, groundY - 60, { border: '#10b981', color: '#34d399' }); break;
-                    case 3: drawSpeechBubble(caveCS.fogX + 130, groundY - 95, 'ФОГ: «Смейтесь! Отсюда вы живыми не выйдете!»', caveCS.fogX + 130, groundY - 60, { border: '#ff3366', color: '#ff7799' }); break;
-                    case 4: drawSpeechBubble(caveCS.heroX + 70, groundY - 95, 'БУРМАЛДАЕЦ: «Пацаны, на выход! Пересчитаем ему зубы!»', caveCS.heroX + 50, groundY - 60, { border: '#38bdf8', color: '#38bdf8' }); break;
-                    case 5: drawSpeechBubble(canvas.width / 2, 75, '⚔️ ВПЕРЕДИ РЕШАЮЩИЙ БОССФАЙТ! ⚔️', canvas.width / 2, 105, { border: '#c084fc', color: '#c084fc' }); break;
+                    case 0: say(caveCS.fogX + 130, 'ФОГ: «Ха-ха! Думали, поймали? Я сам заманил вас сюда!»', { border: '#c084fc', color: '#c084fc' }); break;
+                    case 1: say(caveCS.heroX + 70, 'БУРМАЛДАЕЦ: «Ты свою тачку в хлам разнёс, гений тактики!»', { border: '#ffaa5e', color: '#ffaa5e' }); break;
+                    case 2: say(caveCS.heroX + 70, 'ЧЕРЕМША: «Ты мне бампер поцарапал! Щас монтировкой огребёшь!»', { border: '#10b981', color: '#34d399' }); break;
+                    case 3: say(caveCS.fogX + 130, 'ФОГ: «Смейтесь! Отсюда вы живыми не выйдете!»', { border: '#ff3366', color: '#ff7799' }); break;
+                    case 4: say(caveCS.heroX + 70, 'БУРМАЛДАЕЦ: «Пацаны, на выход! Пересчитаем ему зубы!»', { border: '#38bdf8', color: '#38bdf8' }); break;
+                    case 5: drawSpeechBubble(canvas.width / 2, 90, '⚔️ ВПЕРЕДИ РЕШАЮЩИЙ БОССФАЙТ! ⚔️', canvas.width / 2, 120, { border: '#c084fc', color: '#c084fc', margin: 70, marginY: 56, maxW: 340 }); break;
                 }
             }
 
-            ctx.restore();
             drawCinema(1, caveCS.step === 0 ? 1 - caveCS.timer / 25 : (caveCS.step === 5 ? (caveCS.timer - 75) / 25 : 0));
         }
 
@@ -2413,6 +2431,7 @@
             skipHintBadge.style.display = 'none';
             state = 'cave';
             caveScreen.style.display = 'flex';
+            storyNotify({ type: 'story-complete', level: 3 });   // раньше уровень 3 не засчитывался и «Черемша» не выдавалась
         }
 
         let l3PrevLoc = 'garages', l3Trans = 1, l3Fade = 0;
