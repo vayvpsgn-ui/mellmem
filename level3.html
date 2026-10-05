@@ -5,7 +5,60 @@
         if (location.search.indexOf('embed=1') !== -1 && window.parent !== window) document.documentElement.classList.add('embed-mode');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+<script>
+/* ===== i18n runtime (RU / EN) ===== */
+(function () {
+    var RU = ["Погоня за ФОГом — Уровень 3: Бешеная Погоня", "🏎️ УРОВЕНЬ 3: ПОГОНЯ ЗА ФОГОМ", "НИТРО: 100%", "Камни: 1 | Бутылки: 0", "ПЕРЕХВАТЧИК ФОГА:", "Тапните для пропуска ⏩", "УРОВЕНЬ 3: БЕШЕНАЯ ПОГОНЯ", "ФОГ преследует героев на чёрном бронированном перехватчике!", "Трасса пролегает через", "Ржавые гаражи", ", серое", "Мурино", "и", "Лесные холмы", "Управление:", "[W / Вверх / Пробел]", "— Прыжок машины (перепрыгивать пилы, шипы и таран).", "НИТРО", "(ускорение, чтобы уйти от пикирующего дрона).", "[ЛКМ / ПКМ / F]", "— Стрельба назад по ФОГу (держитесь на земле рядом с врагом!).", "НАЧАТЬ ПОГОНЮ 🏁", "В ГЛАВНОЕ МЕНЮ", "МАШИНА РАЗБИТА!", "Следите за отстрелами огня из выхлопной перед тараном и знаком [!] перед пилами! В холмистом лесу жмите Нитро от дронов!", "ПОПРОБОВАТЬ СНОВА", "🪨 ВХОД В ХРУСТАЛЬНУЮ ПЕЩЕРУ", "ТАЧКА ФОГА ВЗОРВАНА, НО ОН ЗАМАНИЛ НАС В ЛОВУШКУ!", "ФОГ скрылся среди кристаллов с мешком зубов... Героям предстоит решающая битва в пещере!", "Решающая битва в Гнезде Мамы Птицы — Уровень 4!", "Вход на 4 уровень: сделай престиж и дойди до 10 уровня после него.", "К УРОВНЮ 4 ⚔️", "ИГРАТЬ ПОГОНЮ СНОВА 🏎️", "Поверните устройство горизонтально 🔄", "🔧 ГАРАЖ ЧЕРЕМШИ: СРОЧНЫЙ СБОР!", "«Черемша! Фог украл зубы и охотится за тобой!»", "«Мяу! Он собрал чёрный перехватчик!»", "«За мной?! Щас, головку блока дотяну...»", "«Турбина готова! Все в машину!»", "🔥 ПОГНАЛИ! 🔥", "РЖАВЫЕ ГАРАЖИ", "ЛЕСНЫЕ ХОЛМЫ", "СЕРОЕ МУРИНО", "ПЕРЕХВАТЧИК ФОГА (", "🔥🔥 БУСТ!", "НИТРО:", "❌ НЕТ СНАРЯДОВ! ПОДБИРАЙ НА ДОРОГЕ!", "⚠️ В ПРЫЖКЕ НЕ ПОПАСТЬ!", "✨ ПЕРЕПРЫГНУЛ ТАРАН!", "💥 ТАРАН! -1 ❤️", "💥 УДАР ДРОНА! -1 ❤️", "💨 ДРОН ПРОМАХНУЛСЯ!", "💥 ШИПЫ! ПРЫГАЙТЕ! -1 ❤️", "+1 🍾 ЧЕКУШКА!", "+2 🪨 КАМНЯ!", "💨 НЕДОЛЁТ! ПОДПУСТИ БЛИЖЕ!", "-1 ❤️! ПРЫГАЙТЕ ЧЕРЕЗ ПИЛЫ!", "ФОГ: «Ха-ха! Думали, поймали? Я сам заманил вас сюда!»", "БУРМАЛДАЕЦ: «Ты свою тачку в хлам разнёс, гений тактики!»", "ЧЕРЕМША: «Ты мне бампер поцарапал! Щас монтировкой огребёшь!»", "ФОГ: «Смейтесь! Отсюда вы живыми не выйдете!»", "БУРМАЛДАЕЦ: «Пацаны, на выход! Пересчитаем ему зубы!»", "⚔️ ВПЕРЕДИ РЕШАЮЩИЙ БОССФАЙТ! ⚔️", "⚠️ ПИКИРУЕТ ЧЕРЕЗ", "с!"], EN = ["Chasing FOG — Level 3: Mad Pursuit", "🏎️ LEVEL 3: THE CHASE FOR FOG", "NITRO: 100%", "Rocks: 1 | Bottles: 0", "FOG'S INTERCEPTOR:", "Tap to skip ⏩", "LEVEL 3: MAD PURSUIT", "FOG is chasing the heroes in a black armored interceptor!", "The route runs through", "Rusty Garages", ", grey", "Murino", "and", "Forest Hills", "Controls:", "[W / Up / Space]", "— Jump the car (hop over saws, spikes and the battering ram).", "NITRO", "(speed boost to escape the diving drone).", "[LMB / RMB / F]", "— Shoot backwards at FOG (stay on the ground near the enemy!).", "START THE CHASE 🏁", "TO MAIN MENU", "CAR WRECKED!", "Watch for flames spitting out of the exhaust before the ram, and the [!] sign before the saws! In the hilly forest, hit Nitro to dodge the drones!", "TRY AGAIN", "🪨 ENTERING THE CRYSTAL CAVE", "FOG'S RIDE IS BLOWN UP, BUT HE LURED US INTO A TRAP!", "FOG vanished among the crystals with the bag of teeth... The heroes are in for a decisive battle in the cave!", "Decisive battle in Mama Bird's Nest — Level 4!", "Level 4 entry: do a prestige and reach level 10 after it.", "TO LEVEL 4 ⚔️", "REPLAY THE CHASE 🏎️", "Rotate your device to landscape 🔄", "🔧 CHEREMSHA'S GARAGE: EMERGENCY ASSEMBLY!", "“Cheremsha! FOG stole the teeth and he's hunting you!”", "“Meow! He built a black interceptor!”", "“After me?! Hold on, just tightening the cylinder head...”", "“Turbo's ready! Everybody in the car!”", "🔥 LET'S GOOO! 🔥", "RUSTY GARAGES", "FOREST HILLS", "GREY MURINO", "FOG'S INTERCEPTOR (", "🔥🔥 BOOST!", "NITRO:", "❌ NO AMMO! PICK SOME UP ON THE ROAD!", "⚠️ CAN'T HIT WHILE JUMPING!", "✨ JUMPED THE RAM!", "💥 RAM! -1 ❤️", "💥 DRONE STRIKE! -1 ❤️", "💨 THE DRONE MISSED!", "💥 SPIKES! JUMP! -1 ❤️", "+1 🍾 HALF-PINT!", "+2 🪨 ROCKS!", "💨 FELL SHORT! GET CLOSER!", "-1 ❤️! JUMP OVER THE SAWS!", "FOG: “Ha-ha! Thought you caught me? I lured you here myself!”", "BURMALDIAN: “You totaled your own ride, tactical genius!”", "CHEREMSHA: “You scratched my bumper! You're gonna eat a crowbar!”", "FOG: “Laugh all you want! You're not getting out of here alive!”", "BURMALDIAN: “Boys, everybody out! Let's do a teeth count on him!”", "⚔️ A DECISIVE BOSS FIGHT AHEAD! ⚔️", "⚠️ DIVE-BOMBING IN", "s!"];
+    var KEY = 'mello_lang', lang = '';
+    try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ru') lang = q; } catch (e) {}
+    if (!lang) { try { var s = localStorage.getItem(KEY); if (s === 'en' || s === 'ru') lang = s; } catch (e) {} }
+    if (!lang) {
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ru').toLowerCase();
+        lang = /^(ru|uk|be|kk|uz|ky|tg|hy|az|ka|tk)/.test(nav) ? 'ru' : 'en';
+    }
+    var map = null;
+    function build() { map = {}; for (var i = 0; i < RU.length; i++) map[RU[i]] = EN[i]; }
+    function tr(core) { if (lang !== 'en') return core; if (!map) build(); var v = map[core]; return v === undefined ? core : v; }
+    function trLine(line) {
+        var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(line);
+        if (!m || !m[2]) return line;
+        return m[1] + tr(m[2]) + m[3];
+    }
+    var ATTRS = ['title', 'placeholder', 'alt', 'aria-label'];
+    function applyStatic(root) {
+        if (lang !== 'en') return;
+        root = root || document;
+        var CY = /[\u0400-\u04FF]/;
+        var w = document.createTreeWalker(root.body || root, NodeFilter.SHOW_TEXT, null), n, list = [];
+        while ((n = w.nextNode())) {
+            var p = n.parentNode && n.parentNode.nodeName;
+            if (p === 'SCRIPT' || p === 'STYLE') continue;
+            if (CY.test(n.nodeValue)) list.push(n);
+        }
+        list.forEach(function (t) { t.nodeValue = t.nodeValue.split('\n').map(trLine).join('\n'); });
+        var els = (root.body || root).querySelectorAll('[title],[placeholder],[alt],[aria-label]');
+        for (var i = 0; i < els.length; i++) for (var k = 0; k < ATTRS.length; k++) {
+            var v = els[i].getAttribute(ATTRS[k]);
+            if (v && CY.test(v)) els[i].setAttribute(ATTRS[k], trLine(v));
+        }
+        if (document.title && CY.test(document.title)) document.title = trLine(document.title);
+    }
+    window.LANG = lang;
+    window.T = function (i) { return lang === 'en' ? EN[i] : RU[i]; };
+    window.I18N = {
+        lang: lang, applyStatic: applyStatic, tr: tr,
+        set: function (l, cb) {
+            try { localStorage.setItem(KEY, l); } catch (e) {}
+            if (cb) cb();
+            try { var u = new URL(location.href); u.searchParams.delete('lang'); location.replace(u.toString()); } catch (e) { location.reload(); }
+        }
+    };
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Погоня за ФОГом — Уровень 3: Бешеная Погоня</title>
     <style>
         * {
@@ -336,7 +389,8 @@
     </div>
     <div id="rotateOverlay"><div class="rot-icon">🔄</div><div>Поверните устройство горизонтально 🔄</div></div>
 
-    <script>
+    <script>I18N.applyStatic();</script>
+<script>
         const canvas = document.getElementById('gameCanvas');
         let ctx = canvas.getContext('2d');
         const ammoVal = document.getElementById('ammoVal');
@@ -1440,7 +1494,7 @@
             csSparks = [];
             csCarDriveOff = 0;
             csGateLift = 0;
-            gameHeaderTitle.textContent = '🔧 ГАРАЖ ЧЕРЕМШИ: СРОЧНЫЙ СБОР!';
+            gameHeaderTitle.textContent = ('' + T(34) + '');
         }
 
         function updateCutscene() {
@@ -1566,15 +1620,15 @@
             }
 
             if (csTimer < 55) {
-                drawSpeechBubble(340, floorY - 110, '«Черемша! Фог украл зубы и охотится за тобой!»', 320, floorY - 86, { border: '#ffaa5e' });
+                drawSpeechBubble(340, floorY - 110, ('' + T(35) + ''), 320, floorY - 86, { border: '#ffaa5e' });
             } else if (csTimer < 110) {
-                drawSpeechBubble(420, floorY - 110, '«Мяу! Он собрал чёрный перехватчик!»', 420, floorY - 70, { border: '#f59e0b', color: '#ffd166' });
+                drawSpeechBubble(420, floorY - 110, ('' + T(36) + ''), 420, floorY - 70, { border: '#f59e0b', color: '#ffd166' });
             } else if (csTimer < 160) {
-                drawSpeechBubble(690, floorY - 120, '«За мной?! Щас, головку блока дотяну...»', 690, floorY - 100, { border: '#10b981', color: '#34d399' });
+                drawSpeechBubble(690, floorY - 120, ('' + T(37) + ''), 690, floorY - 100, { border: '#10b981', color: '#34d399' });
             } else if (csTimer < 195) {
-                drawSpeechBubble(canvas.width / 2, 90, '«Турбина готова! Все в машину!»', canvas.width / 2, 115, { border: '#10b981', color: '#34d399' });
+                drawSpeechBubble(canvas.width / 2, 90, ('' + T(38) + ''), canvas.width / 2, 115, { border: '#10b981', color: '#34d399' });
             } else {
-                drawSpeechBubble(canvas.width / 2, 90, '🔥 ПОГНАЛИ! 🔥', canvas.width / 2, 115, { border: '#ff3366', color: '#ff3366' });
+                drawSpeechBubble(canvas.width / 2, 90, ('' + T(39) + ''), canvas.width / 2, 115, { border: '#ff3366', color: '#ff3366' });
             }
             ctx.save(); ctx.globalCompositeOperation = 'lighter';
             for (const lx of [260, 680]) {
@@ -1620,16 +1674,16 @@
             if (fogHpText) fogHpText.textContent = `${Math.max(0, l3Fog.hp)}/${l3Fog.maxHp}`;
             if (fogHpFill) fogHpFill.style.width = `${Math.max(0, (l3Fog.hp / l3Fog.maxHp) * 100)}%`;
             if (fogHudLabel) {
-                let loc = 'РЖАВЫЕ ГАРАЖИ';
-                if (l3Fog.hp <= 20) loc = 'ЛЕСНЫЕ ХОЛМЫ';
-                else if (l3Fog.hp <= 40) loc = 'СЕРОЕ МУРИНО';
-                fogHudLabel.innerHTML = `ПЕРЕХВАТЧИК ФОГА (<span style="color:#ffd166;">${loc}</span>): <span id="fogHpText">${Math.max(0, l3Fog.hp)}/${l3Fog.maxHp}</span> HP`;
+                let loc = ('' + T(40) + '');
+                if (l3Fog.hp <= 20) loc = ('' + T(41) + '');
+                else if (l3Fog.hp <= 40) loc = ('' + T(42) + '');
+                fogHudLabel.innerHTML = `${T(43)}<span style="color:#ffd166;">${loc}</span>): <span id="fogHpText">${Math.max(0, l3Fog.hp)}/${l3Fog.maxHp}</span> HP`;
             }
         }
 
         function updateL3WeaponUI() {
             if (ammoVal) ammoVal.innerHTML = `🪨 ${l3Car.ammoRocks} | 🍾 ${l3Car.ammoBottles}`;
-            if (nitroVal) nitroVal.textContent = l3Car.nitroActive ? '🔥🔥 БУСТ!' : `НИТРО: ${Math.floor(l3Car.nitro)}%`;
+            if (nitroVal) nitroVal.textContent = l3Car.nitroActive ? ('' + T(44) + '') : `${T(45)} ${Math.floor(l3Car.nitro)}%`;
         }
 
         function triggerCarJump() {
@@ -1660,7 +1714,7 @@
                 if (nowT - (window._noAmmoT || 0) > 450) {
                     window._noAmmoT = nowT;
                     playSfx('lose.mp3');
-                    hitFloats.push({ x: l3Car.x, y: l3Car.y - 20, text: '❌ НЕТ СНАРЯДОВ! ПОДБИРАЙ НА ДОРОГЕ!', alpha: 1, color: '#ef4444' });
+                    hitFloats.push({ x: l3Car.x, y: l3Car.y - 20, text: ('' + T(46) + ''), alpha: 1, color: '#ef4444' });
                 }
                 return;
             }
@@ -1679,7 +1733,7 @@
             let initVy = inAir ? -7.0 : -1.6;
 
             if (inAir) {
-                hitFloats.push({ x: l3Car.x + 20, y: l3Car.y - 25, text: '⚠️ В ПРЫЖКЕ НЕ ПОПАСТЬ!', alpha: 1.0, color: '#f59e0b' });
+                hitFloats.push({ x: l3Car.x + 20, y: l3Car.y - 25, text: ('' + T(47) + ''), alpha: 1.0, color: '#f59e0b' });
             }
 
             l3Projectiles.push({
@@ -1828,10 +1882,10 @@
                 if (l3Fog.x + l3Fog.w > l3Car.x + 10 && l3Fog.x < l3Car.x + l3Car.w - 15) {
                     if (l3Car.y + l3Car.h <= l3Fog.y + 25) {
                         playSfx('zvuknorm.mp3');
-                        hitFloats.push({ x: l3Car.x + 40, y: l3Car.y - 15, text: '✨ ПЕРЕПРЫГНУЛ ТАРАН!', alpha: 1.2, color: '#34d399' });
+                        hitFloats.push({ x: l3Car.x + 40, y: l3Car.y - 15, text: ('' + T(48) + ''), alpha: 1.2, color: '#34d399' });
                     } else {
                         l3Car.hp--; screenShake = 16; playSfx('lose.mp3');
-                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 25, text: '💥 ТАРАН! -1 ❤️', alpha: 1.5, color: '#ef4444' });
+                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 25, text: ('' + T(49) + ''), alpha: 1.5, color: '#ef4444' });
                         if (l3Car.hp <= 0) { gameOverLevel3(); return; }
                     }
                     l3Fog.actionState = 'ram_return';
@@ -1889,7 +1943,7 @@
 
                     if (Math.hypot(dr.x - (l3Car.x + l3Car.w/2), dr.y - (l3Car.y + l3Car.h/2)) < dr.r + 14) {
                         l3Car.hp--; screenShake = 15; playSfx('lose.mp3');
-                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 25, text: '💥 УДАР ДРОНА! -1 ❤️', alpha: 1.5, color: '#ef4444' });
+                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 25, text: ('' + T(50) + ''), alpha: 1.5, color: '#ef4444' });
                         l3Drones.splice(i, 1);
                         if (l3Car.hp <= 0) { gameOverLevel3(); return; }
                         continue;
@@ -1897,7 +1951,7 @@
 
                     if (dr.y >= currentGroundUnderDrone - 12) {
                         playSfx('zvuknorm.mp3');
-                        hitFloats.push({ x: dr.x, y: currentGroundUnderDrone - 30, text: '💨 ДРОН ПРОМАХНУЛСЯ!', alpha: 1.0, color: '#38bdf8' });
+                        hitFloats.push({ x: dr.x, y: currentGroundUnderDrone - 30, text: ('' + T(51) + ''), alpha: 1.0, color: '#38bdf8' });
                         l3Drones.splice(i, 1);
                     }
                 }
@@ -1924,7 +1978,7 @@
 
                 if (withinX && (l3Car.isGrounded || carNearGround)) {
                     l3Car.hp--; screenShake = 14; playSfx('lose.mp3');
-                    hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 20, text: '💥 ШИПЫ! ПРЫГАЙТЕ! -1 ❤️', alpha: 1.4, color: '#ff0055' });
+                    hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 20, text: ('' + T(52) + ''), alpha: 1.4, color: '#ff0055' });
                     l3Spikes.splice(i, 1);
                     if (l3Car.hp <= 0) { gameOverLevel3(); return; }
                     continue;
@@ -1948,10 +2002,10 @@
                     pk.collected = true;
                     if (pk.type === 'bottle') {
                         l3Car.ammoBottles++; playSfx('Pres.mp3');
-                        hitFloats.push({ x: l3Car.x + 50, y: l3Car.y - 20, text: '+1 🍾 ЧЕКУШКА!', alpha: 1.2, color: '#38bdf8' });
+                        hitFloats.push({ x: l3Car.x + 50, y: l3Car.y - 20, text: ('' + T(53) + ''), alpha: 1.2, color: '#38bdf8' });
                     } else {
                         l3Car.ammoRocks += 2; playSfx('zvuknorm.mp3');
-                        hitFloats.push({ x: l3Car.x + 50, y: l3Car.y - 20, text: '+2 🪨 КАМНЯ!', alpha: 1.2, color: '#ffd166' });
+                        hitFloats.push({ x: l3Car.x + 50, y: l3Car.y - 20, text: ('' + T(54) + ''), alpha: 1.2, color: '#ffd166' });
                     }
                     updateL3WeaponUI();
                     l3Pickups.splice(i, 1);
@@ -1984,7 +2038,7 @@
                                 size: 3
                             });
                         }
-                        hitFloats.push({ x: p.x, y: curGroundY - 20, text: '💨 НЕДОЛЁТ! ПОДПУСТИ БЛИЖЕ!', alpha: 1.0, color: '#94a3b8' });
+                        hitFloats.push({ x: p.x, y: curGroundY - 20, text: ('' + T(55) + ''), alpha: 1.0, color: '#94a3b8' });
                         l3Projectiles.splice(i, 1);
                         continue;
                     }
@@ -2028,7 +2082,7 @@
                 } else {
                     if (p.x > l3Car.x && p.x < l3Car.x + l3Car.w && p.y > l3Car.y && p.y < l3Car.y + l3Car.h) {
                         l3Car.hp--; screenShake = 14; playSfx('lose.mp3');
-                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 20, text: '-1 ❤️! ПРЫГАЙТЕ ЧЕРЕЗ ПИЛЫ!', alpha: 1.3, color: '#ff3366' });
+                        hitFloats.push({ x: l3Car.x + 30, y: l3Car.y - 20, text: ('' + T(56) + ''), alpha: 1.3, color: '#ff3366' });
                         l3Projectiles.splice(i, 1);
                         if (l3Car.hp <= 0) { gameOverLevel3(); return; }
                         continue;
@@ -2447,12 +2501,12 @@
                     drawSpeechBubble(bx, 215, text, a.x, a.y - 8, Object.assign({ margin: 70, marginY: 56, maxW: 340 }, opt));
                 };
                 switch (caveCS.step) {
-                    case 0: say(caveCS.fogX + 130, 'ФОГ: «Ха-ха! Думали, поймали? Я сам заманил вас сюда!»', { border: '#c084fc', color: '#c084fc' }); break;
-                    case 1: say(caveCS.heroX + 70, 'БУРМАЛДАЕЦ: «Ты свою тачку в хлам разнёс, гений тактики!»', { border: '#ffaa5e', color: '#ffaa5e' }); break;
-                    case 2: say(caveCS.heroX + 70, 'ЧЕРЕМША: «Ты мне бампер поцарапал! Щас монтировкой огребёшь!»', { border: '#10b981', color: '#34d399' }); break;
-                    case 3: say(caveCS.fogX + 130, 'ФОГ: «Смейтесь! Отсюда вы живыми не выйдете!»', { border: '#ff3366', color: '#ff7799' }); break;
-                    case 4: say(caveCS.heroX + 70, 'БУРМАЛДАЕЦ: «Пацаны, на выход! Пересчитаем ему зубы!»', { border: '#38bdf8', color: '#38bdf8' }); break;
-                    case 5: drawSpeechBubble(canvas.width / 2, 90, '⚔️ ВПЕРЕДИ РЕШАЮЩИЙ БОССФАЙТ! ⚔️', canvas.width / 2, 120, { border: '#c084fc', color: '#c084fc', margin: 70, marginY: 56, maxW: 340 }); break;
+                    case 0: say(caveCS.fogX + 130, ('' + T(57) + ''), { border: '#c084fc', color: '#c084fc' }); break;
+                    case 1: say(caveCS.heroX + 70, ('' + T(58) + ''), { border: '#ffaa5e', color: '#ffaa5e' }); break;
+                    case 2: say(caveCS.heroX + 70, ('' + T(59) + ''), { border: '#10b981', color: '#34d399' }); break;
+                    case 3: say(caveCS.fogX + 130, ('' + T(60) + ''), { border: '#ff3366', color: '#ff7799' }); break;
+                    case 4: say(caveCS.heroX + 70, ('' + T(61) + ''), { border: '#38bdf8', color: '#38bdf8' }); break;
+                    case 5: drawSpeechBubble(canvas.width / 2, 90, ('' + T(62) + ''), canvas.width / 2, 120, { border: '#c084fc', color: '#c084fc', margin: 70, marginY: 56, maxW: 340 }); break;
                 }
             }
 
@@ -2698,7 +2752,7 @@
                 if (!dr.diving) {
                     ctx.fillStyle = '#ffd166'; ctx.font = '900 13px sans-serif'; ctx.textAlign = 'center';
                     let sec = Math.max(0, dr.timer / 60).toFixed(1);
-                    ctx.fillText(`⚠️ ПИКИРУЕТ ЧЕРЕЗ ${sec}с!`, 0, -dr.r - 8);
+                    ctx.fillText(`${T(63)} ${sec}${T(64)}`, 0, -dr.r - 8);
                 }
                 ctx.restore();
             }

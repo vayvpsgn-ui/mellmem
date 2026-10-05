@@ -5,7 +5,60 @@
         if (location.search.indexOf('embed=1') !== -1 && window.parent !== window) document.documentElement.classList.add('embed-mode');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+<script>
+/* ===== i18n runtime (RU / EN) ===== */
+(function () {
+    var RU = ["Погоня за ФОГом: Лесная Сага & Мурино", "Поверните экран горизонтально 🔄", "Дистанция:", "Тапните в любое место для пропуска ⏩", "ФОГ успел скрыться в гуще леса...", "ПОПРОБОВАТЬ СНОВА", "СЛЕД ВЕДЁТ В МУРИНО! 🏙️", "ФОГ растворился в дыму с мешком, оставив снимок серых высоток...", "🏙️ ОТПРАВИТЬСЯ В ГОРОД (УР. 2)", "В ГЛАВНОЕ МЕНЮ", "🌿 ПРОДОЛЖЕНИЕ СЛЕДУЕТ...", "УРОВЕНЬ 3 ОТКРЫТ", "След Черемши ведёт в погоню. Уровень 3 уже готов — вперёд!", "🌿 К УРОВНЮ 3", "с", "м", "Котость", "Космический Бурмалдаец", "Чекушка", "Пройти уровень 1", "Пройти уровень 2", "МУРИНО", "🌲 ПОГОНЯ ЗА ФОГОМ: ЛЕСНАЯ САГА", "Хе-хе... заберу эти зубы!", "Мешок мой! Теперь бежать!", "«СТОЙ! ОТДАЙ ЗУБЫ!»", "ФОГ С МЕШКОМ:", "Нет рогатки", "камней", "🎯 НАЙДЕНА РОГАТКА! (+3)", "🎉 +10 ЗУБОВ! ФОГ УСКОРЯЕТСЯ!", "🏙️ УРОВЕНЬ 2: СЕРЫЙ ЧЕЛОВЕЙНИК МУРИНО", "ФОГ растворился в дыму с мешком, оставив снимок серых панелек...", "Бурмалдаец позвал Котость, и вместе они бросились по следу в Мурино!", "Все спутники найдены! Открыт Уровень 2!", "Собрано зубов:", "ФОГ растворился в дыму, бросив фотографию высоток Мурино!", "Вход в Мурино закрыт!", "Откройте в кликере Меллстроя:", "СЛЕД ВЕДЁТ В СПАЛЬНЫЙ РАЙОН", "«КОТОСТЬ, ОН НА КРЫШЕ! ЗАРЯЖАЙ ЧЕКУШКИ!»", "«МЯУ! ЦЕЛЬСЯ В СТЕНЫ И ПОЛ, ОНИ РИКОШЕТЯТ!»", "ЧЕРЕМША", "🏙️ ФИНАЛ: ТАЙНА МУРИНО & СЛЕД ЧЕРЕМШИ", "СТАРЫЙ ВЕРНЫЙ ДРУГ", "«А-А-А-А-АХ!»", "«Ага! Допрыгался по крышам, вор!»", "«Опять в дым ушёл! Но смотри — он выронил зубы!»", "«Постой... На этой фотографии...»", "«МЯУ! Это же наш старый друг Черемша!»", "«ФОГ охотится на него! Скорее в путь, спасём друга!»", "👆 Оттяни палец назад — отпусти для выстрела", "ФОГ НА КРЫШЕ:", "❌ СНАРЯДЫ ИСЧЕРПАНЫ! ЖДИТЕ ДРОНА!", "-1 СЕРДЦЕ! 💔", "🎯 ДРОН СБИТ! -1 HP ФОГУ! +", "🔥 КРИТИЧЕСКИЙ УДАР! -5 HP! 🔥", "🛡️ ЩИТ ЗАЩИЩАЕТ!", "24 ШАВЕРМА 24/7", "➕ АПТЕКА 24", "🍺 ПИВО МАРКЕТ", "СИЛА", "оттяни назад ↓", "🛡️ ЩИТ АКТИВЕН", "⚡ ЩИТ СНЯТ! СТРЕЛЯЙ (", "с)!", "ЗАЕЦ СПОТКНУЛСЯ!", "♾️ ЗАБЕГ ЗАКОНЧЕН! Рекорд:", "Разгон не закончен", "Пройдено:", "ДРОНЫ ВЗОРВАЛИ ГЕРОЕВ!", "ФОГ удержал мешок на крышах Мурино...", "Используйте 3 чекушки с умом и цельтесь рикошетом в стены и пол!", "«СТОЙ! ОТДАЙ МЕШОК!»", "«Куда он исчез?! Что за дым?!»", "«Снимок высоток... МУРИНО?!»", "«КОТОООСТЬ! НА ПОМОЩЬ! В МУРИНО!»", "«МЯУ! В МУРИНО?! БЕЖИМ!»", "«ДОГОНИМ ЕГО!»", "· разгон", "♾️ ЛЕСНАЯ САГА: БЕСКОНЕЧНЫЙ ЗАБЕГ"], EN = ["Chasing FOG: Forest Saga & Murino", "Rotate your screen to landscape 🔄", "Distance:", "Tap anywhere to skip ⏩", "FOG managed to vanish into the thick of the forest...", "TRY AGAIN", "THE TRAIL LEADS TO MURINO! 🏙️", "FOG dissolved into smoke with the bag, leaving behind a snapshot of grey high-rises...", "🏙️ HEAD TO THE CITY (LV. 2)", "TO MAIN MENU", "🌿 TO BE CONTINUED...", "LEVEL 3 UNLOCKED", "Cheremsha's trail leads to a chase. Level 3 is ready — let's go!", "🌿 TO LEVEL 3", "s", "m", "Catness", "Cosmic Burmaldian", "Half-Pint", "Beat level 1", "Beat level 2", "MURINO", "🌲 CHASING FOG: FOREST SAGA", "Hee-hee... I'll be taking these teeth!", "The bag is mine! Now RUN!", "“STOP! GIVE BACK THE TEETH!”", "FOG WITH THE BAG:", "No slingshot", "rocks", "🎯 SLINGSHOT FOUND! (+3)", "🎉 +10 TEETH! FOG SPEEDS UP!", "🏙️ LEVEL 2: GREY HUMANHIVE OF MURINO", "FOG dissolved into smoke with the bag, leaving behind a snapshot of grey panel blocks...", "Burmaldian called Catness, and together they rushed down the trail to Murino!", "All companions found! Level 2 unlocked!", "Teeth collected:", "FOG dissolved into smoke, dropping a photo of Murino's high-rises!", "Entry to Murino is closed!", "Unlock in Mellstroy's clicker:", "THE TRAIL LEADS TO THE DORMITORY DISTRICT", "“CATNESS, HE'S ON THE ROOF! LOAD THE HALF-PINTS!”", "“MEOW! AIM AT THE WALLS AND FLOOR, THEY RICOCHET!”", "CHEREMSHA", "🏙️ FINALE: THE MYSTERY OF MURINO & CHEREMSHA'S TRAIL", "OLD FAITHFUL BUDDY", "“AAAAAAH!”", "“Aha! Hopped across the rooftops one time too many, thief!”", "“Vanished in smoke again! But look — he dropped the teeth!”", "“Wait... In this photograph...”", "“MEOW! That's our old friend Cheremsha!”", "“FOG is hunting him! Let's hit the road and save our friend!”", "👆 Pull your finger back — release to fire", "FOG ON THE ROOF:", "❌ OUT OF AMMO! WAIT FOR THE DRONE!", "-1 HEART! 💔", "🎯 DRONE DOWN! -1 HP TO FOG! +", "🔥 CRITICAL HIT! -5 HP! 🔥", "🛡️ THE SHIELD PROTECTS HIM!", "24 SHAWARMA 24/7", "➕ PHARMACY 24", "🍺 BEER MARKET", "POWER", "pull back ↓", "🛡️ SHIELD ACTIVE", "⚡ SHIELD DOWN! SHOOT! (", "s)!", "THE BUNNY TRIPPED!", "♾️ RUN OVER! Record:", "Run-up not finished", "Covered:", "THE DRUNS BLEW UP THE HEROES!", "FOG held on to the bag on the rooftops of Murino...", "Use the 3 half-pints wisely and aim to ricochet off the walls and floor!", "“STOP! GIVE BACK THE BAG!”", "“Where did he go?! What's with the smoke?!”", "“A photo of high-rises... MURINO?!”", "“CATNEEESS! HELP! TO MURINO!”", "“MEOW! TO MURINO?! LET'S RUN!”", "“LET'S CATCH HIM!”", "· run-up", "♾️ FOREST SAGA: ENDLESS RUN"];
+    var KEY = 'mello_lang', lang = '';
+    try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ru') lang = q; } catch (e) {}
+    if (!lang) { try { var s = localStorage.getItem(KEY); if (s === 'en' || s === 'ru') lang = s; } catch (e) {} }
+    if (!lang) {
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ru').toLowerCase();
+        lang = /^(ru|uk|be|kk|uz|ky|tg|hy|az|ka|tk)/.test(nav) ? 'ru' : 'en';
+    }
+    var map = null;
+    function build() { map = {}; for (var i = 0; i < RU.length; i++) map[RU[i]] = EN[i]; }
+    function tr(core) { if (lang !== 'en') return core; if (!map) build(); var v = map[core]; return v === undefined ? core : v; }
+    function trLine(line) {
+        var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(line);
+        if (!m || !m[2]) return line;
+        return m[1] + tr(m[2]) + m[3];
+    }
+    var ATTRS = ['title', 'placeholder', 'alt', 'aria-label'];
+    function applyStatic(root) {
+        if (lang !== 'en') return;
+        root = root || document;
+        var CY = /[\u0400-\u04FF]/;
+        var w = document.createTreeWalker(root.body || root, NodeFilter.SHOW_TEXT, null), n, list = [];
+        while ((n = w.nextNode())) {
+            var p = n.parentNode && n.parentNode.nodeName;
+            if (p === 'SCRIPT' || p === 'STYLE') continue;
+            if (CY.test(n.nodeValue)) list.push(n);
+        }
+        list.forEach(function (t) { t.nodeValue = t.nodeValue.split('\n').map(trLine).join('\n'); });
+        var els = (root.body || root).querySelectorAll('[title],[placeholder],[alt],[aria-label]');
+        for (var i = 0; i < els.length; i++) for (var k = 0; k < ATTRS.length; k++) {
+            var v = els[i].getAttribute(ATTRS[k]);
+            if (v && CY.test(v)) els[i].setAttribute(ATTRS[k], trLine(v));
+        }
+        if (document.title && CY.test(document.title)) document.title = trLine(document.title);
+    }
+    window.LANG = lang;
+    window.T = function (i) { return lang === 'en' ? EN[i] : RU[i]; };
+    window.I18N = {
+        lang: lang, applyStatic: applyStatic, tr: tr,
+        set: function (l, cb) {
+            try { localStorage.setItem(KEY, l); } catch (e) {}
+            if (cb) cb();
+            try { var u = new URL(location.href); u.searchParams.delete('lang'); location.replace(u.toString()); } catch (e) { location.reload(); }
+        }
+    };
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Погоня за ФОГом: Лесная Сага & Мурино</title>
     <style>
         * {
@@ -381,7 +434,8 @@
         </div>
     </div>
 
-    <script>
+    <script>I18N.applyStatic();</script>
+<script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const distVal = document.getElementById('distVal');
@@ -712,15 +766,15 @@
         }
 
         function checkStoryAccess(level) {
-            const names = { catness: 'Котость', burm: 'Космический Бурмалдаец', chekuwka: 'Чекушка' };
+            const names = { catness: ('' + T(16) + ''), burm: ('' + T(17) + ''), chekuwka: ('' + T(18) + '') };
             const need = level === 1 ? ['catness', 'burm'] : (level === 2 ? ['catness', 'burm', 'chekuwka'] : []);
             const data = readMainSave();
             const ach = (data && data.achievementsData) || {};
             const sp = Object.assign({ l1: false, l2: false, l3: false }, (data && data.storyProgress) || {});
             const missing = [];
             need.forEach(k => { if (!(ach[k] && ach[k].unlocked)) missing.push(names[k]); });
-            if (level === 2 && !(sp.l1 || localStoryDone.l1)) missing.push('Пройти уровень 1');
-            if (level === 3 && !(sp.l2 || localStoryDone.l2)) missing.push('Пройти уровень 2');
+            if (level === 2 && !(sp.l1 || localStoryDone.l1)) missing.push(('' + T(19) + ''));
+            if (level === 3 && !(sp.l2 || localStoryDone.l2)) missing.push(('' + T(20) + ''));
             return { unlocked: missing.length === 0, missing: missing };
         }
 
@@ -1319,7 +1373,7 @@
             csBag = { x: 300, y: groundY - 44, stolen: false };
             csFog = { x: 750, y: groundY - 66, w: 58, h: 66 };
 
-            gameHeaderTitle.textContent = '🌲 ПОГОНЯ ЗА ФОГОМ: ЛЕСНАЯ САГА';
+            gameHeaderTitle.textContent = ('' + T(22) + '');
             hudDistWrap.style.display = 'block';
             hudWeaponWrap.style.display = 'block';
             hudTeethWrap.style.display = 'block';
@@ -1390,11 +1444,11 @@
             ctx.restore();
 
             if (cutsceneTimer < 85) {
-                drawSpeechBubble(csFog.x + 29, csFog.y - 18, 'Хе-хе... заберу эти зубы!', csFog.x + 29, csFog.y, { border: '#c084fc', color: '#c084fc' });
+                drawSpeechBubble(csFog.x + 29, csFog.y - 18, ('' + T(23) + ''), csFog.x + 29, csFog.y, { border: '#c084fc', color: '#c084fc' });
             } else if (!csZaec.awake) {
-                drawSpeechBubble(csFog.x + 29, csFog.y - 18, 'Мешок мой! Теперь бежать!', csFog.x + 29, csFog.y, { border: '#c084fc', color: '#c084fc' });
+                drawSpeechBubble(csFog.x + 29, csFog.y - 18, ('' + T(24) + ''), csFog.x + 29, csFog.y, { border: '#c084fc', color: '#c084fc' });
             } else {
-                drawSpeechBubble(csZaec.x + 29, csZaec.y - 24, '«СТОЙ! ОТДАЙ ЗУБЫ!»', csZaec.x + 29, csZaec.y, { border: '#ff3366', color: '#ff3366' });
+                drawSpeechBubble(csZaec.x + 29, csZaec.y - 24, ('' + T(25) + ''), csZaec.x + 29, csZaec.y, { border: '#ff3366', color: '#ff3366' });
             }
         }
 
@@ -1429,7 +1483,7 @@
             projectiles = []; hitFloats = []; obstacles = []; droppedTeeth = []; droppedRocks = []; landingParticles = [];
             slingshotPickupItem = { x: 380, y: groundY - 36, collected: false };
 
-            fogHudLabel.textContent = `ФОГ С МЕШКОМ:`;
+            fogHudLabel.textContent = `${T(26)}`;
             updateFogHpUI();
             updateSlingshotUI();
             teethVal.textContent = collectedTeeth;
@@ -1444,8 +1498,8 @@
         }
 
         function updateSlingshotUI() {
-            if (!hasSlingshot) { slingshotIcon.textContent = '🔒'; ammoVal.textContent = 'Нет рогатки'; }
-            else { slingshotIcon.textContent = '🎯'; ammoVal.textContent = `${slingshotAmmo} камней`; }
+            if (!hasSlingshot) { slingshotIcon.textContent = '🔒'; ammoVal.textContent = ('' + T(27) + ''); }
+            else { slingshotIcon.textContent = '🎯'; ammoVal.textContent = `${slingshotAmmo} ${T(28)}`; }
         }
 
         function fireSlingshot() {
@@ -1763,7 +1817,7 @@
                 if (Math.hypot((player.x + player.w/2) - slingshotPickupItem.x, (player.y + player.h/2) - slingshotPickupItem.y) < 42) {
                     slingshotPickupItem.collected = true; hasSlingshot = true; slingshotAmmo = 3;
                     updateSlingshotUI(); playSfx('Pres.mp3');
-                    hitFloats.push({ x: player.x + 20, y: player.y - 20, text: '🎯 НАЙДЕНА РОГАТКА! (+3)', alpha: 1, color: '#ffd166' });
+                    hitFloats.push({ x: player.x + 20, y: player.y - 20, text: ('' + T(29) + ''), alpha: 1, color: '#ffd166' });
                 }
             }
 
@@ -1903,7 +1957,7 @@
         function triggerEndlessFogBoost() {
             collectedTeeth += 10; teethVal.textContent = collectedTeeth;
             playSfx('Pres.mp3');
-            hitFloats.push({ x: fog.x, y: fog.y - 20, text: '🎉 +10 ЗУБОВ! ФОГ УСКОРЯЕТСЯ!', alpha: 1, color: '#ffd166' });
+            hitFloats.push({ x: fog.x, y: fog.y - 20, text: ('' + T(30) + ''), alpha: 1, color: '#ffd166' });
             fog.hp = fog.maxHp; updateFogHpUI();
             fog.x = Math.min(canvas.width - 100, fog.x + 60);
         }
@@ -1942,7 +1996,7 @@
             cs2ZaecX = 260;
             cs2KotX = -50;
 
-            gameHeaderTitle.textContent = '🏙️ УРОВЕНЬ 2: СЕРЫЙ ЧЕЛОВЕЙНИК МУРИНО';
+            gameHeaderTitle.textContent = ('' + T(31) + '');
             hudDistWrap.style.display = 'none';
             hudWeaponWrap.style.display = 'block';
             hudTeethWrap.style.display = 'none';
@@ -1963,20 +2017,20 @@
                 victoryScreen.style.display = 'flex';
                 if (check.unlocked) {
                     victoryDesc.innerHTML = `
-                        ФОГ растворился в дыму с мешком, оставив снимок серых панелек...<br>
-                        Бурмалдаец позвал Котость, и вместе они бросились по следу в Мурино!<br><br>
-                        🎉 <b>Все спутники найдены! Открыт Уровень 2!</b><br>
-                        Собрано зубов: <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>
+                        ${T(32)}<br>
+                        ${T(33)}<br><br>
+                        🎉 <b>${T(34)}</b><br>
+                        ${T(35)} <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>
                     `;
                     startLevel2Btn.style.display = 'inline-block';
                     startLevel2Btn.classList.remove('locked');
                 } else {
                     victoryDesc.innerHTML = `
-                        ФОГ растворился в дыму, бросив фотографию высоток Мурино!<br><br>
-                        🔒 <b>Вход в Мурино закрыт!</b><br>
-                        Откройте в кликере Меллстроя:<br>
+                        ${T(36)}<br><br>
+                        🔒 <b>${T(37)}</b><br>
+                        ${T(38)}<br>
                         <b style="color: #ffd166;">• ${check.missing.join('<br>• ')}</b><br><br>
-                        Собрано зубов: <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>
+                        ${T(35)} <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>
                     `;
                     startLevel2Btn.classList.add('locked');
                 }
@@ -2091,11 +2145,11 @@
             ctx.fillStyle = '#0f172a';
             ctx.font = '900 24px "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('МУРИНО', px, py + ph/2 - 24);
+            ctx.fillText(('' + T(21) + ''), px, py + ph/2 - 24);
 
             ctx.fillStyle = '#dc2626';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('СЛЕД ВЕДЁТ В СПАЛЬНЫЙ РАЙОН', px, py + ph/2 - 9);
+            ctx.fillText(('' + T(39) + ''), px, py + ph/2 - 9);
             ctx.restore();
         }
 
@@ -2136,9 +2190,9 @@
             }
 
             if (cs2EndTimer >= 80 && cs2EndTimer < 160) {
-                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, '«КОТОСТЬ, ОН НА КРЫШЕ! ЗАРЯЖАЙ ЧЕКУШКИ!»', cs2ZaecX + 29, groundY - 64, { border: '#c084fc', color: '#c084fc' });
+                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, ('' + T(40) + ''), cs2ZaecX + 29, groundY - 64, { border: '#c084fc', color: '#c084fc' });
             } else if (cs2EndTimer >= 190 && cs2EndTimer < 265) {
-                drawSpeechBubble(cs2KotX + 37, groundY - 70, '«МЯУ! ЦЕЛЬСЯ В СТЕНЫ И ПОЛ, ОНИ РИКОШЕТЯТ!»', cs2KotX + 37, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
+                drawSpeechBubble(cs2KotX + 37, groundY - 70, ('' + T(41) + ''), cs2KotX + 37, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
             }
         }
 
@@ -2167,7 +2221,7 @@
             cs2Smoke = [];
             cs2ShowBigChePhoto = false;
 
-            gameHeaderTitle.textContent = '🏙️ ФИНАЛ: ТАЙНА МУРИНО & СЛЕД ЧЕРЕМШИ';
+            gameHeaderTitle.textContent = ('' + T(43) + '');
             hudDistWrap.style.display = 'none';
             hudWeaponWrap.style.display = 'none';
             hudTeethWrap.style.display = 'none';
@@ -2272,7 +2326,7 @@
             ctx.save();
             ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            drawPolaroid(canvas.width / 2, canvas.height / 2 - 12 + Math.sin(_mAmb * 0.05) * 3, 300, 350, -0.035 + Math.sin(_mAmb * 0.03) * 0.012, 'che', 'ЧЕРЕМША', 'СТАРЫЙ ВЕРНЫЙ ДРУГ');
+            drawPolaroid(canvas.width / 2, canvas.height / 2 - 12 + Math.sin(_mAmb * 0.05) * 3, 300, 350, -0.035 + Math.sin(_mAmb * 0.03) * 0.012, 'che', ('' + T(42) + ''), ('' + T(44) + ''));
             ctx.restore();
         }
 
@@ -2311,17 +2365,17 @@
             drawSlingshotWeapon(480, groundY - 35);
 
             if (cs2EndTimer < 45) {
-                drawSpeechBubble(cs2Fog.x + 29, cs2Fog.y - 20, '«А-А-А-А-АХ!»', cs2Fog.x + 29, cs2Fog.y, { border: '#ff3366', color: '#ff3366' });
+                drawSpeechBubble(cs2Fog.x + 29, cs2Fog.y - 20, ('' + T(45) + ''), cs2Fog.x + 29, cs2Fog.y, { border: '#ff3366', color: '#ff3366' });
             } else if (cs2EndTimer >= 60 && cs2EndTimer < 130) {
-                drawSpeechBubble(cs2KotX + 37, groundY - 70, '«Ага! Допрыгался по крышам, вор!»', cs2KotX + 37, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
+                drawSpeechBubble(cs2KotX + 37, groundY - 70, ('' + T(46) + ''), cs2KotX + 37, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
             } else if (cs2EndTimer >= 165 && cs2EndTimer < 240) {
-                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, '«Опять в дым ушёл! Но смотри — он выронил зубы!»', cs2ZaecX + 29, groundY - 64, { border: '#ffaa5e' });
+                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, ('' + T(47) + ''), cs2ZaecX + 29, groundY - 64, { border: '#ffaa5e' });
             } else if (cs2EndTimer >= 270 && cs2EndTimer < 390) {
-                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, '«Постой... На этой фотографии...»', cs2ZaecX + 29, groundY - 64, { border: '#5eead4', color: '#5eead4' });
+                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, ('' + T(48) + ''), cs2ZaecX + 29, groundY - 64, { border: '#5eead4', color: '#5eead4' });
             } else if (cs2EndTimer >= 420 && cs2EndTimer < 510) {
-                drawSpeechBubble(cs2KotX + 37, groundY - 70, '«МЯУ! Это же наш старый друг Черемша!»', cs2KotX + 37, groundY - 50, { border: '#10b981', color: '#34d399' });
+                drawSpeechBubble(cs2KotX + 37, groundY - 70, ('' + T(49) + ''), cs2KotX + 37, groundY - 50, { border: '#10b981', color: '#34d399' });
             } else if (cs2EndTimer >= 540 && cs2EndTimer < 630) {
-                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, '«ФОГ охотится на него! Скорее в путь, спасём друга!»', cs2ZaecX + 29, groundY - 64, { border: '#ff3366', color: '#ff7799' });
+                drawSpeechBubble(cs2ZaecX + 29, groundY - 84, ('' + T(50) + ''), cs2ZaecX + 29, groundY - 64, { border: '#ff3366', color: '#ff7799' });
             }
 
             if (cs2ShowBigChePhoto) {
@@ -2352,9 +2406,9 @@
             hitFloats = [];
             if (typeof cancelSlingDrag === 'function') cancelSlingDrag();
             generateCityDefenses();
-            if ('ontouchstart' in window) hitFloats.push({ x: 330, y: 250, text: '👆 Оттяни палец назад — отпусти для выстрела', alpha: 3.2, color: '#ffd166' });
+            if ('ontouchstart' in window) hitFloats.push({ x: 330, y: 250, text: ('' + T(51) + ''), alpha: 3.2, color: '#ffd166' });
 
-            fogHudLabel.textContent = `ФОГ НА КРЫШЕ:`;
+            fogHudLabel.textContent = `${T(52)}`;
             updateFogLevel2HpUI();
             updateCityAmmoUI();
         }
@@ -2399,7 +2453,7 @@
 
             if (waveShotsLeft <= 0) {
                 playSfx('lose.mp3');
-                hitFloats.push({ x: 480, y: groundY - 70, text: '❌ СНАРЯДЫ ИСЧЕРПАНЫ! ЖДИТЕ ДРОНА!', alpha: 1.2, color: '#ef4444' });
+                hitFloats.push({ x: 480, y: groundY - 70, text: ('' + T(53) + ''), alpha: 1.2, color: '#ef4444' });
                 return;
             }
 
@@ -2468,7 +2522,7 @@
                     if (Math.hypot(activeDrun.x - targetX, activeDrun.y - targetY) < activeDrun.r + 6) {
                         heroHearts--;
                         playSfx('lose.mp3');
-                        hitFloats.push({ x: 480, y: groundY - 60, text: '-1 СЕРДЦЕ! 💔', alpha: 1, color: '#ff3366' });
+                        hitFloats.push({ x: 480, y: groundY - 60, text: ('' + T(54) + ''), alpha: 1, color: '#ff3366' });
                         l2Dust(480, groundY - 20, 16, '#ff0055');
                         activeDrun = null;
                         drunSpawnTimer = 45;
@@ -2543,7 +2597,7 @@
                         l2Dust(activeDrun.x, activeDrun.y, 22, '#00ffff');
                         hitFloats.push({
                             x: activeDrun.x, y: activeDrun.y - 18,
-                            text: `🎯 ДРОН СБИТ! -1 HP ФОГУ! +${dropDiamonds} 💎`,
+                            text: `${T(55)}${dropDiamonds} 💎`,
                             alpha: 1.4, color: '#00e5ff'
                         });
 
@@ -2566,7 +2620,7 @@
                         if (isCrit) {
                                 playSfx('Pres.mp3');
                                 screenShake = 12;
-                                hitFloats.push({ x: 480, y: 45, text: '🔥 КРИТИЧЕСКИЙ УДАР! -5 HP! 🔥', alpha: 1.4, color: '#ff0055' });
+                                hitFloats.push({ x: 480, y: 45, text: ('' + T(56) + ''), alpha: 1.4, color: '#ff0055' });
                             } else {
                                 playSfx('zvuknorm.mp3');
                                 screenShake = 5;
@@ -2587,7 +2641,7 @@
                         p.vy = -p.vy;
                         p.bouncesLeft--;
                         playSfx('lose.mp3');
-                        hitFloats.push({ x: 480, y: 50, text: '🛡️ ЩИТ ЗАЩИЩАЕТ!', alpha: 1, color: '#94a3b8' });
+                        hitFloats.push({ x: 480, y: 50, text: ('' + T(57) + ''), alpha: 1, color: '#94a3b8' });
                     }
                     projectiles.splice(i, 1);
                     continue;
@@ -2646,9 +2700,9 @@
             return { t, c: col, fl, tw, spr, a: 1 };
         }
         const mSigns = [
-            Object.assign(_mkSign('24 ШАВЕРМА 24/7', '#ef4444', 0), { x: 260, y: 95 }),
-            Object.assign(_mkSign('➕ АПТЕКА 24', '#22c55e', 1), { x: 635, y: 105 }),
-            Object.assign(_mkSign('🍺 ПИВО МАРКЕТ', '#38bdf8', 2), { x: 440, y: 310 })
+            Object.assign(_mkSign(('' + T(58) + ''), '#ef4444', 0), { x: 260, y: 95 }),
+            Object.assign(_mkSign(('' + T(59) + ''), '#22c55e', 1), { x: 635, y: 105 }),
+            Object.assign(_mkSign(('' + T(60) + ''), '#38bdf8', 2), { x: 440, y: 310 })
         ];
 
         function l2Spark(x, y, n, color, spd = 1) {
@@ -2896,7 +2950,7 @@
             // шкала силы
             ctx.shadowBlur = 0; ctx.font = '800 14px sans-serif'; ctx.textAlign = 'center';
             ctx.fillStyle = col;
-            ctx.fillText(d.ready ? 'СИЛА ' + Math.round(k * 100) + '%' : 'оттяни назад ↓', d.ax, d.ay - 24);
+            ctx.fillText(d.ready ? ('' + T(61) + ' ') + Math.round(k * 100) + '%' : ('' + T(62) + ''), d.ax, d.ay - 24);
             ctx.restore();
         }
 
@@ -3122,14 +3176,14 @@
                 ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3; ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
                 ctx.beginPath(); ctx.arc(484, 96, 46, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
                 ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText('🛡️ ЩИТ АКТИВЕН', 484, 42);
+                ctx.fillText(('' + T(63) + ''), 484, 42);
                 ctx.restore();
             } else {
                 ctx.save();
                 ctx.fillStyle = '#00ff88'; ctx.font = '900 13px sans-serif'; ctx.textAlign = 'center';
                 ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 8;
                 let secLeft = (fogVulnerableTimer / 60).toFixed(1);
-                ctx.fillText(`⚡ ЩИТ СНЯТ! СТРЕЛЯЙ (${secLeft}с)!`, 484, 38);
+                ctx.fillText(`${T(64)}${secLeft}${T(65)}`, 484, 38);
                 let barW = 120, fillW = (fogVulnerableTimer / 180) * barW;
                 ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(484 - barW/2, 44, barW, 6);
                 ctx.fillStyle = '#00ff88'; ctx.fillRect(484 - barW/2, 44, fillW, 6);
@@ -3149,7 +3203,7 @@
                 let s = Math.max(0, (activeDrun.timer / 60)).toFixed(1);
                 ctx.fillStyle = activeDrun.timer < 90 ? '#ef4444' : '#ffd166';
                 ctx.font = '900 15px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText(`⏳ ${s}с`, 0, -activeDrun.r - 8);
+                ctx.fillText(`⏳ ${s}${T(14)}`, 0, -activeDrun.r - 8);
                 ctx.restore();
             }
 
@@ -3214,20 +3268,20 @@
 
         function gameOverLevel1() {
             state = 'gameover'; playSfx('lose.mp3'); fogBossHud.style.display = 'none';
-            gameOverTitle.textContent = 'ЗАЕЦ СПОТКНУЛСЯ!';
+            gameOverTitle.textContent = ('' + T(66) + '');
             if (gameMode === 'endless') {
                 let best = 0;
                 try { best = +localStorage.getItem('runner_endless_best') || 0; if (distance > best) { best = distance; localStorage.setItem('runner_endless_best', best); } } catch (e) {}
-                gameOverTitle.textContent = '♾️ ЗАБЕГ ЗАКОНЧЕН! Рекорд: ' + best + 'м';
+                gameOverTitle.textContent = ('' + T(67) + ' ') + best + ('' + T(15) + '');
             }
-            gameOverStats.innerHTML = (runWorld < WARMUP_PX ? 'Разгон не закончен<br>' : '') + `Пройдено: <b>${distance}м</b><br>Собрано зубов: <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>`;
+            gameOverStats.innerHTML = (runWorld < WARMUP_PX ? ('' + T(68) + '<br>') : '') + `${T(69)} <b>${distance}${T(15)}</b><br>${T(35)} <b style="color: #ff3366;">+${collectedTeeth} 🦷</b>`;
             gameOverScreen.style.display = 'flex';
         }
 
         function gameOverLevel2() {
             state = 'gameover'; playSfx('lose.mp3'); fogBossHud.style.display = 'none';
-            gameOverTitle.textContent = 'ДРОНЫ ВЗОРВАЛИ ГЕРОЕВ!';
-            gameOverStats.innerHTML = `ФОГ удержал мешок на крышах Мурино...<br>Используйте 3 чекушки с умом и цельтесь рикошетом в стены и пол!`;
+            gameOverTitle.textContent = ('' + T(70) + '');
+            gameOverStats.innerHTML = `${T(71)}<br>${T(72)}`;
             gameOverScreen.style.display = 'flex';
         }
 
@@ -3398,7 +3452,7 @@
                     ctx.fillStyle = '#f8fafc'; ctx.fillRect(-16, -13, 32, 26);
                     ctx.fillStyle = '#334155'; ctx.fillRect(-13, -10, 26, 16);
                     ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 6.5px sans-serif'; ctx.textAlign = 'center';
-                    ctx.fillText('МУРИНО', 0, 10);
+                    ctx.fillText(('' + T(21) + ''), 0, 10);
                     ctx.restore();
                 }
 
@@ -3410,17 +3464,17 @@
                 }
 
                 if (finaleTimer >= 20 && finaleTimer < 95) {
-                    drawSpeechBubble(player.x + 29, player.y - 25, '«СТОЙ! ОТДАЙ МЕШОК!»', player.x + 29, player.y - 4, { border: '#ff3366', color: '#ff3366' });
+                    drawSpeechBubble(player.x + 29, player.y - 25, ('' + T(73) + ''), player.x + 29, player.y - 4, { border: '#ff3366', color: '#ff3366' });
                 } else if (finaleTimer >= 160 && finaleTimer < 230) {
-                    drawSpeechBubble(player.x + 29, player.y - 25, '«Куда он исчез?! Что за дым?!»', player.x + 29, player.y - 4, { border: '#ffaa5e' });
+                    drawSpeechBubble(player.x + 29, player.y - 25, ('' + T(74) + ''), player.x + 29, player.y - 4, { border: '#ffaa5e' });
                 } else if (finaleTimer >= 270 && finaleTimer < 370) {
-                    drawSpeechBubble(player.x + 29, player.y - 25, '«Снимок высоток... МУРИНО?!»', player.x + 29, player.y - 4, { border: '#5eead4', color: '#5eead4' });
+                    drawSpeechBubble(player.x + 29, player.y - 25, ('' + T(75) + ''), player.x + 29, player.y - 4, { border: '#5eead4', color: '#5eead4' });
                 } else if (finaleTimer >= 400 && finaleTimer < 490) {
-                    drawSpeechBubble(player.x + 29, player.y - 25, '«КОТОООСТЬ! НА ПОМОЩЬ! В МУРИНО!»', player.x + 29, player.y - 4, { border: '#ff3366', color: '#ff7799' });
+                    drawSpeechBubble(player.x + 29, player.y - 25, ('' + T(76) + ''), player.x + 29, player.y - 4, { border: '#ff3366', color: '#ff7799' });
                 } else if (finaleTimer >= 530 && finaleTimer < 620) {
-                    drawSpeechBubble(csKotostArrival.x + 35, groundY - 72, '«МЯУ! В МУРИНО?! БЕЖИМ!»', csKotostArrival.x + 35, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
+                    drawSpeechBubble(csKotostArrival.x + 35, groundY - 72, ('' + T(77) + ''), csKotostArrival.x + 35, groundY - 50, { border: '#f59e0b', color: '#ffd166' });
                 } else if (finaleTimer >= 650 && finaleTimer < 725) {
-                    drawSpeechBubble(player.x + 29, player.y - 25, '«ДОГОНИМ ЕГО!»', player.x + 29, player.y - 4, { border: '#ff3366' });
+                    drawSpeechBubble(player.x + 29, player.y - 25, ('' + T(78) + ''), player.x + 29, player.y - 4, { border: '#ff3366' });
                 }
 
                 ctx.restore();
@@ -3438,7 +3492,7 @@
         function updateDistHud() {
             distVal.textContent = distance;
             const w = document.getElementById('warmupVal');
-            if (w) w.textContent = runWorld < WARMUP_PX ? '· разгон ' + Math.floor(runWorld / WARMUP_PX * 100) + '%' : '';
+            if (w) w.textContent = runWorld < WARMUP_PX ? ('' + T(79) + ' ') + Math.floor(runWorld / WARMUP_PX * 100) + '%' : '';
         }
 
         const _vig = createOffscreen(960, 508, (c, w, h) => {
@@ -3729,7 +3783,7 @@
             if (START_LEVEL === 2) startCutsceneLevel2();
             else if (_qs.get('mode') === 'endless') {
                 gameMode = 'endless'; currentLevelNum = 1;
-                gameHeaderTitle.textContent = '♾️ ЛЕСНАЯ САГА: БЕСКОНЕЧНЫЙ ЗАБЕГ';
+                gameHeaderTitle.textContent = ('' + T(80) + '');
                 hudDistWrap.style.display = 'block'; hudWeaponWrap.style.display = 'block'; hudTeethWrap.style.display = 'block';
                 hudDiamondsWrap.style.display = 'none'; mobileControls.style.display = 'flex';
                 startRunning();

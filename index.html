@@ -2,7 +2,60 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+<script>
+/* ===== i18n runtime (RU / EN) ===== */
+(function () {
+    var RU = ["Артур", "С ВОЗВРАЩЕНИЕМ!", "Пока тебя не было, бизнес приносил доход:", "Уведомление", "Текст сообщения", "Отмена", "ОК", "⏸️ БОЙ НА ПАУЗЕ", "Вы свернули игру", "ПРОДОЛЖИТЬ", "Маньяк", "МАНЬЯК", "HP Босса:", "МЕЛЛСТРОЙ", "Кликни для удара!", "УМОЛЯТЬ (", "СБЕЖАТЬ (", "ОТКУП (20 💎)", "ХИЛЛ (+5 HP) (3 💎)", "ПРОПУСК 📺", "Ударь маньяка или выбери действие внизу!", "👊 УДАР!", "жми сюда", "👑 ПЕРЕРОЖДЕНИЕ СТРИМЕРА", "Ты покорил 10-й уровень и стал Владельцем Вселенной!", "Сбрось прогресс до 1 уровня, сохранив ресурсы и скины:", "+100% ко ВСЕМУ доходу", "(клик и пассив) за каждое перерождение, навсегда!", "🚀 Открытие", "11–20 элитных уровней", "👑 Эксклюзивный скин", "«Султан Всея Интернета»", "+50 Алмазов", "бонусом прямо сейчас!", "Меллкоин", "за каждый уровень с 10-го — для рулетки скинов!", "Сделать Престиж (Сброс до 1 уровня)", "Пока не хочу", "⚙️ Настройки игры", "🔊 Звуковые эффекты", "🎵 Фоновая музыка", "🖼️ Фон", "🎁 Промокод", "Введите промокод...", "Применить", "🗑️ Сбросить весь прогресс", "Готово", "📊 Статистика", "Всего заработано:", "Потрачено:", "Всего кликов:", "Сила клика:", "Доход в секунду:", "Всего алмазов получено:", "Потрачено алмазов:", "Всего зубов собрано:", "Потрачено зубов:", "Побеждено боссов (Маньяк):", "Перерождений (Престиж):", "Меллкоины:", "Билеты (мини-игра):", "Время в игре:", "0 сек.", "Закрыть", "🏆 Достижения", "📖 Сюжет: Погоня за ФОГом", "← К списку уровней", "Сюжетная мини-игра", "⏸️ ИГРА НА ПАУЗЕ", "Вкладка была неактивна", "Космический Бурмалдаец", "м", "Стоимость попытки:", "1 билет 🎫", "Тяни мышь или палец, либо жми стрелки / A, D.", "Прыгай монстрам на головы, чтобы выбивать зубы!", "⚡ Подбирай редкие пружины и ракеты для супер-полета!", "Старт (1 🎫)", "Скины и Рулетка 🎰", "Список лидеров 🏆", "Отмена / Выйти", "🎰 Рулетка Скинов Зайца", "Крутить за 50 🦷", "Повторный скин даёт алмазы 💎!", "Гардероб Зайца:", "🏆 Список лидеров", "Лучшие забеги по высоте. Ваше имя в таблице:", "Ваше имя", "Статистика", "Полный экран", "Перерождение доступно!", "Мини-игра Заяц", "Достижения", "Настройки", "шт.", "$ / сек", "🤖 Бот:", "⚡ x2 Клик:", "🔥 x2 Доход:", "🍀 x3 Криты:", "Ур. 1: «Ну че, народ, погнали!» (0%)", "Котость", "Изменить размер", "Убрать с экрана", "Чекушка", "ФОГ", "Друн", "Бурмалдаец", "Собачка", "Черемша", "Мама Птица", "Клики", "Доход", "Бусты", "Донат", "Скины", "Глоток флеша / берна", "+1$ за клик", "куплено: 0", "Мышка из ломбарда", "+4$ за клик", "Фирменный замах Мелла", "+18$ за клик", "Механика на синих свитчах", "+80$ за клик", "«ДАЙ МНЕ ЭТУ СТАВКУ!»", "+350$ за клик", "Золотой перстень с дубайского рынка", "+1,500$ за клик", "Нервный тик лудомана", "+8,000$ за клик", "Перчатка с алмазами", "+40,000$ за клик", "Клик на всю котлету", "+200,000$ за клик", "Легендарный лещ", "+1,200,000$ за клик", "«БУРМАЛДА-А-А!»", "+6,000,000$ за клик", "Разнос монитора", "+35,000,000$ за клик", "Космический фаст-клик", "+200M$ за клик", "Палец Абсолюта", "+1.2B$ за клик", "Абсолютная сингулярность", "+8B$ за клик", "Властелин Мультивселенной", "+60B$ за клик", "Шипящий микрофон за 100 рублей", "+1$ в секунду", "Вебка с мылом 480p", "+8$ в секунду", "Челлендж со стрижкой налысо", "+45$ в секунду", "Стрим-хаус в Москве", "+220$ в секунду", "Зелёный Хуракан в кредит", "+900$ в секунду", "Откат от онлайн-казика", "+4,800$ в секунду", "Пентхаус в Dubai Marina", "+24,000$ в секунду", "Частный джет с золотыми диванами", "+130,000$ в секунду", "Остров со своим казино", "+650,000$ в секунду", "Собственная крипта $MELL", "+3,500,000$ в секунду", "Челленджи мировым звёздам", "+18,000,000$ в сек", "Трансляция на Луне", "+90,000,000$ в сек", "Орбитальный лудо-комплекс", "+450M$ в сек", "Галактика Хайпа Мелла", "+2.5B$ в сек", "Квантовая ферма хайпа", "+15B$ в сек", "Мультивселенская империя Мелла", "+120B$ в сек", "Золотой Дождь", "Вызывает ливень монет", "Авто-тапер (Бот)", "1.5 клика/сек, 40 сек", "Статус:", "Доступен", "Получить за рекламу!", "Две руки на клаву", "x2 клик на 35 сек", "Хайп-Шторм", "x2 доход на 30 сек", "Чуйка лудомана", "15% шанс x3, 35 сек", "Обереги и защита", "Оберег от босса", "Авто-откуп босса навсегда", "Щит от Друнов", "Авто-защита от нашествия", "Билеты в «Космический Бурмалдаец»", "3 билета", "3 попытки", "10 билетов", "10 попыток", "30 билетов", "30 попыток", "Алмазы", "50 алмазов", "+50 💎 на баланс", "150 алмазов", "+150 💎 на баланс", "500 алмазов", "+500 💎 на баланс", "Скин и функции", "Кэжуал Мелл в худи", "Облик Мелла", "Отключить рекламу", "Без рекламы навсегда", "🎰 Рулетка Меллов", "🪙 Меллкоины:", "Крутить за:", "🪙 Меллкоины дают за каждый уровень с 10-го и сундук за 1 час в игре.", "Повторный скин даёт 10 💎.", "Скины рулетки", "🎰 КАЗИНО СОБАЧКИ", "Удача улыбнулась! Крутим слоты на халяву:", "🐶🐶🐶 — СУПЕР-ДЖЕКПОТ: +1 🪙 Меллкоин", "Нажмите «Крутить», чтобы испытать удачу!", "Крутить барабаны!", "Загрузка…", "Понял", "Подтверждение", "Да", "Не хватает алмазов 💎! Нужно", "шт. Перенаправляем в магазин доната.", "МАГАЗИН", "Не хватает билетов 🎫! Нужно", "Мелл судья", "Тёмный друн", "ТЁМНЫЙ ДРУН: ФИНАЛЬНЫЙ БОСС", "Меллуто Узумаки", "Мелл Поттер", "Шейх Бурмалда", "Мелл-Диспетчер", "Мелл Райден", "Мелл на Чиле", "Призрак Лудки", "Мелл-Единорог", "Побег из Стрима", "Мелл Лайт", "Король Тигров", "Месье де Мелль", "Меллкрафт", "Мелл-Шрек", "Меллстронавт", "Капитан Занос", "Тёмный Рыцарь", "Фермер Хайпа", "Меллске Учиха", "[YSDK] sdk.js не загружен — локальный режим", "[YSDK] getPlayer failed — гостевой режим", "Не удалось очистить облачное сохранение. Проверьте соединение и повторите сброс.", "СБРОС", "📺 Реклама сейчас недоступна. Попробуйте позже.", "РЕКЛАМА", "Подтвердить покупку (тестовый режим)?", "ПОКУПКА", "Покупки сейчас недоступны. Проверьте соединение и перезагрузите игру.", "ПОКУПКИ", "[YSDK] consumePurchase failed — повторим при restorePurchases()", "Восстановлены ваши покупки:", "Игрок", "Обычный Заяц-доходяга", "Обычный", "Чёткий кроль", "Редкий", "Бурмалда-ниндзя", "Супер редкий", "Кибер-Кролик", "Эпический", "Демонический Ушастый", "Мифический", "Золотой Донатный Крол", "Легендарный", "Владыка Всех Бурмалдайцев", "Мега легендарный", "Сундук 2 мин", "Сундук 5 мин", "Сундук 10 мин", "Сундук 20 мин", "Сундук 30 мин", "Сундук 1 час", "Сделайте 25 кликов для кошачьей концентрации", "Накопите всего $10,000 заработка", "Накопите 200 алмазов за всё время", "Соберите 250 зубов в мини-игре", "Соберите полностью 2 золотых дождя без единого пропуска монет", "Пройдите 3 уровень сюжетной мини-игры", "Пройдите 4 уровень сюжетной мини-игры", "Переживите 3 нашествия Друнов (увернитесь минимум от половины Друнов в волне)", "«Ну че, народ, погнали!»", "«Здарова, бандиты!»", "«Казик не кормит, да?»", "«Бурмалда космическая»", "«Занос года, роднулькин!»", "«Хайпим, плебеи!»", "«Челленджи на миллионы»", "«Шейх на суете в Дубае»", "«Хозяин бабок и движа»", "«Я купил этот интернет!»", "«Давай по новой, я тильтанул»", "«Казино всей галактики»", "«Лям туда, лям сюда»", "«Орбитальный занос x100000»", "«Бабки не проблема, родной»", "«Перекупил саму Вселенную»", "«Бог лудки и хайпа»", "«Вне времени и пространства»", "«Сверхчеловек Меллстрой»", "«Абсолютный Мелл: Легенда»", "ч.", "мин.", "сек.", "🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!", "Игра начата с 1-го уровня с постоянным бонусом +", "% ко всему доходу!", "События и все скины доступны!", "🪙 За каждый уровень с 10-го ты получаешь Меллкоин для рулетки скинов!", "ПЕРЕРОЖДЕНИЕ", "Пока пусто — станьте первым!", "🎉 Ваш результат попал в таблицу:", "-е место!", "🔑 Войдите в аккаунт Яндекса, чтобы ваш рекорд попал в общий рейтинг.", "🔒 Мини-игра заблокирована! Достигните 4-й стадии («Бурмалда космическая»), чтобы разблокировать Космического Бурмалдайца.", "БЛОКИРОВКА", "Купить вызов Золотого Дождя за 20 💎 алмазов?", "🔒 Реклама для этого буста откроется на", "уровне игры! Текущий уровень:", "ЗАКРЫТО", "Посмотреть короткую рекламу, чтобы активировать буст бесплатно?", "📺 Реклама просмотрена! Буст активирован.", "БОНУС", "🔒 В рулетке", "✅ Надет", "Выбрать", "(Прыжок +15%)", "(повтор: +", "Не хватает зубов 🦷! Нужно 50 зубов за одну крутку.", "РУЛЕТКА", "Повторный скин:", "Вам начислено +", "💎 алмазов компенсации!", "ДУБЛИКАТ", "🎉 НОВЫЙ СКИН:", "НОВЫЙ СКИН", "Купить скин «", "» за", "Купить скин «Кэжуал Мелл в худи» за", "Скин успешно разблокирован!", "УСПЕХ", "Подтвердить покупку:", "билетов", "алмазов", "за", "Начислено +", "билетов 🎫.", "алмазов 💎.", "Реклама уже отключена!", "ИНФОРМАЦИЯ", "Отключить всю рекламу за", "₽ навсегда?", "Реклама полностью отключена.", "Купить «Оберег от босса» за 199 ₽ навсегда?", "Боссы перестанут нападать, а за каждого пропущенного вам будет приходить награда как от откупа!", "🧿 Оберег активирован! Боссы отключены, награды будут начисляться автоматически.", "ОБЕРЕГ", "🧿 Оберег ВКЛЮЧЕН: боссы отключены.", "⚔️ Оберег ВЫКЛЮЧЕН: боссы снова будут нападать!", "Купить «Щит от Друнов» за 149 ₽ навсегда?", "Друны будут автоматически сбиваться ПВО, а вы будете получать награду без риска!", "🛡️ Щит активирован! Друны будут уничтожаться на подлёте.", "ЩИТ", "🛡️ Щит ВКЛЮЧЕН: налёты Друнов отражаются автоматически.", "⚠️ Щит ВЫКЛЮЧЕН: Друны снова будут атаковать Меллстроя!", "Авто", "Фон меняется вместе с уровнем", "Уровень", "Ур.", "Не так быстро! Подожди пару секунд.", "ПРОМОКОД", "Неверный промокод!", "ОШИБКА", "Ты уже использовал этот промокод максимальное число раз.", "Сейчас идёт событие — активируй промокод после его окончания.", "Все сюжетные уровни уже пройдены!", "Достижение «Черемша» уже получено!", "Не удалось проверить промокод. Проверь соединение и попробуй ещё раз.", "Этот промокод закончился — лимит активаций исчерпан.", "Промокод активирован! +30 мин сундуков, начислено +$", "дохода.", "Промокод активирован! Получено +200 💎 алмазов!", "Промокод активирован! Получено +$10,000!", "Промокод активирован! Получено +100 🦷 зубов!", "Артур призван на экран!", "Удача улыбнулась! Нажмите «Крутить», чтобы забрать выигрыш!", "Промокод активирован! Все 4 сюжетных уровня открыты и засчитаны пройденными. Достижения «Черемша» и «Мама Птица» ждут в разделе 🏆.", "Промокод активирован! Достижение «Черемша» разблокировано — забери его в разделе 🏆 Достижения.", "ФОГ ДЖЕКПОТ! +$", "ЧЕКУШКА ДЖЕКПОТ! +$", "КОТОСТЬ ДЖЕКПОТ! +$", "ДРУН ДЖЕКПОТ! +$", "ЧЕРЕМША! +3 🦷", "ЧЕРЕМША! +1 💎", "СУПЕР-ДЖЕКПОТ! +$", "🎨 Вытащить на главный экран", "✅ Размещено на экране", "Тебя не было:", "д", "ч", "мин", "Забрать $", "📺 Забрать $", "за рекламу", "Точно сбросить весь прогресс? Все данные будут удалены безвозвратно!", "СБРОС ИГРЫ", "🎁 Забрать!", "🪙 Меллкоин", "Космический Бурмалдаец (Мини-игра)", "Заблокировано (нужен 4 уровень: «Бурмалда космическая»)", "👑 Султан Всея Интернета", "Награда за перерождение", "Активен", "Купить за", "Куплено", "Цена:", "Закрыто (Ур.", "Скин #", "· порог: $", "Закрыт", "за одну крутку.", "Не хватает зубов 🦷! Нужно", "Не хватает Меллкоинов 🪙! Их дают за каждый уровень с 10-го и за сундук за 1 час в игре.", "Выбрать его можно в списке ниже.", "(ТИЛЬТ −80%)", "(ТИЛЬТ)", "АКТИВНО", "Боссы: ВЫКЛ (Нажмите чтобы включить)", "Боссы: ВКЛ (Нажмите чтобы выключить)", "ОБЕРЕГ ВКЛ", "ОБЕРЕГ ВЫКЛ", "ПВО Друнов: ВКЛ (Защита)", "ПВО Друнов: ВЫКЛ (Опасность)", "ЩИТ ВКЛ", "ЩИТ ВЫКЛ", "Надет", "АКТИВЕН", "куплено:", "КРИТ x3! +$", "🕹️ Води пальцем здесь", "душа двигается плавно", "🧿 Оберег защитил вас от Маньяка (", "Вам начислена награда откупа:", "⚠️ НА ТЕБЯ НАПАЛ МАНЬЯК!", "⚔️ Атака: полоска бегает туда-сюда — нажми, когда она на зелёной зоне (КРИТ), жёлтая — обычный удар, фиолетовый центр — мега-удар.", "🛡️ Защита: уворачивайся от летящих пуль, двигая сердечко пальцем (или WASD).", "🥺 Можно умолять о пощаде, сбежать (потеряешь 15% денег) или откупиться за 20 💎.", "💀 Проиграешь — Меллстрой уйдёт в тильт: доход упадёт на 80%.", "Фиолетовый центр: МЕГА-УДАР (8 урона)!", "Зелёный: КРИТ (5)! Жёлтый: удар (2).", "У Меллстроя уже полное здоровье (20/20 HP)!", "ХИЛЛ", "Здоровье восстановлено: +5 HP!", "🥺 Маньяк сжалился над вашими мольбами и ушёл!", "Вы подобрали с пола: +$1.", "ПОЩАДА", "Маньяк посмеялся над мольбами! Защищайся!", "🏃 Вы смогли сбежать от Маньяка!", "Пока бежали, вы обронили 15% своих накоплений (-$", "ПОБЕГ", "Побег не удался, маньяк преградил путь!", "Откупиться от Маньяка за 20 💎 алмазов?", "Вы гарантированно получите одну награду (на 50% меньше)!", "ОТКУП", "💎 Маньяк взял 20 алмазов и скрылся!", "Убегая, он обронил:", "🛡️ У вас отключена реклама! Босс автоматически пропущен без штрафов.", "ПРОПУСК", "Посмотреть короткую рекламу для безопасного пропуска босса?", "📺 Реклама просмотрена! Маньяк ушел.", "МЕГА-УДАР ПО СЛАБОЙ ТОЧКЕ! -", "КРИТИЧЕСКИЙ УДАР! -", "HP Маньяку!", "Слабый удар: -", "ПРОМАХ! 0 урона!", "УВОРАЧИВАЙСЯ! Води пальцем по нижней панели (или WASD)", "к клику)", "💎 алмазов", "🦷 зубов", "+1 🎫 билет в мини-игру", "🏆 ПОБЕДА НАД МАНЬЯКОМ (", "Ваша награда:", "ПОБЕДА", "💀 МАНЬЯК ПОБЕДИЛ ВАС!", "Меллстрой ушел в тильт: доход и клики урезаны на 80% на", "секунд!", "ПОРАЖЕНИЕ", "🛡️ ПВО «Щит от Друнов» уничтожило врагов на подлёте!", "Собрано осколков: +", "ЩИТ ОТ ДРУНОВ", "🚨 НАШЕСТВИЕ ДРУНОВ!", "⬇️ С неба летят Друны — уворачивайся:", "води пальцем по экрану, Мелл двигается за ним.", "двигай Меллстроя мышкой.", "💥 Попадание Друна отнимает 5% денег.", "💎 Друны, упавшие на пол, разбиваются и оставляют алмазы — чем больше пропустишь мимо себя, тем лучше.", "🏆 Волна засчитана, если увернулся минимум от половины Друнов. 3 таких волны — достижение «Друн».", "ДРУНЫ", "⚠️ НАШЕСТВИЕ ДРУНОВ! Води пальцем в любом месте — Мелл двигается", "⚠️ НАШЕСТВИЕ ДРУНОВ! УВОРАЧИВАЙТЕСЬ!", "УДАР ДРУНА! -5% (-$", "ВОЛНА ПЕРЕЖИТА! Увернулся от", "Волна не засчитана: увернулся от", ", нужно", "ЧИСТАЯ ПОБЕДА! (БЕЗ УРОНА)", "🎉 НАШЕСТВИЕ ДРУНОВ ЗАВЕРШЕНО!", "Увернулся от Друнов:", "— волна засчитана!", "— для зачёта нужно минимум", "Собрано алмазов с разбитых Друнов: +", "🚀 ВЫСАДКА ДЕСАНТА...", "⚡ ПОГНАЛИ!", "(Кликните в любое место, чтобы пропустить)", "Уровень 1: Лесная сага", "ФОГ украл мешок с зубами. Догоните его по лесу!", "Уровень 2: Серый человейник Мурино", "След ведёт в город. Бегите по крышам и остановите ФОГа.", "Уровень 3: В поисках Черемши", "Бешеная погоня на машинах. Награда: достижение «Черемша».", "Уровень 4: Гнездо Мамы Птицы", "ФОГ добрался до гнезда. Босс-файт с Мамой Птицей! Награда: достижение «Мама Птица».", "Достижение «", "Пройти уровень", "Сделать престиж (перерождение)", "Дойти до 10 уровня после престижа", "(сейчас Ур.", "✅ Пройден", "Скоро", "Ещё раз", "Играть", "Закрыто", "♾️ Бесконечный", "🌿 Получено достижение «Черемша»!", "Забери его на главный экран в разделе 🏆 Достижения.", "ДОСТИЖЕНИЕ", "🐦 Получено достижение «Мама Птица»!", "+100 🦷 за победу!", "🔒 Уровень", "пока закрыт.", "Нужно:", "УРОВЕНЬ ЗАКРЫТ", "МАМА ПТИЦА! +", "МАМА ПТИЦА! +$", "кликов)", "МАМА ПТИЦА! +1 🎫", "МАМА ПТИЦА! ФРИСПИН 🎰", "Мама Птица дарит бесплатное вращение! Нажмите «Фриспин».", "🦴 Фриспин (осталось:", "ЛУДОКАЗИНО СОБАЧКИ!", "Барабаны крутятся... 🎰", "Мимо! Разные символы — в этот раз без призов :(", "👑 СУПЕР-ДЖЕКПОТ СОБАЧЕК! 👑", "+1 🪙 Меллкоин", "🦴🦴🦴 ТРИ КОСТОЧКИ! Вы получили 3 фриспина! 🎰", "🎉 ТРИ АЛМАЗА! Начислено: +", "🦷 ТРИ ЗУБА! Начислено: +", "🎫 ТРИ БИЛЕТА! Начислено: +", "🎫 в мини-игру!", "💵 ТРИ БАКСА! Начислено: +$", "(x150 клика)!", "✨ Пара Собачек!", "🦴🦴 Пара Косточек! Вы получили 1 фриспин! 🎰", "✨ Пара Алмазов! Начислено: +", "✨ Пара Зубов! Начислено: +", "✨ Пара Билетов! Начислено: +", "✨ Пара Баксов! Начислено: +$", "(x75 клика)!", "var m = /Ур\\. (\\d+)\\/\\d+: (.*) \\(\\d+%\\)/.exec(lvl.textContent); if (!m) return;", "НОВЫЙ УРОВЕНЬ", "Симулятор Стримера: Меллстрой"], EN = ["Arthur", "WELCOME BACK!", "While you were gone, the business kept raking in the cash:", "Notification", "Message text", "Cancel", "OK", "⏸️ BATTLE PAUSED", "You minimized the game", "RESUME", "Maniac", "MANIAC", "Boss HP:", "MELLSTROY", "Click to strike!", "BEG (", "FLEE (", "BRIBE (20 💎)", "HEAL (+5 HP) (3 💎)", "SKIP 📺", "Hit the maniac or pick an action below!", "👊 PUNCH!", "tap here", "👑 STREAMER REBIRTH", "You conquered level 10 and became the Owner of the Universe!", "Reset your progress to level 1, keeping your resources and skins:", "+100% to ALL income", "(click and passive) for every rebirth, forever!", "🚀 Unlocks", "elite levels 11–20", "👑 Exclusive skin", "“Sultan of the Whole Internet”", "+50 Diamonds", "as a bonus right now!", "Mellcoin", "for every level from the 10th on — for the skin roulette!", "Prestige (Reset to Level 1)", "Not yet", "⚙️ Game Settings", "🔊 Sound Effects", "🎵 Background Music", "🖼️ Background", "🎁 Promo Code", "Enter promo code...", "Apply", "🗑️ Reset All Progress", "Done", "📊 Statistics", "Total earned:", "Spent:", "Total clicks:", "Click power:", "Income per second:", "Total diamonds earned:", "Diamonds spent:", "Total teeth collected:", "Teeth spent:", "Bosses defeated (Maniac):", "Rebirths (Prestige):", "Mellcoins:", "Tickets (mini-game):", "Time played:", "0 sec.", "Close", "🏆 Achievements", "📖 Story: The Chase for FOG", "← Back to levels", "Story mini-game", "⏸️ GAME PAUSED", "The tab was inactive", "Cosmic Burmaldian", "m", "Cost per attempt:", "1 ticket 🎫", "Drag your mouse or finger, or press the arrows / A, D.", "Jump on monsters' heads to knock their teeth out!", "⚡ Grab rare springs and rockets for a super flight!", "Start (1 🎫)", "Skins & Roulette 🎰", "Leaderboard 🏆", "Cancel / Exit", "🎰 Bunny Skin Roulette", "Spin for 50 🦷", "A duplicate skin gives diamonds 💎!", "Bunny's Wardrobe:", "🏆 Leaderboard", "Best runs by height. Your name on the board:", "Your name", "Statistics", "Fullscreen", "Rebirth available!", "Bunny mini-game", "Achievements", "Settings", "pcs.", "$ / sec", "🤖 Bot:", "⚡ x2 Click:", "🔥 x2 Income:", "🍀 x3 Crits:", "Lv. 1: “Well, folks, let's gooo!” (0%)", "Catness", "Change size", "Remove from screen", "Half-Pint", "FOG", "Drun", "Burmaldian", "Doggy", "Cheremsha", "Mama Bird", "Clicks", "Income", "Boosts", "Donate", "Skins", "Gulp of Flash / Burn", "+$1 per click", "owned: 0", "Pawn-Shop Mouse", "+$4 per click", "Mell's Signature Wind-Up", "+$18 per click", "Blue-Switch Mechanical Keyboard", "+$80 per click", "“GIMME THAT BET!”", "+$350 per click", "Gold Ring from a Dubai Bazaar", "+$1,500 per click", "Gambler's Nervous Twitch", "+$8,000 per click", "Diamond-Studded Glove", "+$40,000 per click", "Whole-Cutlet Click", "+$200,000 per click", "Legendary Bream Slap", "+$1,200,000 per click", "“BURMALDAAAAA!”", "+$6,000,000 per click", "Monitor Smash-Up", "+$35,000,000 per click", "Cosmic Fast-Click", "+$200M per click", "Finger of the Absolute", "+$1.2B per click", "Absolute Singularity", "+$8B per click", "Lord of the Multiverse", "+$60B per click", "Hissing 100-Ruble Microphone", "+$1 per second", "Soapy 480p Webcam", "+$8 per second", "Shave-Your-Head Challenge", "+$45 per second", "Stream House in Moscow", "+$220 per second", "Green Huracán on Credit", "+$900 per second", "Kickback from an Online Cazzino", "+$4,800 per second", "Penthouse in Dubai Marina", "+$24,000 per second", "Private Jet with Golden Couches", "+$130,000 per second", "Island with Its Very Own Casino", "+$650,000 per second", "Own Crypto: $MELL", "+$3,500,000 per second", "Challenges for World-Famous Stars", "+$18,000,000 per sec", "Livestream from the Moon", "+$90,000,000 per sec", "Orbital Gamble-Plex", "+$450M per sec", "Mell's Galaxy of Hype", "+$2.5B per sec", "Quantum Hype Farm", "+$15B per sec", "Mell's Multiversal Empire", "+$120B per sec", "Golden Rain", "Summons a downpour of coins", "Auto-Tapper (Bot)", "1.5 clicks/sec, 40 sec", "Status:", "Available", "Get it for an ad!", "Both Hands on the Keys", "x2 click for 35 sec", "Hype Storm", "x2 income for 30 sec", "Gambler's Hunch", "15% chance of x3, 35 sec", "Charms & Protection", "Anti-Boss Charm", "Auto-bribes the boss forever", "Anti-Drun Shield", "Auto-defense against the invasion", "Tickets for “Cosmic Burmaldian”", "3 tickets", "3 attempts", "10 tickets", "10 attempts", "30 tickets", "30 attempts", "Diamonds", "50 diamonds", "+50 💎 to your balance", "150 diamonds", "+150 💎 to your balance", "500 diamonds", "+500 💎 to your balance", "Skin & Features", "Casual Mell in a Hoodie", "Mell's look", "Disable Ads", "No ads forever", "🎰 Mell Roulette", "🪙 Mellcoins:", "Spin for:", "🪙 Mellcoins are awarded for every level from the 10th on, plus a chest at 1 hour of play.", "A duplicate skin gives 10 💎.", "Roulette skins", "🎰 DOGGY'S CASINO", "Lady Luck smiled on you! Spinning the slots for free:", "🐶🐶🐶 — SUPER JACKPOT: +1 🪙 Mellcoin", "Press “Spin” to try your luck!", "Spin the reels!", "Loading…", "Got it", "Confirmation", "Yes", "Not enough diamonds 💎! You need", "more. Redirecting you to the donate shop.", "SHOP", "Not enough tickets 🎫! You need", "Judge Mell", "Dark Drun", "DARK DRUN: FINAL BOSS", "Mellruto Uzumaki", "Mell Potter", "Sheikh Burmalda", "Mell the Dispatcher", "Mell Raiden", "Mell on Chill", "Ghost of Ludka", "Mell the Unicorn", "Stream Break", "Mell Light", "Tiger King", "Monsieur de Mell", "Mellcraft", "Mell-Shrek", "Mellstronaut", "Captain Big Win", "Dark Knight", "Hype Farmer", "Mellske Uchiha", "[YSDK] sdk.js not loaded — local mode", "[YSDK] getPlayer failed — guest mode", "Couldn't clear the cloud save. Check your connection and try the reset again.", "RESET", "📺 Ads are unavailable right now. Please try again later.", "ADS", "Confirm purchase (test mode)?", "PURCHASE", "Purchases are unavailable right now. Check your connection and reload the game.", "PURCHASES", "[YSDK] consumePurchase failed — will retry on restorePurchases()", "Your purchases were restored:", "Player", "Ordinary Bunny Weakling", "Common", "Chad Bunny", "Rare", "Burmalda Ninja", "Super Rare", "Cyber Bunny", "Epic", "Demonic Floppy-Ears", "Mythic", "Golden Donation Bunny", "Legendary", "Lord of All Burmaldians", "Mega Legendary", "2 min Chest", "5 min Chest", "10 min Chest", "20 min Chest", "30 min Chest", "1 hour Chest", "Make 25 clicks for cat-like concentration", "Earn $10,000 in total", "Accumulate 200 diamonds over time", "Collect 250 teeth in the mini-game", "Fully collect 2 Golden Rains without missing a single coin", "Beat level 3 of the story mini-game", "Beat level 4 of the story mini-game", "Survive 3 Drun invasions (dodge at least half the Druns in a wave)", "“Well, folks, let's gooo!”", "“Howdy, bandits!”", "“The casino ain't feeding you, huh?”", "“Cosmic Burmalda”", "“Big Win of the Year, buddy!”", "“Let's hype, plebs!”", "“Million-Dollar Challenges”", "“Sheikh of the Hustle in Dubai”", "“Lord of the Loot and the Action”", "“I bought this internet!”", "“Run it back, I tilted”", "“Casino of the Entire Galaxy”", "“A Mil Here, a Mil There”", "“Orbital Big Win x100000”", "“Money's No Object, Bro”", "“Bought Out the Universe Itself”", "“God of Gambling and Hype”", "“Beyond Time and Space”", "“Mellstroy the Superman”", "“Absolute Mell: The Legend”", "h", "min", "sec", "🎉 REBIRTH COMPLETE!", "Game restarted from level 1 with a permanent bonus of +", "% to ALL income!", "Events and all skins are available!", "🪙 For every level from the 10th on, you earn a Mellcoin for the skin roulette!", "REBIRTH", "Nobody here yet — be the first!", "🎉 Your score made the board — place #", "!", "🔑 Sign in to Yandex to get your record on the global leaderboard.", "🔒 Mini-game locked! Reach stage 4 (“Cosmic Burmalda”) to unlock the Cosmic Burmaldian.", "LOCKED", "Buy a Golden Rain summon for 20 💎 diamonds?", "🔒 The ad for this boost unlocks at level", "of the game! Current level:", "LOCKED", "Watch a short ad to activate the boost for free?", "📺 Ad watched! Boost activated.", "BONUS", "🔒 In roulette", "✅ Equipped", "Select", "(Jump +15%)", "(duplicate: +", "Not enough teeth 🦷! You need 50 teeth per spin.", "ROULETTE", "Duplicate skin:", "You received +", "💎 diamonds in compensation!", "DUPLICATE", "🎉 NEW SKIN:", "NEW SKIN", "Buy the skin “", "” for", "Buy the “Casual Mell in a Hoodie” skin for", "Skin unlocked successfully!", "SUCCESS", "Confirm purchase:", "tickets", "diamonds", "for", "Added +", "tickets 🎫.", "diamonds 💎.", "Ads are already disabled!", "INFO", "Disable all ads for", "₽, forever?", "Ads are now fully disabled.", "Buy the “Anti-Boss Charm” for 199 ₽ forever?", "Bosses will stop attacking, and for every skipped one you'll get a reward as if you'd bribed them!", "🧿 Charm activated! Bosses are disabled; rewards will be credited automatically.", "CHARM", "🧿 Charm ON: bosses are disabled.", "⚔️ Charm OFF: bosses will attack again!", "Buy the “Anti-Drun Shield” for 149 ₽ forever?", "Druns will be shot down by air defense automatically, and you'll get the reward without the risk!", "🛡️ Shield activated! Druns will be destroyed on approach.", "SHIELD", "🛡️ Shield ON: Drun raids are repelled automatically.", "⚠️ Shield OFF: Druns will attack Mellstroy again!", "Auto", "Background changes with your level", "Level", "Lv.", "Not so fast! Wait a couple of seconds.", "PROMO CODE", "Invalid promo code!", "ERROR", "You've already used this promo code the maximum number of times.", "An event is in progress — activate the promo code after it ends.", "All story levels are already beaten!", "The “Cheremsha” achievement is already earned!", "Couldn't verify the promo code. Check your connection and try again.", "This promo code has run out — activation limit reached.", "Promo code activated! +30 min of chests, earned +$", "of income.", "Promo code activated! Received +200 💎 diamonds!", "Promo code activated! Received +$10,000!", "Promo code activated! Received +100 🦷 teeth!", "Arthur has been summoned to the screen!", "Lady Luck smiled on you! Press “Spin” to claim your winnings!", "Promo code activated! All 4 story levels are unlocked and marked as beaten. The “Cheremsha” and “Mama Bird” achievements await in the 🏆 section.", "Promo code activated! The “Cheremsha” achievement is unlocked — claim it in the 🏆 Achievements section.", "FOG JACKPOT! +$", "HALF-PINT JACKPOT! +$", "CATNESS JACKPOT! +$", "DRUN JACKPOT! +$", "CHEREMSHA! +3 🦷", "CHEREMSHA! +1 💎", "SUPER JACKPOT! +$", "🎨 Drag onto the main screen", "✅ Placed on screen", "You were away:", "d", "h", "min", "Claim $", "📺 Claim $", "for watching an ad", "Really reset all progress? All data will be deleted permanently!", "RESET GAME", "🎁 Claim!", "🪙 Mellcoin", "Cosmic Burmaldian (Mini-game)", "Locked (requires level 4: “Cosmic Burmalda”)", "👑 Sultan of the Whole Internet", "Rebirth reward", "Active", "Buy for", "Owned", "Price:", "Locked (Lv.", "Skin #", "· threshold: $", "Locked", "for one spin.", "Not enough teeth 🦷! You need", "Not enough Mellcoins 🪙! They're awarded for every level from the 10th on and for the 1-hour chest.", "You can pick it from the list below.", "(TILT −80%)", "(TILT)", "ACTIVE", "Bosses: OFF (Tap to turn on)", "Bosses: ON (Tap to turn off)", "CHARM ON", "CHARM OFF", "Drun AA: ON (Protected)", "Drun AA: OFF (Dangerous)", "SHIELD ON", "SHIELD OFF", "Worn", "ACTIVE", "owned:", "CRIT x3! +$", "🕹️ Drag your finger here", "the soul moves smoothly", "🧿 The charm protected you from the Maniac (", "You received the bribe reward:", "⚠️ THE MANIAC ATTACKED YOU!", "⚔️ Attack: the bar slides back and forth — press when it's on the green zone (CRIT); yellow is a normal hit, the purple center is a mega-hit.", "🛡️ Defense: dodge the flying bullets by moving the little heart with your finger (or WASD).", "🥺 You can beg for mercy, flee (you'll lose 15% of your money) or buy him off for 20 💎.", "💀 If you lose, Mellstroy goes on tilt: income drops by 80%.", "Purple center: MEGA-HIT (8 damage)!", "Green: CRIT (5)! Yellow: hit (2).", "Mellstroy is already at full health (20/20 HP)!", "HEAL", "Health restored: +5 HP!", "🥺 The Maniac took pity on your pleas and left!", "You picked up from the floor: +$1.", "MERCY", "The Maniac laughed at your pleas! Defend yourself!", "🏃 You managed to escape the Maniac!", "While running, you dropped 15% of your savings (-$", "ESCAPE", "Escape failed, the maniac blocked your path!", "Buy off the Maniac for 20 💎 diamonds?", "You're guaranteed one reward (50% smaller)!", "BRIBE", "💎 The Maniac took 20 diamonds and vanished!", "While fleeing, he dropped:", "🛡️ Your ads are disabled! The boss was skipped automatically with no penalty.", "SKIP", "Watch a short ad to safely skip the boss?", "📺 Ad watched! The Maniac left.", "MEGA-HIT ON THE WEAK SPOT! -", "CRITICAL HIT! -", "HP to the Maniac!", "Weak hit: -", "MISS! 0 damage!", "DODGE! Drag your finger on the bottom panel (or WASD)", "click power)", "💎 diamonds", "🦷 teeth", "+1 🎫 mini-game ticket", "🏆 VICTORY OVER THE MANIAC (", "Your reward:", "VICTORY", "💀 THE MANIAC DEFEATED YOU!", "Mellstroy went on tilt: income and clicks are cut by 80% for", "seconds!", "DEFEAT", "🛡️ The “Anti-Drun Shield” AA destroyed the enemies on approach!", "Shards collected: +", "ANTI-DRUN SHIELD", "🚨 DRUN INVASION!", "⬇️ Druns are falling from the sky — dodge them:", "drag your finger across the screen, Mell follows it.", "move Mellstroy with your mouse.", "💥 A Drun hit takes 5% of your money.", "💎 Druns that hit the floor shatter and leave diamonds — the more you let slip past, the better.", "🏆 A wave counts if you dodge at least half the Druns. 3 such waves earn the “Drun” achievement.", "DRUNS", "⚠️ DRUN INVASION! Drag your finger anywhere — Mell follows", "⚠️ DRUN INVASION! DODGE!", "DRUN HIT! -5% (-$", "WAVE SURVIVED! Dodged", "Wave not counted: dodged", ", needed", "FLAWLESS VICTORY! (NO DAMAGE)", "🎉 DRUN INVASION OVER!", "Dodged Druns:", "— wave counted!", "— to count, you need at least", "Diamonds collected from shattered Druns: +", "🚀 LANDING THE TROOPS...", "⚡ LET'S GOOO!", "(Click anywhere to skip)", "Level 1: Forest Saga", "FOG stole the bag of teeth. Catch him through the forest!", "Level 2: Grey Humanhive of Murino", "The trail leads to the city. Run across the rooftops and stop FOG.", "Level 3: In Search of Cheremsha", "A wild car chase. Reward: the “Cheremsha” achievement.", "Level 4: Mama Bird's Nest", "FOG reached the nest. Boss fight with Mama Bird! Reward: the “Mama Bird” achievement.", "Achievement “", "Beat level", "Do a prestige (rebirth)", "Reach level 10 after prestige", "(now Lv.", "✅ Completed", "Soon", "Play again", "Play", "Locked", "♾️ Endless", "🌿 Achievement unlocked: “Cheremsha”!", "Claim it on the main screen in the 🏆 Achievements section.", "ACHIEVEMENT", "🐦 Achievement unlocked: “Mama Bird”!", "+100 🦷 for the win!", "🔒 Level", "is still locked.", "You need:", "LEVEL LOCKED", "MAMA BIRD! +", "MAMA BIRD! +$", "clicks)", "MAMA BIRD! +1 🎫", "MAMA BIRD! FREE SPIN 🎰", "Mama Bird gifts you a free spin! Press “Free Spin”.", "🦴 Free Spin (left:", "DOGGY'S LUDO-CASINO!", "The reels are spinning... 🎰", "Miss! Mismatched symbols — no prizes this time :(", "👑 DOGGY SUPER JACKPOT! 👑", "+1 🪙 Mellcoin", "🦴🦴🦴 THREE BONES! You got 3 free spins! 🎰", "🎉 THREE DIAMONDS! Added: +", "🦷 THREE TEETH! Added: +", "🎫 THREE TICKETS! Added: +", "🎫 for the mini-game!", "💵 THREE BUCKS! Added: +$", "(x150 click)!", "✨ A Pair of Doggies!", "🦴🦴 A Pair of Bones! You got 1 free spin! 🎰", "✨ A Pair of Diamonds! Added: +", "✨ A Pair of Teeth! Added: +", "✨ A Pair of Tickets! Added: +", "✨ A Pair of Bucks! Added: +$", "(x75 click)!", "(special regex line)", "NEW LEVEL", "Streamer Simulator: Mellstroy"];
+    var KEY = 'mello_lang', lang = '';
+    try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ru') lang = q; } catch (e) {}
+    if (!lang) { try { var s = localStorage.getItem(KEY); if (s === 'en' || s === 'ru') lang = s; } catch (e) {} }
+    if (!lang) {
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ru').toLowerCase();
+        lang = /^(ru|uk|be|kk|uz|ky|tg|hy|az|ka|tk)/.test(nav) ? 'ru' : 'en';
+    }
+    var map = null;
+    function build() { map = {}; for (var i = 0; i < RU.length; i++) map[RU[i]] = EN[i]; }
+    function tr(core) { if (lang !== 'en') return core; if (!map) build(); var v = map[core]; return v === undefined ? core : v; }
+    function trLine(line) {
+        var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(line);
+        if (!m || !m[2]) return line;
+        return m[1] + tr(m[2]) + m[3];
+    }
+    var ATTRS = ['title', 'placeholder', 'alt', 'aria-label'];
+    function applyStatic(root) {
+        if (lang !== 'en') return;
+        root = root || document;
+        var CY = /[\u0400-\u04FF]/;
+        var w = document.createTreeWalker(root.body || root, NodeFilter.SHOW_TEXT, null), n, list = [];
+        while ((n = w.nextNode())) {
+            var p = n.parentNode && n.parentNode.nodeName;
+            if (p === 'SCRIPT' || p === 'STYLE') continue;
+            if (CY.test(n.nodeValue)) list.push(n);
+        }
+        list.forEach(function (t) { t.nodeValue = t.nodeValue.split('\n').map(trLine).join('\n'); });
+        var els = (root.body || root).querySelectorAll('[title],[placeholder],[alt],[aria-label]');
+        for (var i = 0; i < els.length; i++) for (var k = 0; k < ATTRS.length; k++) {
+            var v = els[i].getAttribute(ATTRS[k]);
+            if (v && CY.test(v)) els[i].setAttribute(ATTRS[k], trLine(v));
+        }
+        if (document.title && CY.test(document.title)) document.title = trLine(document.title);
+    }
+    window.LANG = lang;
+    window.T = function (i) { return lang === 'en' ? EN[i] : RU[i]; };
+    window.I18N = {
+        lang: lang, applyStatic: applyStatic, tr: tr,
+        set: function (l, cb) {
+            try { localStorage.setItem(KEY, l); } catch (e) {}
+            if (cb) cb();
+            try { var u = new URL(location.href); u.searchParams.delete('lang'); location.replace(u.toString()); } catch (e) { location.reload(); }
+        }
+    };
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#070a09">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1888,7 +1941,14 @@
             /* подпись силы клика выше плашки уровня, не касаясь её */
             .cpc-badge { bottom: calc(var(--ib) + 24px); font-size: 11px; padding: 4px 12px; }
         }
-    </style>
+
+        /* ===== Language picker ===== */
+        .lang-picker { display: flex; gap: 8px; width: 100%; }
+        .lang-btn { flex: 1; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--line, rgba(255,255,255,.18)); background: rgba(255,255,255,.05); color: var(--txt-dim, #a3b8b0); font-weight: 800; font-size: 13px; cursor: pointer; transition: .2s; }
+        .lang-btn:hover { border-color: var(--mint, #3dffa0); color: #fff; }
+        .lang-btn.active { border-color: var(--mint, #3dffa0); color: var(--mint, #3dffa0); background: rgba(61,255,160,.12); box-shadow: 0 0 12px rgba(61,255,160,.35); cursor: default; }
+        html[data-lang="en"] .upgrade-card.best-buy::after { content: "🔥 best buy"; }
+        </style>
 </head>
 <body>
 <div class="game-wrapper">
@@ -1987,6 +2047,14 @@
             <div class="modal-card">
                 <div class="modal-title">⚙️ Настройки игры</div>
                 
+                <div class="settings-group" style="gap: 8px;">
+                    <span class="settings-label-title">🌐 Language / Язык</span>
+                    <div class="lang-picker" id="langPicker">
+                        <button type="button" class="lang-btn" data-lang="ru">Русский</button>
+                        <button type="button" class="lang-btn" data-lang="en">English</button>
+                    </div>
+                </div>
+
                 <div class="settings-group">
                     <div class="settings-row">
                         <span class="settings-label-title">🔊 Звуковые эффекты</span>
@@ -2505,6 +2573,7 @@
         </div>
     </div>
 <div id="sdkLoader" style="position:fixed;inset:0;z-index:99999;background:#070a09;display:flex;align-items:center;justify-content:center;color:#00ff88;font:800 16px Manrope,sans-serif;">Загрузка…</div>
+<script>I18N.applyStatic();</script>
 <script>
         // ========================================================
         // ФОРМАТИРОВАНИЕ ЧИСЕЛ (ОТ 100 000 000 -> 100M, 1B, 1T, 1Qa...)
@@ -2797,13 +2866,13 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             }
         }
 
-        window.alert = function(msg, title = 'Уведомление') {
+        window.alert = function(msg, title = ('' + T(3) + '')) {
             flushPendingAlert();
             return new Promise((resolve) => {
                 customAlertTitle.textContent = title;
                 customAlertMessage.textContent = msg;
                 customAlertCancelBtn.style.display = 'none';
-                customAlertOkBtn.textContent = 'Понял';
+                customAlertOkBtn.textContent = ('' + T(230) + '');
                 customAlertOverlay.classList.add('active');
 
                 alertResolveCallback = () => {
@@ -2813,14 +2882,14 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             });
         };
 
-        window.confirm = function(msg, title = 'Подтверждение') {
+        window.confirm = function(msg, title = ('' + T(231) + '')) {
             flushPendingAlert();
             return new Promise((resolve) => {
                 customAlertTitle.textContent = title;
                 customAlertMessage.textContent = msg;
                 customAlertCancelBtn.style.display = 'block';
-                customAlertCancelBtn.textContent = 'Отмена';
-                customAlertOkBtn.textContent = 'Да';
+                customAlertCancelBtn.textContent = ('' + T(5) + '');
+                customAlertOkBtn.textContent = ('' + T(232) + '');
                 customAlertOverlay.classList.add('active');
 
                 alertResolveCallback = (confirmed) => {
@@ -2851,12 +2920,12 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         async function requireResource(type, amount) {
             if (type === 'diamonds' && diamonds < amount) {
-                await alert(`Не хватает алмазов 💎! Нужно ${amount} шт. Перенаправляем в магазин доната.`, 'МАГАЗИН');
+                await alert(`${T(233)} ${amount} ${T(234)}`, ('' + T(235) + ''));
                 switchTab('tab-donate');
                 return false;
             }
             if (type === 'tickets' && tickets < amount) {
-                await alert(`Не хватает билетов 🎫! Нужно ${amount} шт. Перенаправляем в магазин доната.`, 'МАГАЗИН');
+                await alert(`${T(236)} ${amount} ${T(234)}`, ('' + T(235) + ''));
                 switchTab('tab-donate');
                 return false;
             }
@@ -2886,9 +2955,9 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let halfDodgedDrunWaves = 0;       // волны, где увернулся минимум от половины Друнов
 
         let specialSkins = {
-            skindon: { unlocked: false, cost: 100, name: 'Мелл судья', img: 'skindon.png' },
-            skindon1: { unlocked: false, cost: 300, name: 'Тёмный друн', img: 'skindon1.png' },
-            skindon2: { unlocked: false, cost: 500, name: 'ТЁМНЫЙ ДРУН: ФИНАЛЬНЫЙ БОСС', img: 'skindon2.png' }
+            skindon: { unlocked: false, cost: 100, name: ('' + T(237) + ''), img: 'skindon.png' },
+            skindon1: { unlocked: false, cost: 300, name: ('' + T(238) + ''), img: 'skindon1.png' },
+            skindon2: { unlocked: false, cost: 500, name: ('' + T(239) + ''), img: 'skindon2.png' }
         };
 
         let activeSpecialSkin = null;
@@ -2904,25 +2973,25 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         const MELL_DUP_DIAMONDS = 10;
         const MELL_SKIN_COLOR = '#ffd700';
         const MELL_ROULETTE_SKINS = [
-            ['rul1', 'Меллуто Узумаки'],
-            ['rul2', 'Мелл Поттер'],
-            ['rul3', 'Шейх Бурмалда'],
-            ['rul4', 'Мелл-Диспетчер'],
-            ['rul5', 'Мелл Райден'],
-            ['rul6', 'Мелл на Чиле'],
-            ['rul7', 'Призрак Лудки'],
-            ['rul8', 'Мелл-Единорог'],
-            ['rul9', 'Побег из Стрима'],
-            ['rul10', 'Мелл Лайт'],
-            ['rul11', 'Король Тигров'],
-            ['rul12', 'Месье де Мелль'],
-            ['rul13', 'Меллкрафт'],
-            ['rul14', 'Мелл-Шрек'],
-            ['rul15', 'Меллстронавт'],
-            ['rul16', 'Капитан Занос'],
-            ['rul17', 'Тёмный Рыцарь'],
-            ['rul18', 'Фермер Хайпа'],
-            ['rul19', 'Меллске Учиха']
+            ['rul1', ('' + T(240) + '')],
+            ['rul2', ('' + T(241) + '')],
+            ['rul3', ('' + T(242) + '')],
+            ['rul4', ('' + T(243) + '')],
+            ['rul5', ('' + T(244) + '')],
+            ['rul6', ('' + T(245) + '')],
+            ['rul7', ('' + T(246) + '')],
+            ['rul8', ('' + T(247) + '')],
+            ['rul9', ('' + T(248) + '')],
+            ['rul10', ('' + T(249) + '')],
+            ['rul11', ('' + T(250) + '')],
+            ['rul12', ('' + T(251) + '')],
+            ['rul13', ('' + T(252) + '')],
+            ['rul14', ('' + T(253) + '')],
+            ['rul15', ('' + T(254) + '')],
+            ['rul16', ('' + T(255) + '')],
+            ['rul17', ('' + T(256) + '')],
+            ['rul18', ('' + T(257) + '')],
+            ['rul19', ('' + T(258) + '')]
         ];
         MELL_ROULETTE_SKINS.forEach(([id, name]) => {
             specialSkins[id] = { unlocked: false, roulette: true, name, color: MELL_SKIN_COLOR, weight: 1, dupReward: MELL_DUP_DIAMONDS, img: id + '.png' };
@@ -2994,7 +3063,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         async function initYandexSDK() {
-            if (typeof YaGames === 'undefined') { console.warn('[YSDK] sdk.js не загружен — локальный режим'); return false; }
+            if (typeof YaGames === 'undefined') { console.warn(('' + T(259) + '')); return false; }
             try {
                 ysdk = await withTimeout(YaGames.init(), 6000);
                 sdkReady = !!ysdk;
@@ -3011,7 +3080,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                     if (typeof yaPlayer.isAuthorized === 'function') playerAuthorized = !!yaPlayer.isAuthorized();
                     else if (typeof yaPlayer.getMode === 'function') playerAuthorized = yaPlayer.getMode() !== 'lite';
                 } catch (e) { playerAuthorized = false; }
-            } catch (e) { console.warn('[YSDK] getPlayer failed — гостевой режим', e); yaPlayer = null; playerAuthorized = false; }
+            } catch (e) { console.warn(('' + T(260) + ''), e); yaPlayer = null; playerAuthorized = false; }
 
             // Платежи
             try { yaPayments = await withTimeout(ysdk.getPayments({ signed: false }), 5000); }
@@ -3096,7 +3165,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 catch (e) {
                     console.warn('[YSDK] cloud reset failed', e);
                     resetInProgress = false;
-                    await alert('Не удалось очистить облачное сохранение. Проверьте соединение и повторите сброс.', 'СБРОС');
+                    await alert(('' + T(261) + ''), ('' + T(262) + ''));
                     return false;
                 }
             }
@@ -3179,7 +3248,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                         onError: (err) => {
                             console.warn('[YSDK] rewarded ad error', err);
                             adEnd();
-                            alert('📺 Реклама сейчас недоступна. Попробуйте позже.', 'РЕКЛАМА');
+                            alert(('' + T(263) + ''), ('' + T(264) + ''));
                         }
                     }
                 });
@@ -3203,10 +3272,10 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 catch (e) { console.warn('[YSDK] purchase cancelled/failed', e); return { ok: false }; }
             }
             if (IS_LOCAL_DEV && !sdkReady) {   // тестовая заглушка только при локальном запуске
-                const ok = await confirm(mockText || 'Подтвердить покупку (тестовый режим)?', 'ПОКУПКА');
+                const ok = await confirm(mockText || ('' + T(265) + ''), ('' + T(266) + ''));
                 return { ok, purchase: null };
             }
-            await alert('Покупки сейчас недоступны. Проверьте соединение и перезагрузите игру.', 'ПОКУПКИ');
+            await alert(('' + T(267) + ''), ('' + T(268) + ''));
             return { ok: false };
         }
 
@@ -3219,7 +3288,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         async function consumePurchaseSafe(purchase) {
             if (!purchase || !yaPayments || !purchase.purchaseToken) return;
             try { await yaPayments.consumePurchase(purchase.purchaseToken); }
-            catch (e) { console.warn('[YSDK] consumePurchase failed — повторим при restorePurchases()', e); }
+            catch (e) { console.warn(('' + T(269) + ''), e); }
         }
 
         function grantConsumable(productId) {
@@ -3271,7 +3340,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 updateUI();
                 try { if (typeof renderSkinsList === 'function') renderSkinsList(); } catch (e) {}
                 commitPurchase();
-                if (restoredText.length) await alert('Восстановлены ваши покупки: ' + restoredText.join(', '), 'ПОКУПКИ');
+                if (restoredText.length) await alert(('' + T(270) + ' ') + restoredText.join(', '), ('' + T(268) + ''));
             }
         }
 
@@ -3318,7 +3387,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 const pl = en.player || {};
                 return {
                     rank: en.rank,
-                    name: (pl.publicName && String(pl.publicName).trim()) || 'Игрок',
+                    name: (pl.publicName && String(pl.publicName).trim()) || ('' + T(271) + ''),
                     score: en.score,
                     mine: !!(myId && pl.uniqueID === myId) || (lbCloudUserRank > 0 && en.rank === lbCloudUserRank)
                 };
@@ -3384,13 +3453,13 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         document.addEventListener('visibilitychange', () => { if (document.hidden) { flushLocalSave(); flushCloudSave(true); } });
 
         const bunnySkinsConfig = [
-            { id: 'common', name: 'Обычный Заяц-доходяга', rarity: 'Обычный', color: '#a3b8b0', img: 'zaec.png', weight: 0, unlocked: true, dupReward: 1 },
-            { id: 'rare', name: 'Чёткий кроль', rarity: 'Редкий', color: '#00e5ff', img: 'zaec1.png', weight: 50.0, unlocked: false, dupReward: 2 },
-            { id: 'super_rare', name: 'Бурмалда-ниндзя', rarity: 'Супер редкий', color: '#9d4edd', img: 'zaec2.png', weight: 25.0, unlocked: false, dupReward: 5 },
-            { id: 'epic', name: 'Кибер-Кролик', rarity: 'Эпический', color: '#e01e5a', img: 'zaec3.png', weight: 15.0, unlocked: false, dupReward: 10 },
-            { id: 'mythic', name: 'Демонический Ушастый', rarity: 'Мифический', color: '#ff007f', img: 'zaec4.png', weight: 7.0, unlocked: false, dupReward: 20 },
-            { id: 'legendary', name: 'Золотой Донатный Крол', rarity: 'Легендарный', color: '#ffd700', img: 'zaec5.png', weight: 2.5, unlocked: false, dupReward: 40 },
-            { id: 'mega_legendary', name: 'Владыка Всех Бурмалдайцев', rarity: 'Мега легендарный', color: '#ff3300', img: 'zaec6.png', weight: 0.5, unlocked: false, dupReward: 100 }
+            { id: 'common', name: ('' + T(272) + ''), rarity: ('' + T(273) + ''), color: '#a3b8b0', img: 'zaec.png', weight: 0, unlocked: true, dupReward: 1 },
+            { id: 'rare', name: ('' + T(274) + ''), rarity: ('' + T(275) + ''), color: '#00e5ff', img: 'zaec1.png', weight: 50.0, unlocked: false, dupReward: 2 },
+            { id: 'super_rare', name: ('' + T(276) + ''), rarity: ('' + T(277) + ''), color: '#9d4edd', img: 'zaec2.png', weight: 25.0, unlocked: false, dupReward: 5 },
+            { id: 'epic', name: ('' + T(278) + ''), rarity: ('' + T(279) + ''), color: '#e01e5a', img: 'zaec3.png', weight: 15.0, unlocked: false, dupReward: 10 },
+            { id: 'mythic', name: ('' + T(280) + ''), rarity: ('' + T(281) + ''), color: '#ff007f', img: 'zaec4.png', weight: 7.0, unlocked: false, dupReward: 20 },
+            { id: 'legendary', name: ('' + T(282) + ''), rarity: ('' + T(283) + ''), color: '#ffd700', img: 'zaec5.png', weight: 2.5, unlocked: false, dupReward: 40 },
+            { id: 'mega_legendary', name: ('' + T(284) + ''), rarity: ('' + T(285) + ''), color: '#ff3300', img: 'zaec6.png', weight: 0.5, unlocked: false, dupReward: 100 }
         ];
 
         let selectedBunnySkinId = 'common';
@@ -3400,12 +3469,12 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let lastDayString = '';
 
         let boxesConfig = [
-            { id: 'box2', name: 'Сундук 2 мин', timeReq: 120, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 1, tickets: 0 }) },
-            { id: 'box5', name: 'Сундук 5 мин', timeReq: 300, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 3, tickets: 0 }) },
-            { id: 'box10', name: 'Сундук 10 мин', timeReq: 600, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 8) + 3, tickets: 0 }) },
-            { id: 'box20', name: 'Сундук 20 мин', timeReq: 1200, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 6) + 10, tickets: 0 }) },
-            { id: 'box30', name: 'Сундук 30 мин', timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 2 }) },
-            { id: 'box60', name: 'Сундук 1 час', timeReq: 3600, claimed: false, getReward: () => ({ diamonds: 30, tickets: 3, mellCoins: 1 }) }
+            { id: 'box2', name: ('' + T(286) + ''), timeReq: 120, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 1, tickets: 0 }) },
+            { id: 'box5', name: ('' + T(287) + ''), timeReq: 300, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 3) + 3, tickets: 0 }) },
+            { id: 'box10', name: ('' + T(288) + ''), timeReq: 600, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 8) + 3, tickets: 0 }) },
+            { id: 'box20', name: ('' + T(289) + ''), timeReq: 1200, claimed: false, getReward: () => ({ diamonds: Math.floor(Math.random() * 6) + 10, tickets: 0 }) },
+            { id: 'box30', name: ('' + T(290) + ''), timeReq: 1800, claimed: false, getReward: () => ({ diamonds: 20, tickets: 2 }) },
+            { id: 'box60', name: ('' + T(291) + ''), timeReq: 3600, claimed: false, getReward: () => ({ diamonds: 30, tickets: 3, mellCoins: 1 }) }
         ];
 
         let melloPosX = null;
@@ -3420,14 +3489,14 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let postRebirthLvl10 = false;   // после престижа дошли до 10 уровня (условие входа на 4 уровень)
 
         let achievements = {
-            catness: { name: 'Котость', desc: 'Сделайте 25 кликов для кошачьей концентрации', icon: '🐱', unlocked: false, claimedDeco: false, check: () => totalClicks >= 25 },
-            chekuwka: { name: 'Чекушка', desc: 'Накопите всего $10,000 заработка', icon: '🍾', unlocked: false, claimedDeco: false, check: () => totalEarned >= 10000 },
-            fog: { name: 'ФОГ', desc: 'Накопите 200 алмазов за всё время', icon: '⚡', unlocked: false, claimedDeco: false, check: () => totalDiamondsEarned >= 200 },
-            burm: { name: 'Космический Бурмалдаец', desc: 'Соберите 250 зубов в мини-игре', icon: '🐰', unlocked: false, claimedDeco: false, check: () => totalTeethEarned >= 250 },
-            dog: { name: 'Собачка', desc: 'Соберите полностью 2 золотых дождя без единого пропуска монет', icon: '🐶', unlocked: false, claimedDeco: false, check: () => perfectGoldenRains >= 2 },
-            cheremsha: { name: 'Черемша', desc: 'Пройдите 3 уровень сюжетной мини-игры', icon: '<img src="che.png" alt="Черемша">', unlocked: false, claimedDeco: false, check: () => !!storyProgress.l3 },
-            mamabird: { name: 'Мама Птица', desc: 'Пройдите 4 уровень сюжетной мини-игры', icon: '<img src="mam.png" alt="Мама Птица">', unlocked: false, claimedDeco: false, check: () => !!storyProgress.l4 },
-            drun: { name: 'Друн', desc: 'Переживите 3 нашествия Друнов (увернитесь минимум от половины Друнов в волне)', icon: '👾', unlocked: false, claimedDeco: false, check: () => halfDodgedDrunWaves >= 3 }
+            catness: { name: ('' + T(101) + ''), desc: ('' + T(292) + ''), icon: '🐱', unlocked: false, claimedDeco: false, check: () => totalClicks >= 25 },
+            chekuwka: { name: ('' + T(104) + ''), desc: ('' + T(293) + ''), icon: '🍾', unlocked: false, claimedDeco: false, check: () => totalEarned >= 10000 },
+            fog: { name: ('' + T(105) + ''), desc: ('' + T(294) + ''), icon: '⚡', unlocked: false, claimedDeco: false, check: () => totalDiamondsEarned >= 200 },
+            burm: { name: ('' + T(70) + ''), desc: ('' + T(295) + ''), icon: '🐰', unlocked: false, claimedDeco: false, check: () => totalTeethEarned >= 250 },
+            dog: { name: ('' + T(108) + ''), desc: ('' + T(296) + ''), icon: '🐶', unlocked: false, claimedDeco: false, check: () => perfectGoldenRains >= 2 },
+            cheremsha: { name: ('' + T(109) + ''), desc: ('' + T(297) + ''), icon: ('<img src="che.png" alt="' + T(109) + '">'), unlocked: false, claimedDeco: false, check: () => !!storyProgress.l3 },
+            mamabird: { name: ('' + T(110) + ''), desc: ('' + T(298) + ''), icon: ('<img src="mam.png" alt="' + T(110) + '">'), unlocked: false, claimedDeco: false, check: () => !!storyProgress.l4 },
+            drun: { name: ('' + T(106) + ''), desc: ('' + T(299) + ''), icon: '👾', unlocked: false, claimedDeco: false, check: () => halfDodgedDrunWaves >= 3 }
         };
 
         let decos = {
@@ -3526,26 +3595,26 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         // 20 УРОВНЕЙ И ОБРАЗОВ
         const levels = [
-            { threshold: 0, name: '«Ну че, народ, погнали!»', img: 'mell1.png', bg: 'images.png' },
-            { threshold: 1000, name: '«Здарова, бандиты!»', img: 'mell2.png', bg: 'images1.png' },
-            { threshold: 7000, name: '«Казик не кормит, да?»', img: 'mell3.png', bg: 'images2.png' },
-            { threshold: 33000, name: '«Бурмалда космическая»', img: 'mell4.png', bg: 'images3.png' },
-            { threshold: 170000, name: '«Занос года, роднулькин!»', img: 'mell5.png', bg: 'images4.png' },
-            { threshold: 900000, name: '«Хайпим, плебеи!»', img: 'mell6.png', bg: 'images5.png' },
-            { threshold: 5000000, name: '«Челленджи на миллионы»', img: 'mell7.png', bg: 'images6.png' },
-            { threshold: 32000000, name: '«Шейх на суете в Дубае»', img: 'mell8.png', bg: 'images7.png' },
-            { threshold: 185000000, name: '«Хозяин бабок и движа»', img: 'mell9.png', bg: 'images8.png' },
-            { threshold: 780000000, name: '«Я купил этот интернет!»', img: 'mell10.png', bg: 'images9.png' },
-            { threshold: 5000000000, name: '«Давай по новой, я тильтанул»', img: 'mell10.png', bg: 'images10.png' },
-            { threshold: 25000000000, name: '«Казино всей галактики»', img: 'mell11.png', bg: 'images11.png' },
-            { threshold: 120000000000, name: '«Лям туда, лям сюда»', img: 'mell8.png', bg: 'images12.png' },
-            { threshold: 600000000000, name: '«Орбитальный занос x100000»', img: 'mell12.png', bg: 'images13.png' },
-            { threshold: 3000000000000, name: '«Бабки не проблема, родной»', img: 'mell6.png', bg: 'images14.png' },
-            { threshold: 15000000000000, name: '«Перекупил саму Вселенную»', img: 'mell13.png', bg: 'images15.png' },
-            { threshold: 75000000000000, name: '«Бог лудки и хайпа»', img: 'mell4.png', bg: 'images16.png' },
-            { threshold: 350000000000000, name: '«Вне времени и пространства»', img: 'mell14.png', bg: 'images17.png' },
-            { threshold: 1500000000000000, name: '«Сверхчеловек Меллстрой»', img: 'mell2.png', bg: 'images18.png' },
-            { threshold: 10000000000000000, name: '«Абсолютный Мелл: Легенда»', img: 'mell15.png', bg: 'images19.png' }
+            { threshold: 0, name: ('' + T(300) + ''), img: 'mell1.png', bg: 'images.png' },
+            { threshold: 1000, name: ('' + T(301) + ''), img: 'mell2.png', bg: 'images1.png' },
+            { threshold: 7000, name: ('' + T(302) + ''), img: 'mell3.png', bg: 'images2.png' },
+            { threshold: 33000, name: ('' + T(303) + ''), img: 'mell4.png', bg: 'images3.png' },
+            { threshold: 170000, name: ('' + T(304) + ''), img: 'mell5.png', bg: 'images4.png' },
+            { threshold: 900000, name: ('' + T(305) + ''), img: 'mell6.png', bg: 'images5.png' },
+            { threshold: 5000000, name: ('' + T(306) + ''), img: 'mell7.png', bg: 'images6.png' },
+            { threshold: 32000000, name: ('' + T(307) + ''), img: 'mell8.png', bg: 'images7.png' },
+            { threshold: 185000000, name: ('' + T(308) + ''), img: 'mell9.png', bg: 'images8.png' },
+            { threshold: 780000000, name: ('' + T(309) + ''), img: 'mell10.png', bg: 'images9.png' },
+            { threshold: 5000000000, name: ('' + T(310) + ''), img: 'mell10.png', bg: 'images10.png' },
+            { threshold: 25000000000, name: ('' + T(311) + ''), img: 'mell11.png', bg: 'images11.png' },
+            { threshold: 120000000000, name: ('' + T(312) + ''), img: 'mell8.png', bg: 'images12.png' },
+            { threshold: 600000000000, name: ('' + T(313) + ''), img: 'mell12.png', bg: 'images13.png' },
+            { threshold: 3000000000000, name: ('' + T(314) + ''), img: 'mell6.png', bg: 'images14.png' },
+            { threshold: 15000000000000, name: ('' + T(315) + ''), img: 'mell13.png', bg: 'images15.png' },
+            { threshold: 75000000000000, name: ('' + T(316) + ''), img: 'mell4.png', bg: 'images16.png' },
+            { threshold: 350000000000000, name: ('' + T(317) + ''), img: 'mell14.png', bg: 'images17.png' },
+            { threshold: 1500000000000000, name: ('' + T(318) + ''), img: 'mell2.png', bg: 'images18.png' },
+            { threshold: 10000000000000000, name: ('' + T(319) + ''), img: 'mell15.png', bg: 'images19.png' }
         ];
 
         // Уровни 11–20 требуют на 60% больше заработка
@@ -3686,9 +3755,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             let hours = Math.floor(totalSeconds / 3600);
             let minutes = Math.floor((totalSeconds % 3600) / 60);
             let seconds = totalSeconds % 60;
-            if (hours > 0) return `${hours} ч. ${minutes} мин. ${seconds} сек.`;
-            if (minutes > 0) return `${minutes} мин. ${seconds} сек.`;
-            return `${seconds} сек.`;
+            if (hours > 0) return `${hours} ${T(320)} ${minutes} ${T(321)} ${seconds} ${T(322)}`;
+            if (minutes > 0) return `${minutes} ${T(321)} ${seconds} ${T(322)}`;
+            return `${seconds} ${T(322)}`;
         }
 
         openPrestigeBtn.addEventListener('click', () => prestigeModal.classList.add('active'));
@@ -3726,7 +3795,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 prestigeSound.play().catch(() => playJackpotSound());
             }
 
-            await alert(`🎉 ПЕРЕРОЖДЕНИЕ ВЫПОЛНЕНО!\nИгра начата с 1-го уровня с постоянным бонусом +${Math.round(rebirths * PRESTIGE_BONUS * 100)}% ко всему доходу!\nСобытия и все скины доступны!\n🪙 За каждый уровень с 10-го ты получаешь Меллкоин для рулетки скинов!`, 'ПЕРЕРОЖДЕНИЕ');
+            await alert(`${T(323)}\n${T(324)}${Math.round(rebirths * PRESTIGE_BONUS * 100)}${T(325)}\n${T(326)}\n${T(327)}`, ('' + T(328) + ''));
             
             updateUI();
             saveGame();
@@ -3752,9 +3821,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         // ============================================================
         const LB_KEY = 'mello_jumpleaderboard';
         const LB_SEED = [
-            { name: 'Котость', score: 2400 }, { name: 'Чекушка', score: 1800 },
-            { name: 'Черемша', score: 1300 }, { name: 'Друн', score: 900 },
-            { name: 'ФОГ', score: 600 }
+            { name: ('' + T(101) + ''), score: 2400 }, { name: ('' + T(104) + ''), score: 1800 },
+            { name: ('' + T(109) + ''), score: 1300 }, { name: ('' + T(106) + ''), score: 900 },
+            { name: ('' + T(105) + ''), score: 600 }
         ];
         function lbLoad() {
             try {
@@ -3768,10 +3837,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         else others.push(e);
                     });
                     if (best) others.push(best);
-                    return { name: String(d.name || 'Игрок'), entries: others };
+                    return { name: String(d.name || ('' + T(271) + '')), entries: others };
                 }
             } catch (e) {}
-            return { name: 'Игрок', entries: LB_SEED.map(e => ({ ...e })) };
+            return { name: ('' + T(271) + ''), entries: LB_SEED.map(e => ({ ...e })) };
         }
         let lbData = lbLoad();
         function lbSave() { try { localStorage.setItem(LB_KEY, JSON.stringify({ name: lbData.name, entries: lbData.entries })); } catch (e) {} }
@@ -3809,18 +3878,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const cls = ['gold', 'silver', 'bronze'];
             list.innerHTML = rows.map((e, i) => {
                 const pos = e.rank || (i + 1);
-                return `<div class="lb-row ${e.mine ? 'me' : ''} ${cls[pos - 1] || ''}"><div class="lb-pos">${medals[pos - 1] || pos}</div><div class="lb-nm">${lbEscape(e.name)}</div><div class="lb-sc">${Number(e.score).toLocaleString('ru-RU')} м</div></div>`;
-            }).join('') || '<div style="text-align:center; color:#7a8a84; font-size:13px;">Пока пусто — станьте первым!</div>';
+                return `<div class="lb-row ${e.mine ? 'me' : ''} ${cls[pos - 1] || ''}"><div class="lb-pos">${medals[pos - 1] || pos}</div><div class="lb-nm">${lbEscape(e.name)}</div><div class="lb-sc">${Number(e.score).toLocaleString((LANG === 'en' ? 'en-US' : 'ru-RU'))} ${T(71)}</div></div>`;
+            }).join('') || ('<div style="text-align:center; color:#7a8a84; font-size:13px;">' + T(329) + '</div>');
             const shownPlace = (lbCloudRows !== null) ? (newPlace ? lbCloudUserRank : 0) : newPlace;
-            if (shownPlace) { note.style.display = 'block'; note.textContent = `🎉 Ваш результат попал в таблицу: ${shownPlace}-е место!`; }
-            else if (lbCloudRows !== null && yaPlayer && !playerAuthorized) { note.style.display = 'block'; note.textContent = '🔑 Войдите в аккаунт Яндекса, чтобы ваш рекорд попал в общий рейтинг.'; }
+            if (shownPlace) { note.style.display = 'block'; note.textContent = `${T(330)} ${shownPlace}${T(331)}`; }
+            else if (lbCloudRows !== null && yaPlayer && !playerAuthorized) { note.style.display = 'block'; note.textContent = ('' + T(332) + ''); }
             else note.style.display = 'none';
         }
         const leaderboardScreen = document.getElementById('leaderboardScreen');
         document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; loadCloudLeaderboard(); });
         document.getElementById('closeLeaderboardBtn').addEventListener('click', () => { leaderboardScreen.style.display = 'none'; });
         function lbApplyName() {
-            const v = document.getElementById('lbNameInput').value.trim().slice(0, 16) || 'Игрок';
+            const v = document.getElementById('lbNameInput').value.trim().slice(0, 16) || ('' + T(271) + '');
             lbData.name = v;
             lbData.entries.forEach(e => { if (e.mine) e.name = v; });
             lbSave(); renderLeaderboard();
@@ -3855,7 +3924,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
                 document.getElementById('jumpTicketsCount').textContent = tickets;
             } else {
-                await alert('🔒 Мини-игра заблокирована! Достигните 4-й стадии («Бурмалда космическая»), чтобы разблокировать Космического Бурмалдайца.', 'БЛОКИРОВКА');
+                await alert(('' + T(333) + ''), ('' + T(334) + ''));
             }
         });
 
@@ -3971,7 +4040,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         window.buyGoldenRainForDiamonds = async function() {
             if (!(await requireResource('diamonds', 20))) return;
-            const ok = await confirm('Купить вызов Золотого Дождя за 20 💎 алмазов?');
+            const ok = await confirm(('' + T(335) + ''));
             if (ok) {
                 diamonds -= 20;
                 totalDiamondsSpent += 20;
@@ -4067,17 +4136,17 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             let minPlayerLevel = boostType === 'autoClicker' ? 2 : (boostType === 'doubleTap' ? 3 : (boostType === 'hypeStorm' ? 4 : 5));
 
             if (currentLevel < minPlayerLevel && rebirths === 0) {
-                await alert(`🔒 Реклама для этого буста откроется на ${minPlayerLevel} уровне игры! Текущий уровень: ${currentLevel}.`, 'ЗАКРЫТО');
+                await alert(`${T(336)} ${minPlayerLevel} ${T(337)} ${currentLevel}.`, ('' + T(338) + ''));
                 return;
             }
 
-            const ok = await confirm('Посмотреть короткую рекламу, чтобы активировать буст бесплатно?', 'РЕКЛАМА');
+            const ok = await confirm(('' + T(339) + ''), ('' + T(264) + ''));
             if (ok) {
                 showRewardedAd(async () => {
                     activateBoosterEffect(boostType, item.lvl);
                     updateUI();
                     saveGame();
-                    await alert('📺 Реклама просмотрена! Буст активирован.', 'БОНУС');
+                    await alert(('' + T(340) + ''), ('' + T(341) + ''));
                 });
             }
         };
@@ -4110,19 +4179,19 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let btnHtml = '';
 
                 if (!skin.unlocked) {
-                    btnHtml = `<span style="font-size:11px; color:#7a8a84; font-weight:700;">🔒 В рулетке</span>`;
+                    btnHtml = `<span style="font-size:11px; color:#7a8a84; font-weight:700;">${T(342)}</span>`;
                 } else if (isSelected) {
-                    btnHtml = `<span style="font-size:12px; color:#00ff88; font-weight:800;">✅ Надет</span>`;
+                    btnHtml = `<span style="font-size:12px; color:#00ff88; font-weight:800;">${T(343)}</span>`;
                 } else {
-                    btnHtml = `<button class="skin-action-btn select" onclick="selectBunnySkin('${skin.id}')">Выбрать</button>`;
+                    btnHtml = `<button class="skin-action-btn select" onclick="selectBunnySkin('${skin.id}')">${T(344)}</button>`;
                 }
 
                 card.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px;">
                         <img src="${skin.img}" style="width:36px; height:36px; object-fit:contain;" alt="">
                         <div>
-                            <div style="font-size:13px; font-weight:800; color:${skin.color};">${skin.rarity} ${skin.id === 'mega_legendary' ? '(Прыжок +15%)' : ''}</div>
-                            <div style="font-size:11px; color:#a3b8b0;">${skin.name} ${skin.dupReward ? `(повтор: +${skin.dupReward} 💎)` : ''}</div>
+                            <div style="font-size:13px; font-weight:800; color:${skin.color};">${skin.rarity} ${skin.id === 'mega_legendary' ? ('' + T(345) + '') : ''}</div>
+                            <div style="font-size:11px; color:#a3b8b0;">${skin.name} ${skin.dupReward ? `${T(346)}${skin.dupReward} 💎)` : ''}</div>
                         </div>
                     </div>
                     <div>${btnHtml}</div>
@@ -4166,7 +4235,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (isSpinningRoulette) return;
 
             if (teeth < 50) {
-                await alert('Не хватает зубов 🦷! Нужно 50 зубов за одну крутку.', 'РУЛЕТКА');
+                await alert(('' + T(347) + ''), ('' + T(348) + ''));
                 return;
             }
 
@@ -4227,10 +4296,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     let rewardDiamonds = winningSkin.dupReward || 2;
                     diamonds += rewardDiamonds;
                     totalDiamondsEarned += rewardDiamonds;
-                    await alert(`Повторный скин: ${winningSkin.name} (${winningSkin.rarity})!\nВам начислено +${rewardDiamonds} 💎 алмазов компенсации!`, 'ДУБЛИКАТ');
+                    await alert(`${T(349)} ${winningSkin.name} (${winningSkin.rarity})!\n${T(350)}${rewardDiamonds} ${T(351)}`, ('' + T(352) + ''));
                 } else {
                     winningSkin.unlocked = true;
-                    await alert(`🎉 НОВЫЙ СКИН: ${winningSkin.name} (${winningSkin.rarity})!`, 'НОВЫЙ СКИН');
+                    await alert(`${T(353)} ${winningSkin.name} (${winningSkin.rarity})!`, ('' + T(354) + ''));
                 }
 
                 isSpinningRoulette = false;
@@ -4255,7 +4324,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }
 
             if (!(await requireResource('diamonds', skin.cost))) return;
-            const ok = await confirm(`Купить скин «${skin.name}» за ${skin.cost} 💎?`);
+            const ok = await confirm(`${T(355)}${skin.name}${T(356)} ${skin.cost} 💎?`);
             if (ok) {
                 diamonds -= skin.cost;
                 totalDiamondsSpent += skin.cost;
@@ -4295,7 +4364,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 saveGame();
                 return;
             }
-            const r = await runPurchase('skin_casual', `Купить скин «Кэжуал Мелл в худи» за ${priceRub} ₽?`);
+            const r = await runPurchase('skin_casual', `${T(357)} ${priceRub} ₽?`);
             if (!r.ok) return;
             donSkin3Unlocked = true;
             activeSpecialSkin = 'skindon3';
@@ -4304,48 +4373,48 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             updateUI();
             renderSkinsList();
             commitPurchase();
-            await alert('Скин успешно разблокирован!', 'УСПЕХ');
+            await alert(('' + T(358) + ''), ('' + T(359) + ''));
         };
 
         // Расходники: tickets_3/10/30, diamonds_50/150/500
         window.buyPack = async function(type, count, rubPrice) {
             const productId = `${type}_${count}`;
             if (!CONSUMABLE_PRODUCTS[productId]) return;
-            const r = await runPurchase(productId, `Подтвердить покупку: ${count} ${type === 'tickets' ? 'билетов' : 'алмазов'} за ${rubPrice} ₽?`);
+            const r = await runPurchase(productId, `${T(360)} ${count} ${type === 'tickets' ? ('' + T(361) + '') : ('' + T(362) + '')} ${T(363)} ${rubPrice} ₽?`);
             if (!r.ok) return;
             grantConsumable(productId);
             recordGrantedToken(r.purchase && r.purchase.purchaseToken);
             updateUI();
             commitPurchase();                       // сначала фиксируем начисление...
             await consumePurchaseSafe(r.purchase);  // ...затем списываем покупку у Яндекса
-            await alert(type === 'tickets' ? `Начислено +${count} билетов 🎫.` : `Начислено +${count} алмазов 💎.`, 'ПОКУПКА');
+            await alert(type === 'tickets' ? `${T(364)}${count} ${T(365)}` : `${T(364)}${count} ${T(366)}`, ('' + T(266) + ''));
         };
 
         window.buyNoAds = async function(rubPrice) {
             if (noAdsPurchased) {
-                await alert('Реклама уже отключена!', 'ИНФОРМАЦИЯ');
+                await alert(('' + T(367) + ''), ('' + T(368) + ''));
                 return;
             }
-            const r = await runPurchase('no_ads', `Отключить всю рекламу за ${rubPrice} ₽ навсегда?`);
+            const r = await runPurchase('no_ads', `${T(369)} ${rubPrice} ${T(370)}`);
             if (!r.ok) return;
             noAdsPurchased = true;
             updateUI();
             commitPurchase();
-            await alert('Реклама полностью отключена.', 'ИНФОРМАЦИЯ');
+            await alert(('' + T(371) + ''), ('' + T(368) + ''));
         };
 
         window.handleBossWardClick = async function() {
             if (!bossWardPurchased) {
-                const r = await runPurchase('boss_ward', 'Купить «Оберег от босса» за 199 ₽ навсегда?\nБоссы перестанут нападать, а за каждого пропущенного вам будет приходить награда как от откупа!');
+                const r = await runPurchase('boss_ward', ('' + T(372) + '\n' + T(373) + ''));
                 if (!r.ok) return;
                 bossWardPurchased = true;
                 bossWardEnabled = true;
                 updateUI();
                 commitPurchase();
-                await alert('🧿 Оберег активирован! Боссы отключены, награды будут начисляться автоматически.', 'ОБЕРЕГ');
+                await alert(('' + T(374) + ''), ('' + T(375) + ''));
             } else {
                 bossWardEnabled = !bossWardEnabled;
-                await alert(bossWardEnabled ? '🧿 Оберег ВКЛЮЧЕН: боссы отключены.' : '⚔️ Оберег ВЫКЛЮЧЕН: боссы снова будут нападать!', 'ОБЕРЕГ');
+                await alert(bossWardEnabled ? ('' + T(376) + '') : ('' + T(377) + ''), ('' + T(375) + ''));
                 updateUI();
                 saveGame();
             }
@@ -4353,16 +4422,16 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         window.handleDrunShieldClick = async function() {
             if (!drunShieldPurchased) {
-                const r = await runPurchase('drun_shield', 'Купить «Щит от Друнов» за 149 ₽ навсегда?\nДруны будут автоматически сбиваться ПВО, а вы будете получать награду без риска!');
+                const r = await runPurchase('drun_shield', ('' + T(378) + '\n' + T(379) + ''));
                 if (!r.ok) return;
                 drunShieldPurchased = true;
                 drunShieldEnabled = true;
                 updateUI();
                 commitPurchase();
-                await alert('🛡️ Щит активирован! Друны будут уничтожаться на подлёте.', 'ЩИТ');
+                await alert(('' + T(380) + ''), ('' + T(381) + ''));
             } else {
                 drunShieldEnabled = !drunShieldEnabled;
-                await alert(drunShieldEnabled ? '🛡️ Щит ВКЛЮЧЕН: налёты Друнов отражаются автоматически.' : '⚠️ Щит ВЫКЛЮЧЕН: Друны снова будут атаковать Меллстроя!', 'ЩИТ');
+                await alert(drunShieldEnabled ? ('' + T(382) + '') : ('' + T(383) + ''), ('' + T(381) + ''));
                 updateUI();
                 saveGame();
             }
@@ -4380,16 +4449,16 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             box.innerHTML = '';
             const auto = document.createElement('button');
             auto.className = 'bg-thumb auto' + (selectedBgLevel === 0 ? ' active' : '');
-            auto.textContent = 'Авто';
-            auto.title = 'Фон меняется вместе с уровнем';
+            auto.textContent = ('' + T(384) + '');
+            auto.title = ('' + T(385) + '');
             auto.addEventListener('click', () => setBgLevel(0));
             box.appendChild(auto);
             for (let n = 1; n <= open; n++) {
                 const b = document.createElement('button');
                 b.className = 'bg-thumb' + (selectedBgLevel === n ? ' active' : '');
                 b.style.backgroundImage = `url('${levels[n - 1].bg}')`;
-                b.title = `Уровень ${n}: ${levels[n - 1].name}`;
-                b.innerHTML = `<span>Ур. ${n}</span>`;
+                b.title = `${T(386)} ${n}: ${levels[n - 1].name}`;
+                b.innerHTML = `<span>${T(387)} ${n}</span>`;
                 b.addEventListener('click', () => setBgLevel(n));
                 box.appendChild(b);
             }
@@ -4550,7 +4619,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (promoBusy) return;
             const now = Date.now();
             if (now - lastPromoTry < PROMO_COOLDOWN_MS) {
-                await alert('Не так быстро! Подожди пару секунд.', 'ПРОМОКОД');
+                await alert(('' + T(388) + ''), ('' + T(389) + ''));
                 return;
             }
             lastPromoTry = now;
@@ -4558,7 +4627,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const code = promoInput.value.trim().toLowerCase();
             const cfg = PROMO_CONFIG[code];
             if (!cfg) {
-                await alert('Неверный промокод!', 'ОШИБКА');
+                await alert(('' + T(390) + ''), ('' + T(391) + ''));
                 return;
             }
 
@@ -4568,29 +4637,29 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 const used = promoUsed[cfg.id] || 0;
                 if (cfg.perPlayer && used >= cfg.perPlayer) {
                     promoInput.value = '';
-                    await alert('Ты уже использовал этот промокод максимальное число раз.', 'ПРОМОКОД');
+                    await alert(('' + T(392) + ''), ('' + T(389) + ''));
                     return;
                 }
                 // Коды, которые нельзя применить прямо сейчас (не тратим попытку)
                 if ((code === 'maniacnight' && (inBattle || isDrunInvasionActive)) || (code === 'dronestorm' && (isDrunInvasionActive || inBattle))) {
-                    await alert('Сейчас идёт событие — активируй промокод после его окончания.', 'ПРОМОКОД');
+                    await alert(('' + T(393) + ''), ('' + T(389) + ''));
                     return;
                 }
                 if (code === 'storyskip' && ['l1','l2','l3','l4'].every(k => storyProgress[k])) {
                     promoInput.value = '';
-                    await alert('Все сюжетные уровни уже пройдены!', 'ПРОМОКОД');
+                    await alert(('' + T(394) + ''), ('' + T(389) + ''));
                     return;
                 }
                 if (code === 'wildgarlic' && achievements.cheremsha.unlocked) {
                     promoInput.value = '';
-                    await alert('Достижение «Черемша» уже получено!', 'ПРОМОКОД');
+                    await alert(('' + T(395) + ''), ('' + T(389) + ''));
                     return;
                 }
                 // Общий лимит
                 const g = await claimPromoGlobally(cfg);
                 if (!g.ok) {
-                    await alert(g.offline ? 'Не удалось проверить промокод. Проверь соединение и попробуй ещё раз.'
-                                          : 'Этот промокод закончился — лимит активаций исчерпан.', 'ПРОМОКОД');
+                    await alert(g.offline ? ('' + T(396) + '')
+                                          : ('' + T(397) + ''), ('' + T(389) + ''));
                     return;
                 }
 
@@ -4604,28 +4673,28 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     let basePassive = getBasePassiveCps();
                     let addedMoney = basePassive * 1800;
                     if (addedMoney > 0) { balance += addedMoney; totalEarned += addedMoney; }
-                    await alert(`Промокод активирован! +30 мин сундуков, начислено +$${formatCompactNumber(addedMoney)} дохода.`, 'ПРОМОКОД');
+                    await alert(`${T(398)}${formatCompactNumber(addedMoney)} ${T(399)}`, ('' + T(389) + ''));
                 } else if (code === 'gemrain') {
                     diamonds += 200;
                     totalDiamondsEarned += 200;
-                    await alert('Промокод активирован! Получено +200 💎 алмазов!', 'ПРОМОКОД');
+                    await alert(('' + T(400) + ''), ('' + T(389) + ''));
                 } else if (code === 'cashgrab') {
                     balance += 10000;
                     totalEarned += 10000;
-                    await alert('Промокод активирован! Получено +$10,000!', 'ПРОМОКОД');
+                    await alert(('' + T(401) + ''), ('' + T(389) + ''));
                 } else if (code === 'toothfairy') {
                     teeth += 100;
                     totalTeethEarned += 100;
-                    await alert('Промокод активирован! Получено +100 🦷 зубов!', 'ПРОМОКОД');
+                    await alert(('' + T(402) + ''), ('' + T(389) + ''));
                 } else if (code === 'summonarthur') {
                     spawnArtur();
                     settingsModal.classList.remove('active');
-                    await alert('Артур призван на экран!', 'ПРОМОКОД');
+                    await alert(('' + T(403) + ''), ('' + T(389) + ''));
                 } else if (code === 'maniacnight') {
                     settingsModal.classList.remove('active');
                     startBossBattle();
                 } else if (code === 'luckydog' || code === 'dogjackpot') {
-                    dogCasinoResult.textContent = 'Удача улыбнулась! Нажмите «Крутить», чтобы забрать выигрыш!';
+                    dogCasinoResult.textContent = ('' + T(404) + '');
                     spinDogCasinoBtn.style.display = 'block';
                     slot1.textContent = '🐶';
                     slot2.textContent = '💎';
@@ -4644,11 +4713,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     storyProgress.l1 = storyProgress.l2 = storyProgress.l3 = storyProgress.l4 = true;
                     checkAchievements();
                     saveGame();
-                    await alert('Промокод активирован! Все 4 сюжетных уровня открыты и засчитаны пройденными. Достижения «Черемша» и «Мама Птица» ждут в разделе 🏆.', 'ПРОМОКОД');
+                    await alert(('' + T(405) + ''), ('' + T(389) + ''));
                 } else if (code === 'wildgarlic') {
                     achievements.cheremsha.unlocked = true;
                     saveGame();
-                    await alert('Промокод активирован! Достижение «Черемша» разблокировано — забери его в разделе 🏆 Достижения.', 'ПРОМОКОД');
+                    await alert(('' + T(406) + ''), ('' + T(389) + ''));
                 }
 
                 updateChestButtonUI();
@@ -4889,7 +4958,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         balance += fogJackpot;
                         totalEarned += fogJackpot;
                         playCustomDecoJackpot(soundJackpotFog);
-                        showFloatingText(`ФОГ ДЖЕКПОТ! +$${formatCompactNumber(fogJackpot)}`, e, true, false, false);
+                        showFloatingText(`${T(407)}${formatCompactNumber(fogJackpot)}`, e, true, false, false);
                         updateUI();
                         saveGame();
                     }
@@ -4899,7 +4968,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         balance += jackpotAmount;
                         totalEarned += jackpotAmount;
                         playCustomDecoJackpot(soundJackpotChekuwka);
-                        showFloatingText(`ЧЕКУШКА ДЖЕКПОТ! +$${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
+                        showFloatingText(`${T(408)}${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
                         updateUI();
                         saveGame();
                     }
@@ -4909,7 +4978,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         balance += jackpotAmount;
                         totalEarned += jackpotAmount;
                         playCustomDecoJackpot(soundJackpotCatness);
-                        showFloatingText(`КОТОСТЬ ДЖЕКПОТ! +$${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
+                        showFloatingText(`${T(409)}${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
                         updateUI();
                         saveGame();
                     }
@@ -4934,7 +5003,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         totalDiamondsEarned += prizeGems;
 
                         playJackpotSound();
-                        showFloatingText(`ДРУН ДЖЕКПОТ! +$${formatCompactNumber(prizeMoney)} +${prizeGems}💎`, e, true, false, true);
+                        showFloatingText(`${T(410)}${formatCompactNumber(prizeMoney)} +${prizeGems}💎`, e, true, false, true);
                         updateUI();
                         saveGame();
                     }
@@ -4945,11 +5014,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         if (Math.random() < 0.5) {
                             teeth += 3;
                             totalTeethEarned += 3;
-                            showFloatingText('ЧЕРЕМША! +3 🦷', e, true, false, false);
+                            showFloatingText(('' + T(411) + ''), e, true, false, false);
                         } else {
                             diamonds += 1;
                             totalDiamondsEarned += 1;
-                            showFloatingText('ЧЕРЕМША! +1 💎', e, false, false, true);
+                            showFloatingText(('' + T(412) + ''), e, false, false, true);
                         }
                         playJackpotSound();
                         updateUI();
@@ -4969,7 +5038,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         balance += jackpotAmount;
                         totalEarned += jackpotAmount;
                         playJackpotSound();
-                        showFloatingText(`СУПЕР-ДЖЕКПОТ! +$${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
+                        showFloatingText(`${T(413)}${formatCompactNumber(jackpotAmount)}`, e, true, false, false);
                         updateUI();
                         saveGame();
                     }
@@ -5116,9 +5185,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let actionHtml = '';
                 const isCurrentlyOnScreen = decos[key] && decos[key].unlockedOnScreen;
                 if (ach.unlocked && !isCurrentlyOnScreen) {
-                    actionHtml = `<button class="claim-decoration-btn" onclick="claimDecoration('${key}')">🎨 Вытащить на главный экран</button>`;
+                    actionHtml = `<button class="claim-decoration-btn" onclick="claimDecoration('${key}')">${T(414)}</button>`;
                 } else if (ach.unlocked && isCurrentlyOnScreen) {
-                    actionHtml = `<div style="font-size: 11px; color: #00ff88; margin-top: 4px;">✅ Размещено на экране</div>`;
+                    actionHtml = `<div style="font-size: 11px; color: #00ff88; margin-top: 4px;">${T(415)}</div>`;
                 }
 
                 card.innerHTML = `
@@ -5154,6 +5223,20 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         const OFFLINE_FREE_K = 0.03;          // бесплатно
         const OFFLINE_AD_K = 0.20;            // за рекламу
         let pendingOffline = null;            // {free, ad, sec} — ещё не забрано
+        // Время сервера Яндекса (не меняется переводом часов на устройстве). Без SDK — время устройства.
+        function trustedNow() {
+            try {
+                if (sdkReady && ysdk && typeof ysdk.serverTime === 'function') {
+                    const t = Number(ysdk.serverTime());
+                    if (Number.isFinite(t) && t > 1e12) return t;
+                }
+            } catch (e) {}
+            return Date.now();
+        }
+        function timeSource() {
+            try { if (sdkReady && ysdk && typeof ysdk.serverTime === 'function' && Number(ysdk.serverTime()) > 1e12) return 'srv'; } catch (e) {}
+            return 'dev';
+        }
         let offlineClaimed = false;
         function getOfflineRate() {
             let r = getBasePassiveCps();
@@ -5168,8 +5251,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 sec = Math.max(0, Number(d.pendingOffline.sec) || 0);
             }
             const savedAt = d ? Number(d.savedAt) || 0 : 0;
-            const away = (Date.now() - savedAt) / 1000;
-            if (savedAt > 0 && away >= OFFLINE_MIN_SEC) {
+            const away = (trustedNow() - savedAt) / 1000;
+            // сравниваем только время из одного источника (серверное с серверным), иначе пропускаем
+            const sameSrc = d && d.timeSrc === timeSource();
+            if (savedAt > 0 && sameSrc && away >= OFFLINE_MIN_SEC) {
                 const used = Math.min(away, OFFLINE_MAX_SEC);
                 let rate = d && d.offlineCps !== undefined ? Number(d.offlineCps) : getOfflineRate();
                 if (!Number.isFinite(rate) || rate < 0) rate = 0;
@@ -5182,16 +5267,16 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         }
         function formatAway(sec) {
             const m = Math.floor(sec / 60), h = Math.floor(m / 60), dd = Math.floor(h / 24);
-            if (dd >= 1) return `Тебя не было: ${dd} д ${h % 24} ч`;
-            if (h >= 1) return `Тебя не было: ${h} ч ${m % 60} мин`;
-            return `Тебя не было: ${m} мин`;
+            if (dd >= 1) return `${T(416)} ${dd} ${T(417)} ${h % 24} ${T(418)}`;
+            if (h >= 1) return `${T(416)} ${h} ${T(418)} ${m % 60} ${T(419)}`;
+            return `${T(416)} ${m} ${T(419)}`;
         }
         function showOfflineModal() {
             if (!pendingOffline) return;
             offlineClaimed = false;
             document.getElementById('offlineAwayText').textContent = formatAway(pendingOffline.sec);
-            document.getElementById('offlineFreeBtn').textContent = `Забрать $${formatCompactNumber(pendingOffline.free)}`;
-            document.getElementById('offlineAdBtn').textContent = `📺 Забрать $${formatCompactNumber(pendingOffline.ad)} за рекламу`;
+            document.getElementById('offlineFreeBtn').textContent = `${T(420)}${formatCompactNumber(pendingOffline.free)}`;
+            document.getElementById('offlineAdBtn').textContent = `${T(421)}${formatCompactNumber(pendingOffline.ad)} ${T(422)}`;
             document.getElementById('offlineModal').classList.add('active');
         }
         function claimOffline(kind) {
@@ -5219,7 +5304,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         function getSavePayload() {
             const gameData = {
                 balance, diamonds, teeth, tickets, mellCoins, coinLevelsClaimed, rebirths, rebirthSkinUnlocked, donSkin3Unlocked, activeSpecialSkin, specialSkins,
-                savedAt: Date.now(),
+                savedAt: trustedNow(), timeSrc: timeSource(),
                 offlineCps: getOfflineRate(),
                 pendingOffline,
                 noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, mamabirdClicksCount, postRebirthLvl10, selectedBgLevel, maxBgLevelReached, storyProgress,
@@ -5422,7 +5507,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         }
 
         document.getElementById('resetBtn').addEventListener('click', async () => {
-            const ok = await confirm('Точно сбросить весь прогресс? Все данные будут удалены безвозвратно!', 'СБРОС ИГРЫ');
+            const ok = await confirm(('' + T(423) + ''), ('' + T(424) + ''));
             if (ok) {
                 clearInterval(autoClickerInterval);
                 clearInterval(autoClickerTimer);
@@ -5448,7 +5533,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (mainChestBtn.style.display === 'none') mainChestBtn.style.display = '';
 
             if (playTimeSeconds >= nextBox.timeReq) {
-                setChestHtml('🎁 Забрать!');
+                setChestHtml(('' + T(425) + ''));
                 mainChestBtn.title = nextBox.name;
                 mainChestBtn.classList.add('ready');
             } else {
@@ -5512,7 +5597,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     mellCoins += gainedCoins;
                     try {
                         const stageRect = clickStage.getBoundingClientRect();
-                        showFloatingTextExplicit(`+${gainedCoins} 🪙 Меллкоин`, stageRect.width / 2 - 50, stageRect.height / 2 - 60, false, false, true);
+                        showFloatingTextExplicit(`+${gainedCoins} ${T(426)}`, stageRect.width / 2 - 50, stageRect.height / 2 - 60, false, false, true);
                     } catch (e) {}
                     if (activeTabId !== 'tab-skins') skinNotifDot.style.display = 'block';
                     saveGame();
@@ -5548,11 +5633,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (activeLvlIdx >= 3 || rebirths > 0) {
                 openJumpBtn.classList.remove('locked-minigame');
                 openJumpBtn.innerHTML = '🐰';
-                openJumpBtn.title = 'Космический Бурмалдаец (Мини-игра)';
+                openJumpBtn.title = ('' + T(427) + '');
             } else {
                 openJumpBtn.classList.add('locked-minigame');
                 openJumpBtn.innerHTML = '🔒';
-                openJumpBtn.title = 'Заблокировано (нужен 4 уровень: «Бурмалда космическая»)';
+                openJumpBtn.title = ('' + T(428) + '');
             }
 
             if (skinIndexForLevelIdx(activeLvlIdx) > maxSeenSkinIndex && activeTabId !== 'tab-skins') skinNotifDot.style.display = 'block';
@@ -5571,7 +5656,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             let percent = Math.min(100, Math.max(0, (earnedInLevel / progressSpan) * 100));
 
             levelProgressBar.style.width = `${percent}%`;
-            const lvlTxt = `Ур. ${currentLevel}/${levels.length}: ${levels[activeLvlIdx].name} (${Math.floor(percent)}%)`;
+            const lvlTxt = `${T(387)} ${currentLevel}/${levels.length}: ${levels[activeLvlIdx].name} (${Math.floor(percent)}%)`;
             if (levelStatusText.textContent !== lvlTxt) levelStatusText.textContent = lvlTxt;
         }
 
@@ -5593,11 +5678,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     <div class="upgrade-left-wrap">
                         <img src="skinpres.png" alt="" class="upgrade-icon-img" style="border-radius: 50%;" onerror="this.src='mell10.png'">
                         <div class="upgrade-info">
-                            <div class="upgrade-title" style="color:#ffd700;">👑 Султан Всея Интернета</div>
-                            <div class="upgrade-effect">Награда за перерождение</div>
+                            <div class="upgrade-title" style="color:#ffd700;">${T(429)}</div>
+                            <div class="upgrade-effect">${T(430)}</div>
                         </div>
                     </div>
-                    ${isSelected ? `<button class="skin-action-btn active">Активен</button>` : `<button class="skin-action-btn select" onclick="selectPrestigeSkin()">Выбрать</button>`}
+                    ${isSelected ? `<button class="skin-action-btn active">${T(431)}</button>` : `<button class="skin-action-btn select" onclick="selectPrestigeSkin()">${T(344)}</button>`}
                 `;
                 skinsListContainer.appendChild(card);
             }
@@ -5611,11 +5696,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
                 let btnHtml = '';
                 if (!sk.unlocked) {
-                    btnHtml = `<button class="skin-action-btn select" style="border-color:#00e5ff; color:#00e5ff;" onclick="buySpecialSkin('${k}')">Купить за ${sk.cost} 💎</button>`;
+                    btnHtml = `<button class="skin-action-btn select" style="border-color:#00e5ff; color:#00e5ff;" onclick="buySpecialSkin('${k}')">${T(432)} ${sk.cost} 💎</button>`;
                 } else if (isSelected) {
-                    btnHtml = `<button class="skin-action-btn active">Активен</button>`;
+                    btnHtml = `<button class="skin-action-btn active">${T(431)}</button>`;
                 } else {
-                    btnHtml = `<button class="skin-action-btn select" onclick="buySpecialSkin('${k}')">Выбрать</button>`;
+                    btnHtml = `<button class="skin-action-btn select" onclick="buySpecialSkin('${k}')">${T(344)}</button>`;
                 }
 
                 card.innerHTML = `
@@ -5623,7 +5708,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         <img src="${sk.img}" alt="" class="upgrade-icon-img" style="border-radius: 50%;" onerror="this.src='mell9.png'">
                         <div class="upgrade-info">
                             <div class="upgrade-title" style="color:#00e5ff;">💎 ${sk.name}</div>
-                            <div class="upgrade-effect">${sk.unlocked ? 'Куплено' : `Цена: ${sk.cost} алмазов`}</div>
+                            <div class="upgrade-effect">${sk.unlocked ? ('' + T(433) + '') : `${T(434)} ${sk.cost} ${T(362)}`}</div>
                         </div>
                     </div>
                     ${btnHtml}
@@ -5640,16 +5725,16 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 card.className = `upgrade-card ${!isUnlocked ? 'disabled' : ''}`;
                 
                 let btnHtml = '';
-                if (!isUnlocked) btnHtml = `<button class="skin-action-btn locked">Закрыто (Ур. ${lvl.unlockLevel})</button>`;
-                else if (isSelected) btnHtml = `<button class="skin-action-btn active">Активен</button>`;
-                else btnHtml = `<button class="skin-action-btn select" onclick="selectSkin(${index})">Выбрать</button>`;
+                if (!isUnlocked) btnHtml = `<button class="skin-action-btn locked">${T(435)} ${lvl.unlockLevel})</button>`;
+                else if (isSelected) btnHtml = `<button class="skin-action-btn active">${T(431)}</button>`;
+                else btnHtml = `<button class="skin-action-btn select" onclick="selectSkin(${index})">${T(344)}</button>`;
 
                 card.innerHTML = `
                     <div class="upgrade-left-wrap">
                         <img src="${lvl.img}" alt="" class="upgrade-icon-img" style="border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'">
                         <div class="upgrade-info">
-                            <div class="upgrade-title">Скин #${index + 1}: ${lvl.name}</div>
-                            <div class="upgrade-effect">Уровень ${lvl.unlockLevel} · порог: $${formatCompactNumber(lvl.threshold)}</div>
+                            <div class="upgrade-title">${T(436)}${index + 1}: ${lvl.name}</div>
+                            <div class="upgrade-effect">${T(386)} ${lvl.unlockLevel} ${T(437)}${formatCompactNumber(lvl.threshold)}</div>
                         </div>
                     </div>
                     ${btnHtml}
@@ -5698,7 +5783,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 tile.innerHTML = `
                     <img src="${sk.img}" alt="" onerror="this.style.opacity=.25">
                     <div class="mw-name">${sk.name}</div>
-                    <div class="mw-state">${isActive ? 'Активен' : (sk.unlocked ? 'Выбрать' : 'Закрыт')}</div>
+                    <div class="mw-state">${isActive ? ('' + T(431) + '') : (sk.unlocked ? ('' + T(344) + '') : ('' + T(438) + ''))}</div>
                 `;
                 if (sk.unlocked && !isActive) tile.addEventListener('click', () => buySpecialSkin(sk.key));
                 mellWardrobeEl.appendChild(tile);
@@ -5718,9 +5803,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         async function spinMellRoulette(pay) {
             if (isSpinningMell) return;
             const cost = MELL_SPIN_COST[pay];
-            if (pay === 'diamonds' && diamonds < cost) { await alert(`Не хватает алмазов 💎! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
-            if (pay === 'teeth' && teeth < cost) { await alert(`Не хватает зубов 🦷! Нужно ${cost} за одну крутку.`, 'РУЛЕТКА'); return; }
-            if (pay === 'coins' && mellCoins < cost) { await alert('Не хватает Меллкоинов 🪙! Их дают за каждый уровень с 10-го и за сундук за 1 час в игре.', 'РУЛЕТКА'); return; }
+            if (pay === 'diamonds' && diamonds < cost) { await alert(`${T(233)} ${cost} ${T(439)}`, ('' + T(348) + '')); return; }
+            if (pay === 'teeth' && teeth < cost) { await alert(`${T(440)} ${cost} ${T(439)}`, ('' + T(348) + '')); return; }
+            if (pay === 'coins' && mellCoins < cost) { await alert(('' + T(441) + ''), ('' + T(348) + '')); return; }
 
             if (pay === 'diamonds') { diamonds -= cost; totalDiamondsSpent += cost; }
             else if (pay === 'teeth') { teeth -= cost; totalTeethSpent += cost; }
@@ -5774,10 +5859,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     const rewardDiamonds = MELL_DUP_DIAMONDS;
                     diamonds += rewardDiamonds;
                     totalDiamondsEarned += rewardDiamonds;
-                    await alert(`Повторный скин: ${real.name}!\nВам начислено +${rewardDiamonds} 💎 алмазов компенсации!`, 'ДУБЛИКАТ');
+                    await alert(`${T(349)} ${real.name}!\n${T(350)}${rewardDiamonds} ${T(351)}`, ('' + T(352) + ''));
                 } else {
                     real.unlocked = true;
-                    await alert(`🎉 НОВЫЙ СКИН: ${real.name}!\nВыбрать его можно в списке ниже.`, 'НОВЫЙ СКИН');
+                    await alert(`${T(353)} ${real.name}!\n${T(442)}`, ('' + T(354) + ''));
                 }
 
                 isSpinningMell = false;
@@ -5925,15 +6010,15 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             infoTickets.textContent = `${tickets.toLocaleString()} 🎫`;
             }
 
-            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + ' (ТИЛЬТ −80%)' : formatCompactNumber(cps);
-            cpcEl.textContent = mellTiltCooldown > 0 ? '$' + formatCompactNumber(getCpc() * getTiltMult()) + ' (ТИЛЬТ)' : '$' + formatCompactNumber(getCpc());
+            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + (' ' + T(443) + '') : formatCompactNumber(cps);
+            cpcEl.textContent = mellTiltCooldown > 0 ? '$' + formatCompactNumber(getCpc() * getTiltMult()) + (' ' + T(444) + '') : '$' + formatCompactNumber(getCpc());
 
             const noAdsStatusEl = document.getElementById('noAdsStatus');
             const noAdsPriceEl = document.getElementById('noAdsPrice');
             const noAdsCard = document.getElementById('noAdsCard');
             if (noAdsPurchased) {
-                noAdsStatusEl.textContent = 'Куплено';
-                noAdsPriceEl.textContent = 'АКТИВНО';
+                noAdsStatusEl.textContent = ('' + T(433) + '');
+                noAdsPriceEl.textContent = ('' + T(445) + '');
                 noAdsPriceEl.style.color = '#7a8a84';
                 noAdsCard.style.opacity = '0.6';
             }
@@ -5941,24 +6026,24 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const bossWardStatus = document.getElementById('bossWardStatus');
             const bossWardPrice = document.getElementById('bossWardPrice');
             if (bossWardPurchased) {
-                bossWardStatus.textContent = bossWardEnabled ? 'Боссы: ВЫКЛ (Нажмите чтобы включить)' : 'Боссы: ВКЛ (Нажмите чтобы выключить)';
-                bossWardPrice.textContent = bossWardEnabled ? 'ОБЕРЕГ ВКЛ' : 'ОБЕРЕГ ВЫКЛ';
+                bossWardStatus.textContent = bossWardEnabled ? ('' + T(446) + '') : ('' + T(447) + '');
+                bossWardPrice.textContent = bossWardEnabled ? ('' + T(448) + '') : ('' + T(449) + '');
                 bossWardPrice.style.color = bossWardEnabled ? '#00ff88' : '#ff4b4b';
             }
 
             const drunShieldStatus = document.getElementById('drunShieldStatus');
             const drunShieldPrice = document.getElementById('drunShieldPrice');
             if (drunShieldPurchased) {
-                drunShieldStatus.textContent = drunShieldEnabled ? 'ПВО Друнов: ВКЛ (Защита)' : 'ПВО Друнов: ВЫКЛ (Опасность)';
-                drunShieldPrice.textContent = drunShieldEnabled ? 'ЩИТ ВКЛ' : 'ЩИТ ВЫКЛ';
+                drunShieldStatus.textContent = drunShieldEnabled ? ('' + T(450) + '') : ('' + T(451) + '');
+                drunShieldPrice.textContent = drunShieldEnabled ? ('' + T(452) + '') : ('' + T(453) + '');
                 drunShieldPrice.style.color = drunShieldEnabled ? '#00ff88' : '#ff4b4b';
             }
 
             const statusDonSkin3 = document.getElementById('statusDonSkin3');
             const priceDonSkin3 = document.getElementById('priceDonSkin3');
             if (donSkin3Unlocked) {
-                statusDonSkin3.textContent = activeSpecialSkin === 'skindon3' ? 'Надет' : 'Куплено';
-                priceDonSkin3.textContent = 'АКТИВЕН';
+                statusDonSkin3.textContent = activeSpecialSkin === 'skindon3' ? ('' + T(454) + '') : ('' + T(433) + '');
+                priceDonSkin3.textContent = ('' + T(455) + '');
                 priceDonSkin3.style.color = '#00ff88';
             }
 
@@ -6013,7 +6098,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const card = document.getElementById(cardId);
             if (!card || !item) return;
             document.getElementById(costId).textContent = formatCompactNumber(item.cost);
-            document.getElementById(cntId).textContent = `куплено: ${item.lvl}`;
+            document.getElementById(cntId).textContent = `${T(456)} ${item.lvl}`;
 
             if (balance >= item.cost) card.classList.remove('disabled');
             else card.classList.add('disabled');
@@ -6087,7 +6172,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             recalculateCps();
 
             if (event && (event.clientX || (event.touches && event.touches[0]))) {
-                if (isCrit) showFloatingText(`КРИТ x3! +$${formatCompactNumber(currentCpc)}`, event, false, true);
+                if (isCrit) showFloatingText(`${T(457)}${formatCompactNumber(currentCpc)}`, event, false, true);
                 else showFloatingText(`+$${formatCompactNumber(currentCpc)}`, event);
             }
 
@@ -6270,7 +6355,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         const battlePadLabel = document.getElementById('battlePadLabel');
         function setPadMode(m) {
             battlePad.dataset.mode = m;
-            battlePadLabel.textContent = m === 'attack' ? '👊 УДАР!\nжми сюда' : '🕹️ Води пальцем здесь\nдуша двигается плавно';
+            battlePadLabel.textContent = m === 'attack' ? ('' + T(21) + '\n' + T(22) + '') : ('' + T(458) + '\n' + T(459) + '');
         }
         let padPtr = null;
         function soulMoveBy(dx, dy) {
@@ -6345,7 +6430,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let singleReward = getSingleReward(phantomHp, true);
                 applySingleReward(singleReward);
 
-                await alert(`🧿 Оберег защитил вас от Маньяка (${phantomHp} HP)!\nВам начислена награда откупа: ${singleReward.text}`, 'ОБЕРЕГ');
+                await alert(`${T(460)}${phantomHp} HP)!\n${T(461)} ${singleReward.text}`, ('' + T(375) + ''));
                 finishBossFightClean();
                 return;
             }
@@ -6355,11 +6440,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 eventIntroOpen = true;
                 saveGame();
                 try {
-                    await alert('⚠️ НА ТЕБЯ НАПАЛ МАНЬЯК!\n\n' +
-                        '⚔️ Атака: полоска бегает туда-сюда — нажми, когда она на зелёной зоне (КРИТ), жёлтая — обычный удар, фиолетовый центр — мега-удар.\n' +
-                        '🛡️ Защита: уворачивайся от летящих пуль, двигая сердечко пальцем (или WASD).\n' +
-                        '🥺 Можно умолять о пощаде, сбежать (потеряешь 15% денег) или откупиться за 20 💎.\n' +
-                        '💀 Проиграешь — Меллстрой уйдёт в тильт: доход упадёт на 80%.', 'МАНЬЯК');
+                    await alert(('' + T(462) + '\n\n') +
+                        ('' + T(463) + '\n') +
+                        ('' + T(464) + '\n') +
+                        ('' + T(465) + '\n') +
+                        ('' + T(466) + ''), ('' + T(11) + ''));
                 } finally { eventIntroOpen = false; }
             }
 
@@ -6409,8 +6494,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             sliderDir = 1;
             bullets = [];
 
-            let hintExtra = bossMaxHp > 25 ? ' Фиолетовый центр: МЕГА-УДАР (8 урона)!' : '';
-            battleStatusHint.textContent = `Зелёный: КРИТ (5)! Жёлтый: удар (2).${hintExtra}`;
+            let hintExtra = bossMaxHp > 25 ? (' ' + T(467) + '') : '';
+            battleStatusHint.textContent = `${T(468)}${hintExtra}`;
             battleStatusHint.style.color = '#00ff88';
 
             document.getElementById('undertaleBtnGroup').style.pointerEvents = 'auto';
@@ -6420,7 +6505,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         btnHeal.addEventListener('click', async () => {
             if (!inBattle) return;
             if (playerHp >= playerMaxHp) {
-                await alert('У Меллстроя уже полное здоровье (20/20 HP)!', 'ХИЛЛ');
+                await alert(('' + T(469) + ''), ('' + T(470) + ''));
                 return;
             }
             if (!(await requireResource('diamonds', 3))) return;
@@ -6430,7 +6515,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             updateBattleHUD();
             updateUI();
             saveGame();
-            battleStatusHint.textContent = 'Здоровье восстановлено: +5 HP!';
+            battleStatusHint.textContent = ('' + T(471) + '');
             battleStatusHint.style.color = '#00ff88';
         });
 
@@ -6445,13 +6530,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 balance += 1;
                 totalEarned += 1;
                 playJackpotSound();
-                await alert('🥺 Маньяк сжалился над вашими мольбами и ушёл!\nВы подобрали с пола: +$1.', 'ПОЩАДА');
+                await alert(('' + T(472) + '\n' + T(473) + ''), ('' + T(474) + ''));
                 finishBossFightClean();
             } else {
                 currentBegChance *= 1.5;
                 updateChancesUI();
                 playLoseSound();
-                battleStatusHint.textContent = 'Маньяк посмеялся над мольбами! Защищайся!';
+                battleStatusHint.textContent = ('' + T(475) + '');
                 battleStatusHint.style.color = '#ff3366';
                 setTimeout(startDodgePhase, 800);
             }
@@ -6468,13 +6553,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let lostMoney = Math.floor(balance * 0.15);
                 balance = Math.max(0, balance - lostMoney);
                 playLoseSound();
-                await alert(`🏃 Вы смогли сбежать от Маньяка!\nПока бежали, вы обронили 15% своих накоплений (-$${formatCompactNumber(lostMoney)}).`, 'ПОБЕГ');
+                await alert(`${T(476)}\n${T(477)}${formatCompactNumber(lostMoney)}).`, ('' + T(478) + ''));
                 finishBossFightClean();
             } else {
                 currentFleeChance *= 1.5;
                 updateChancesUI();
                 playLoseSound();
-                battleStatusHint.textContent = 'Побег не удался, маньяк преградил путь!';
+                battleStatusHint.textContent = ('' + T(479) + '');
                 battleStatusHint.style.color = '#ff3366';
                 setTimeout(startDodgePhase, 800);
             }
@@ -6483,7 +6568,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         btnBribe.addEventListener('click', async () => {
             if (!inBattle || battlePhase !== 'attack') return;
             if (!(await requireResource('diamonds', 20))) return;
-            const ok = await confirm('Откупиться от Маньяка за 20 💎 алмазов?\nВы гарантированно получите одну награду (на 50% меньше)!', 'ОТКУП');
+            const ok = await confirm(('' + T(480) + '\n' + T(481) + ''), ('' + T(482) + ''));
             if (ok) {
                 diamonds -= 20;
                 totalDiamondsSpent += 20;
@@ -6493,7 +6578,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let singleReward = getSingleReward(bossMaxHp, true);
                 applySingleReward(singleReward);
 
-                await alert(`💎 Маньяк взял 20 алмазов и скрылся!\nУбегая, он обронил: ${singleReward.text}`, 'ОТКУП');
+                await alert(`${T(483)}\n${T(484)} ${singleReward.text}`, ('' + T(482) + ''));
                 finishBossFightClean();
             }
         });
@@ -6503,10 +6588,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (noAdsPurchased) {
                 inBattle = false;
                 bossModal.classList.remove('active');
-                await alert('🛡️ У вас отключена реклама! Босс автоматически пропущен без штрафов.', 'ПРОПУСК');
+                await alert(('' + T(485) + ''), ('' + T(486) + ''));
                 finishBossFightClean();
             } else {
-                const ok = await confirm('Посмотреть короткую рекламу для безопасного пропуска босса?', 'РЕКЛАМА');
+                const ok = await confirm(('' + T(487) + ''), ('' + T(264) + ''));
                 if (!ok || !inBattle) return;
                 // Награда (пропуск босса) — строго внутри onRewarded
                 showRewardedAd(async () => {
@@ -6514,7 +6599,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     isBossPaused = false;
                     if (bossPauseOverlay) bossPauseOverlay.style.display = 'none';
                     bossModal.classList.remove('active');
-                    await alert('📺 Реклама просмотрена! Маньяк ушел.', 'ПРОПУСК');
+                    await alert(('' + T(488) + ''), ('' + T(486) + ''));
                     finishBossFightClean();
                 });
             }
@@ -6543,21 +6628,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (bossMaxHp > 25 && dist <= 5) {
                 damage = 8;
                 playJackpotSound();
-                battleStatusHint.textContent = `МЕГА-УДАР ПО СЛАБОЙ ТОЧКЕ! -${damage} HP!`;
+                battleStatusHint.textContent = `${T(489)}${damage} HP!`;
                 battleStatusHint.style.color = '#ff00ff';
             } else if (dist < 14) {
                 damage = 5;
                 playJackpotSound();
-                battleStatusHint.textContent = `КРИТИЧЕСКИЙ УДАР! -${damage} HP Маньяку!`;
+                battleStatusHint.textContent = `${T(490)}${damage} ${T(491)}`;
                 battleStatusHint.style.color = '#00ff88';
             } else if (dist < 43) {
                 damage = 2;
-                battleStatusHint.textContent = `Слабый удар: -${damage} HP Маньяку!`;
+                battleStatusHint.textContent = `${T(492)}${damage} ${T(491)}`;
                 battleStatusHint.style.color = '#ffd700';
             } else {
                 damage = 0;
                 playLoseSound();
-                battleStatusHint.textContent = `ПРОМАХ! 0 урона!`;
+                battleStatusHint.textContent = `${T(493)}`;
                 battleStatusHint.style.color = '#ff4b4b';
             }
 
@@ -6580,7 +6665,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             dodgeTimer = 340;
 
             currentPattern = (currentPattern % 3) + 1;
-            battleStatusHint.textContent = 'УВОРАЧИВАЙСЯ! Води пальцем по нижней панели (или WASD)';
+            battleStatusHint.textContent = ('' + T(494) + '');
             battleStatusHint.style.color = '#ff3366';
         }
 
@@ -6783,13 +6868,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (chosen === 'money') {
                     let mult = Math.floor(Math.random() * 11) + 5;
                     let val = Math.max(1, Math.floor(currentCpcVal * mult * multRatio));
-                    return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} к клику)` };
+                    return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} ${T(495)}` };
                 } else if (chosen === 'diamonds') {
                     let val = Math.max(1, Math.floor((Math.floor(Math.random() * 6) + 3) * multRatio));
-                    return { type: 'diamonds', val: val, text: `+${val} 💎 алмазов` };
+                    return { type: 'diamonds', val: val, text: `+${val} ${T(496)}` };
                 } else {
                     let val = Math.max(1, Math.floor((Math.floor(Math.random() * 11) + 8) * multRatio));
-                    return { type: 'teeth', val: val, text: `+${val} 🦷 зубов` };
+                    return { type: 'teeth', val: val, text: `+${val} ${T(497)}` };
                 }
             } else {
                 let types = ['money', 'diamonds', 'teeth', 'ticket'];
@@ -6798,15 +6883,15 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (chosen === 'money') {
                     let mult = Math.floor(Math.random() * 16) + 15;
                     let val = Math.max(1, Math.floor(currentCpcVal * mult * multRatio));
-                    return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} к клику)` };
+                    return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} ${T(495)}` };
                 } else if (chosen === 'diamonds') {
                     let val = Math.max(1, Math.floor((Math.floor(Math.random() * 11) + 10) * multRatio));
-                    return { type: 'diamonds', val: val, text: `+${val} 💎 алмазов` };
+                    return { type: 'diamonds', val: val, text: `+${val} ${T(496)}` };
                 } else if (chosen === 'teeth') {
                     let val = Math.max(1, Math.floor((Math.floor(Math.random() * 36) + 25) * multRatio));
-                    return { type: 'teeth', val: val, text: `+${val} 🦷 зубов` };
+                    return { type: 'teeth', val: val, text: `+${val} ${T(497)}` };
                 } else {
-                    return { type: 'tickets', val: 1, text: `+1 🎫 билет в мини-игру` };
+                    return { type: 'tickets', val: 1, text: `${T(498)}` };
                 }
             }
         }
@@ -6837,7 +6922,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             applySingleReward(reward);
 
             playJackpotSound();
-            await alert(`🏆 ПОБЕДА НАД МАНЬЯКОМ (${bossMaxHp} HP)!\nВаша награда: ${reward.text}`, 'ПОБЕДА');
+            await alert(`${T(499)}${bossMaxHp} HP)!\n${T(500)} ${reward.text}`, ('' + T(501) + ''));
 
             finishBossFightClean();
         }
@@ -6852,7 +6937,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             mellTiltCooldown = Math.round(60 - ratio * 30);
 
             melloBtn.classList.add('disabled-cooldown');
-            await alert(`💀 МАНЬЯК ПОБЕДИЛ ВАС!\nМеллстрой ушел в тильт: доход и клики урезаны на 80% на ${mellTiltCooldown} секунд!`, 'ПОРАЖЕНИЕ');
+            await alert(`${T(502)}\n${T(503)} ${mellTiltCooldown} ${T(504)}`, ('' + T(505) + ''));
 
             finishBossFightClean();
         }
@@ -6899,7 +6984,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let autoDia = Math.floor(Math.random() * 5) + 3;
                 diamonds += autoDia;
                 totalDiamondsEarned += autoDia;
-                await alert(`🛡️ ПВО «Щит от Друнов» уничтожило врагов на подлёте!\nСобрано осколков: +${autoDia} 💎!`, 'ЩИТ ОТ ДРУНОВ');
+                await alert(`${T(506)}\n${T(507)}${autoDia} 💎!`, ('' + T(508) + ''));
                 updateUI();
                 saveGame();
                 return;
@@ -6910,11 +6995,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 eventIntroOpen = true;
                 saveGame();
                 try {
-                    await alert('🚨 НАШЕСТВИЕ ДРУНОВ!\n\n' +
-                        '⬇️ С неба летят Друны — уворачивайся: ' + (drunMobile() ? 'води пальцем по экрану, Мелл двигается за ним.' : 'двигай Меллстроя мышкой.') + '\n' +
-                        '💥 Попадание Друна отнимает 5% денег.\n' +
-                        '💎 Друны, упавшие на пол, разбиваются и оставляют алмазы — чем больше пропустишь мимо себя, тем лучше.\n' +
-                        '🏆 Волна засчитана, если увернулся минимум от половины Друнов. 3 таких волны — достижение «Друн».', 'ДРУНЫ');
+                    await alert(('' + T(509) + '\n\n') +
+                        ('' + T(510) + ' ') + (drunMobile() ? ('' + T(511) + '') : ('' + T(512) + '')) + '\n' +
+                        ('' + T(513) + '\n') +
+                        ('' + T(514) + '\n') +
+                        ('' + T(515) + ''), ('' + T(516) + ''));
                 } finally { eventIntroOpen = false; }
                 if (isDrunInvasionActive || inBattle) { try { sirenaSound.pause(); sirenaSound.currentTime = 0; } catch (e) {} return; }
             }
@@ -6947,7 +7032,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 melloBtn.style.top = `${melloPosY}px`;
             }
 
-            showFloatingText((drunMobile() ? '⚠️ НАШЕСТВИЕ ДРУНОВ! Води пальцем в любом месте — Мелл двигается' : '⚠️ НАШЕСТВИЕ ДРУНОВ! УВОРАЧИВАЙТЕСЬ!'), { clientX: clickStage.clientWidth / 2, clientY: 100 }, false, true);
+            showFloatingText((drunMobile() ? ('' + T(517) + '') : ('' + T(518) + '')), { clientX: clickStage.clientWidth / 2, clientY: 100 }, false, true);
             lastDrunFrameTime = performance.now();
             drunTimeAcc = 0;
             requestAnimationFrame(drunInvasionLoop);
@@ -7019,7 +7104,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     createDrunExplosion(drunCenterX, drunCenterY);
                     let lost = Math.floor(balance * 0.05);
                     balance = Math.max(0, balance - lost);
-                    showFloatingText(`УДАР ДРУНА! -5% (-$${formatCompactNumber(lost)})`, { clientX: d.x + 40, clientY: d.y + 40 }, false, true);
+                    showFloatingText(`${T(519)}${formatCompactNumber(lost)})`, { clientX: d.x + 40, clientY: d.y + 40 }, false, true);
                     drunsList.splice(i, 1);
                     updateUI();
                     continue;
@@ -7127,18 +7212,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (waveSurvived) {
                 halfDodgedDrunWaves++;
                 if (tookDrunDamageInCurrentWave) {
-                    showFloatingText(`ВОЛНА ПЕРЕЖИТА! Увернулся от ${dodgedCount}/${totalDrunsInWave}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
+                    showFloatingText(`${T(520)} ${dodgedCount}/${totalDrunsInWave}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
                 }
             } else {
-                showFloatingText(`Волна не засчитана: увернулся от ${dodgedCount}/${totalDrunsInWave}, нужно ${needDodged}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, false, true, false);
+                showFloatingText(`${T(521)} ${dodgedCount}/${totalDrunsInWave}${T(522)} ${needDodged}`, { clientX: clickStage.clientWidth / 2, clientY: 150 }, false, true, false);
             }
             if (!tookDrunDamageInCurrentWave) {
                 perfectDrunInvasionsCount++;
-                showFloatingText('ЧИСТАЯ ПОБЕДА! (БЕЗ УРОНА)', { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
+                showFloatingText(('' + T(523) + ''), { clientX: clickStage.clientWidth / 2, clientY: 150 }, true, false, false);
             }
 
             playJackpotSound();
-            await alert(`🎉 НАШЕСТВИЕ ДРУНОВ ЗАВЕРШЕНО!\nУвернулся от Друнов: ${dodgedCount}/${totalDrunsInWave}` + (waveSurvived ? ' — волна засчитана!' : ` — для зачёта нужно минимум ${needDodged}.`) + `\nСобрано алмазов с разбитых Друнов: +${drunDiamondsCollected} 💎!`, 'ПОБЕДА');
+            await alert(`${T(524)}\n${T(525)} ${dodgedCount}/${totalDrunsInWave}` + (waveSurvived ? (' ' + T(526) + '') : ` ${T(527)} ${needDodged}.`) + `\n${T(528)}${drunDiamondsCollected} 💎!`, ('' + T(501) + ''));
 
             nextDrunScheduledTime = Date.now() + drunGapMs();
             updateUI();
@@ -8254,12 +8339,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0, 255, 136, 0.7)';
                 ctx.shadowBlur = IS_IOS ? 0 : 8;
-                ctx.fillText(rocket.stage === 'flying' ? '🚀 ВЫСАДКА ДЕСАНТА...' : '⚡ ПОГНАЛИ!', canvas.width / 2, 75);
+                ctx.fillText(rocket.stage === 'flying' ? ('' + T(529) + '') : ('' + T(530) + ''), canvas.width / 2, 75);
                 
                 ctx.font = '600 12px "Segoe UI", sans-serif';
                 ctx.fillStyle = '#a3b8b0';
                 ctx.shadowBlur = 0;
-                ctx.fillText('(Кликните в любое место, чтобы пропустить)', canvas.width / 2, 98);
+                ctx.fillText(('' + T(531) + ''), canvas.width / 2, 98);
                 ctx.restore();
             }
 
@@ -8512,7 +8597,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         setInterval(() => {
             if (document.hidden) return;
             recalculateCps();
-            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + ' (ТИЛЬТ −80%)' : formatCompactNumber(cps);
+            cpsEl.textContent = mellTiltCooldown > 0 ? formatCompactNumber(cps) + (' ' + T(443) + '') : formatCompactNumber(cps);
         }, 250);
 
         // ==========================================
@@ -8527,24 +8612,24 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         const storyFrame = document.getElementById('storyFrame');
 
         const STORY_LEVELS = [
-            { n: 1, title: 'Уровень 1: Лесная сага', url: 'runner.html?embed=1&level=1', reqAch: ['catness', 'burm'], reqPrev: 0,
-              desc: 'ФОГ украл мешок с зубами. Догоните его по лесу!' },
-            { n: 2, title: 'Уровень 2: Серый человейник Мурино', url: 'runner.html?embed=1&level=2', reqAch: ['catness', 'burm', 'chekuwka'], reqPrev: 1,
-              desc: 'След ведёт в город. Бегите по крышам и остановите ФОГа.' },
-            { n: 3, title: 'Уровень 3: В поисках Черемши', url: 'level3.html?embed=1', reqAch: [], reqPrev: 2,
-              desc: 'Бешеная погоня на машинах. Награда: достижение «Черемша».' },
-            { n: 4, title: 'Уровень 4: Гнездо Мамы Птицы', url: 'level4.html?embed=1', reqAch: [], reqPrev: 3, reqRebirth: true,
-              desc: 'ФОГ добрался до гнезда. Босс-файт с Мамой Птицей! Награда: достижение «Мама Птица».' }
+            { n: 1, title: ('' + T(532) + ''), url: 'runner.html?embed=1&level=1', reqAch: ['catness', 'burm'], reqPrev: 0,
+              desc: ('' + T(533) + '') },
+            { n: 2, title: ('' + T(534) + ''), url: 'runner.html?embed=1&level=2', reqAch: ['catness', 'burm', 'chekuwka'], reqPrev: 1,
+              desc: ('' + T(535) + '') },
+            { n: 3, title: ('' + T(536) + ''), url: 'level3.html?embed=1', reqAch: [], reqPrev: 2,
+              desc: ('' + T(537) + '') },
+            { n: 4, title: ('' + T(538) + ''), url: 'level4.html?embed=1', reqAch: [], reqPrev: 3, reqRebirth: true,
+              desc: ('' + T(539) + '') }
         ];
 
         function getStoryAccess(lvl) {
             const missing = [];
-            lvl.reqAch.forEach(k => { if (!achievements[k].unlocked) missing.push({ text: 'Достижение «' + achievements[k].name + '»', ok: false }); });
+            lvl.reqAch.forEach(k => { if (!achievements[k].unlocked) missing.push({ text: ('' + T(540) + '') + achievements[k].name + (LANG === 'en' ? '”' : '»'), ok: false }); });
             const prevOk = lvl.reqPrev === 0 || !!storyProgress['l' + lvl.reqPrev];
-            if (!prevOk) missing.push({ text: 'Пройти уровень ' + lvl.reqPrev, ok: false });
+            if (!prevOk) missing.push({ text: ('' + T(541) + ' ') + lvl.reqPrev, ok: false });
             if (lvl.reqRebirth) {
-                if (rebirths < 1) missing.push({ text: 'Сделать престиж (перерождение)', ok: false });
-                if (!postRebirthLvl10) missing.push({ text: 'Дойти до 10 уровня после престижа' + (rebirths > 0 ? ' (сейчас Ур. ' + currentLevel + ')' : ''), ok: false });
+                if (rebirths < 1) missing.push({ text: ('' + T(542) + ''), ok: false });
+                if (!postRebirthLvl10) missing.push({ text: ('' + T(543) + '') + (rebirths > 0 ? (' ' + T(544) + ' ') + currentLevel + ')' : ''), ok: false });
             }
             if (storyProgress['l' + lvl.n]) return { open: true, missing: [] };
             return { open: missing.length === 0, missing };
@@ -8563,7 +8648,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (!acc.open) {
                     reqHtml = acc.missing.map(m => '<div class="story-req">🔒 ' + m.text + '</div>').join('');
                 } else if (done) {
-                    reqHtml = '<div class="story-req ok">✅ Пройден</div>';
+                    reqHtml = ('<div class="story-req ok">' + T(545) + '</div>');
                 }
 
                 card.innerHTML =
@@ -8575,7 +8660,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
                 const btn = document.createElement('button');
                 btn.className = 'story-play-btn';
-                btn.textContent = coming ? 'Скоро' : (acc.open ? (done ? 'Ещё раз' : 'Играть') : 'Закрыто');
+                btn.textContent = coming ? ('' + T(546) + '') : (acc.open ? (done ? ('' + T(547) + '') : ('' + T(548) + '')) : ('' + T(549) + ''));
                 btn.disabled = coming || !acc.open;
                 btn.addEventListener('click', () => launchStoryLevel(lvl.n));
                 const btnBox = document.createElement('div');
@@ -8584,7 +8669,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (lvl.n === 1 && acc.open) {
                     const eb = document.createElement('button');
                     eb.className = 'story-play-btn';
-                    eb.textContent = '♾️ Бесконечный';
+                    eb.textContent = ('' + T(550) + '');
                     eb.style.background = '#ff9f43';
                     eb.addEventListener('click', () => launchStoryLevel(1, 'endless'));
                     btnBox.appendChild(eb);
@@ -8628,7 +8713,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (!lvl || lvl.comingSoon || !getStoryAccess(lvl).open) return;
             storyMenu.style.display = 'none';
             storyPlay.style.display = 'flex';
-            storyFrame.src = lvl.url + (mode ? '&mode=' + mode : '') + '&t=' + Date.now();
+            storyFrame.src = lvl.url + (mode ? '&mode=' + mode : '') + '&lang=' + LANG + '&t=' + Date.now();
             enterStoryPlayView();
         }
 
@@ -8678,12 +8763,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     if (d.level === 3 && !wasUnlocked && achievements.cheremsha.unlocked) {
                         // alert() не блокирует переходы: показываем с задержкой, когда игрок уже вышел из полноэкранного режима
                         setTimeout(() => {
-                            alert('🌿 Получено достижение «Черемша»!\nЗабери его на главный экран в разделе 🏆 Достижения.', 'ДОСТИЖЕНИЕ');
+                            alert(('' + T(551) + '\n' + T(552) + ''), ('' + T(553) + ''));
                         }, 400);
                     }
                     if (d.level === 4 && achievements.mamabird.unlocked && (!wasMamaUnlocked || firstL4)) {
                         setTimeout(() => {
-                            alert('🐦 Получено достижение «Мама Птица»!' + (firstL4 ? '\n+100 🦷 за победу!' : '') + '\nЗабери его на главный экран в разделе 🏆 Достижения.', 'ДОСТИЖЕНИЕ');
+                            alert(('' + T(554) + '') + (firstL4 ? ('\n' + T(555) + '') : '') + ('\n' + T(552) + ''), ('' + T(553) + ''));
                         }, 400);
                     }
                 } else if (d.type === 'story-exit') {
@@ -8695,7 +8780,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         goBackToStoryMenuSafe();   // уровень закрыт — не оставляем игрока на мёртвом экране
                         if (lvl) {
                             const need = getStoryAccess(lvl).missing.map(m => '• ' + m.text).join('\n');
-                            setTimeout(() => { alert('🔒 Уровень ' + lvl.n + ' пока закрыт.\nНужно:\n' + need, 'УРОВЕНЬ ЗАКРЫТ'); }, 400);
+                            setTimeout(() => { alert(('' + T(556) + ' ') + lvl.n + (' ' + T(557) + '\n' + T(558) + '\n') + need, ('' + T(559) + '')); }, 400);
                         }
                     }
                 }
@@ -8774,21 +8859,21 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (r === 0) {
                 const n = Math.floor(Math.random() * 5) + 1;          // 1-5 алмазов
                 diamonds += n; totalDiamondsEarned += n;
-                showFloatingText(`МАМА ПТИЦА! +${n} 💎`, e, false, false, true);
+                showFloatingText(`${T(560)}${n} 💎`, e, false, false, true);
             } else if (r === 1) {
                 const n = Math.floor(Math.random() * 10) + 1;         // 1-10 зубов
                 teeth += n; totalTeethEarned += n;
-                showFloatingText(`МАМА ПТИЦА! +${n} 🦷`, e, true, false, false);
+                showFloatingText(`${T(560)}${n} 🦷`, e, true, false, false);
             } else if (r === 2) {
                 const k = Math.floor(Math.random() * 91) + 10;        // 10-100 кликов
                 const money = Math.floor(getCpc() * k);
                 balance += money; totalEarned += money;
-                showFloatingText(`МАМА ПТИЦА! +$${formatCompactNumber(money)} (${k} кликов)`, e, true, false, false);
+                showFloatingText(`${T(561)}${formatCompactNumber(money)} (${k} ${T(562)}`, e, true, false, false);
             } else if (r === 3) {
                 tickets += 1;
-                showFloatingText('МАМА ПТИЦА! +1 🎫', e, true, false, false);
+                showFloatingText(('' + T(563) + ''), e, true, false, false);
             } else {
-                showFloatingText('МАМА ПТИЦА! ФРИСПИН 🎰', e, true, false, false);
+                showFloatingText(('' + T(564) + ''), e, true, false, false);
                 playJackpotSound();
                 updateUI();
                 saveGame();
@@ -8808,9 +8893,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             dogFreeSpins = 1;
             dogFreeRound = true;
             currentPresetResult = generatePresetResult();
-            dogCasinoResult.textContent = 'Мама Птица дарит бесплатное вращение! Нажмите «Фриспин».';
+            dogCasinoResult.textContent = ('' + T(565) + '');
             slot1.textContent = '🐶'; slot2.textContent = '💎'; slot3.textContent = '🦷';
-            spinDogCasinoBtn.textContent = `🦴 Фриспин (осталось: ${dogFreeSpins})`;
+            spinDogCasinoBtn.textContent = `${T(566)} ${dogFreeSpins})`;
             spinDogCasinoBtn.style.display = 'block';
             closeDogCasinoBtn.style.display = 'none';
             dogCasinoModal.classList.remove('super');
@@ -8831,14 +8916,14 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
                 currentPresetResult = generatePresetResult();
 
-                dogCasinoResult.textContent = 'Удача улыбнулась! Нажмите «Крутить», чтобы забрать выигрыш!';
+                dogCasinoResult.textContent = ('' + T(404) + '');
                 spinDogCasinoBtn.style.display = 'block';
                 slot1.textContent = '🐶';
                 slot2.textContent = '💎';
                 slot3.textContent = '🦷';
                 dogFreeSpins = 0;
                 dogFreeRound = false;
-                spinDogCasinoBtn.textContent = 'Крутить барабаны!';
+                spinDogCasinoBtn.textContent = ('' + T(228) + '');
                 closeDogCasinoBtn.style.display = 'none';   // пока не прокрутили — закрыть нельзя, чтобы не потерять приз
                 dogCasinoModal.classList.remove('super');
                 [slot1, slot2, slot3].forEach(sl => sl.classList.remove('win', 'spinning'));
@@ -8848,7 +8933,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     jackpotSound.currentTime = 0;
                     jackpotSound.play().catch(()=>{});
                 }
-                showFloatingText('ЛУДОКАЗИНО СОБАЧКИ!', e, true, false, false);
+                showFloatingText(('' + T(567) + ''), e, true, false, false);
             }
         }
 
@@ -8905,7 +8990,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (dogFreeRound && dogFreeSpins > 0) dogFreeSpins--;
             spinDogCasinoBtn.style.display = 'none';
             closeDogCasinoBtn.style.display = 'none';
-            dogCasinoResult.textContent = 'Барабаны крутятся... 🎰';
+            dogCasinoResult.textContent = ('' + T(568) + '');
             dogCasinoModal.classList.remove('super');
             [slot1, slot2, slot3].forEach(sl => { sl.classList.remove('win'); sl.classList.add('spinning'); });
 
@@ -8955,12 +9040,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (dogFreeSpins > 0) {
                 dogFreeRound = true;
                 currentPresetResult = generatePresetResult();
-                spinDogCasinoBtn.textContent = `🦴 Фриспин (осталось: ${dogFreeSpins})`;
+                spinDogCasinoBtn.textContent = `${T(566)} ${dogFreeSpins})`;
                 spinDogCasinoBtn.style.display = 'block';
                 closeDogCasinoBtn.style.display = 'none';
             } else {
                 dogFreeRound = false;
-                spinDogCasinoBtn.textContent = 'Крутить барабаны!';
+                spinDogCasinoBtn.textContent = ('' + T(228) + '');
                 closeDogCasinoBtn.style.display = 'block';
             }
         }
@@ -8975,7 +9060,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             let type = res.type;
 
             if (type === 'loss') {
-                dogCasinoResult.innerHTML = '<span style="color: #ff4b4b;">Мимо! Разные символы — в этот раз без призов :(</span>';
+                dogCasinoResult.innerHTML = ('<span style="color: #ff4b4b;">' + T(569) + '</span>');
                 playLoseSound();
                 return;
             }
@@ -8998,31 +9083,31 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     dogCasinoModal.classList.add('super');
 
                     dogCasinoResult.innerHTML = `
-                        <span style="color: #ffd700;">👑 СУПЕР-ДЖЕКПОТ СОБАЧЕК! 👑</span>
-                        <div class="dog-chips"><span>+${tk} 🎫</span><span>+${dm} 💎</span><span>+${th} 🦷</span><span>+$${formatCompactNumber(moneyVal)}</span><span class="coin">+1 🪙 Меллкоин</span></div>
+                        <span style="color: #ffd700;">${T(570)}</span>
+                        <div class="dog-chips"><span>+${tk} 🎫</span><span>+${dm} 💎</span><span>+${th} 🦷</span><span>+$${formatCompactNumber(moneyVal)}</span><span class="coin">${T(571)}</span></div>
                     `;
                 } else if (sym === '🦴') {
                     dogFreeSpins += 3;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">🦴🦴🦴 ТРИ КОСТОЧКИ! Вы получили 3 фриспина! 🎰</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">${T(572)}</span>`;
                 } else if (sym === '💎') {
                     let count = dogMult(Math.floor(Math.random() * 9) + 7);
                     diamonds += count;
                     totalDiamondsEarned += count;
-                    dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">🎉 ТРИ АЛМАЗА! Начислено: +${count} 💎!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">${T(573)}${count} 💎!</span>`;
                 } else if (sym === '🦷') {
                     let count = dogMult(Math.floor(Math.random() * 11) + 10);
                     teeth += count;
                     totalTeethEarned += count;
-                    dogCasinoResult.innerHTML = `<span style="color: #ff3366;">🦷 ТРИ ЗУБА! Начислено: +${count} 🦷!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ff3366;">${T(574)}${count} 🦷!</span>`;
                 } else if (sym === '🎫') {
                     let tk = dogMultTickets(2);
                     tickets += tk;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">🎫 ТРИ БИЛЕТА! Начислено: +${tk} 🎫 в мини-игру!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">${T(575)}${tk} ${T(576)}</span>`;
                 } else if (sym === '💵') {
                     let moneyVal = Math.floor(getCpc() * 100 * DOG_PRIZE_MULT);
                     balance += moneyVal;
                     totalEarned += moneyVal;
-                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">💵 ТРИ БАКСА! Начислено: +$${formatCompactNumber(moneyVal)} (x150 клика)!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">${T(577)}${formatCompactNumber(moneyVal)} ${T(578)}</span>`;
                 }
             } else if (type === 'two') {
                 if (sym === '🐶') {
@@ -9036,31 +9121,31 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     totalEarned += moneyVal;
 
                     dogCasinoResult.innerHTML = `
-                        <span style="color: #ffd700;">✨ Пара Собачек!</span>
+                        <span style="color: #ffd700;">${T(579)}</span>
                         <div class="dog-chips"><span>+${dm} 💎</span><span>+${th} 🦷</span><span>+$${formatCompactNumber(moneyVal)}</span></div>
                     `;
                 } else if (sym === '🦴') {
                     dogFreeSpins += 1;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">🦴🦴 Пара Косточек! Вы получили 1 фриспин! 🎰</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffb86b;">${T(580)}</span>`;
                 } else if (sym === '💎') {
                     let count = dogMult(Math.floor(Math.random() * 5) + 3);
                     diamonds += count;
                     totalDiamondsEarned += count;
-                    dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">✨ Пара Алмазов! Начислено: +${count} 💎!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00e5ff;">${T(581)}${count} 💎!</span>`;
                 } else if (sym === '🦷') {
                     let count = dogMult(Math.floor(Math.random() * 6) + 5);
                     teeth += count;
                     totalTeethEarned += count;
-                    dogCasinoResult.innerHTML = `<span style="color: #ff3366;">✨ Пара Зубов! Начислено: +${count} 🦷!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ff3366;">${T(582)}${count} 🦷!</span>`;
                 } else if (sym === '🎫') {
                     let tk = dogMultTickets(1);
                     tickets += tk;
-                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">✨ Пара Билетов! Начислено: +${tk} 🎫!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #ffd700;">${T(583)}${tk} 🎫!</span>`;
                 } else if (sym === '💵') {
                     let moneyVal = Math.floor(getCpc() * 50 * DOG_PRIZE_MULT);
                     balance += moneyVal;
                     totalEarned += moneyVal;
-                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">✨ Пара Баксов! Начислено: +$${formatCompactNumber(moneyVal)} (x75 клика)!</span>`;
+                    dogCasinoResult.innerHTML = `<span style="color: #00ff88;">${T(584)}${formatCompactNumber(moneyVal)} ${T(585)}</span>`;
                 }
             }
 
@@ -9099,11 +9184,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
     }).observe(stage, { childList: true });
     var lvl = document.getElementById('levelStatusText'), prev = 0;
     new MutationObserver(function () {
-        var m = /Ур\. (\d+)\/\d+: (.*) \(\d+%\)/.exec(lvl.textContent); if (!m) return;
+        var m = /(?:Ур|Lv)\. (\d+)\/\d+: (.*) \(\d+%\)/.exec(lvl.textContent); if (!m) return;
         var cur = +m[1];
         if (prev && cur > prev) {
             var b = document.createElement('div'); b.className = 'level-banner';
-            b.innerHTML = '<small>НОВЫЙ УРОВЕНЬ ' + cur + '</small><b></b>'; b.lastChild.textContent = m[2];
+            b.innerHTML = ('<small>' + T(587) + ' ') + cur + '</small><b></b>'; b.lastChild.textContent = m[2];
             stage.appendChild(b); setTimeout(function () { b.remove(); }, 2700);
         }
         prev = cur;
@@ -9136,6 +9221,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 (function () {
     var w = document.querySelector('.game-wrapper'), m = document.getElementById('dogCasinoModal');
     if (w && m && m.parentNode !== w) w.appendChild(m);
+})();
+</script>
+<script>
+(function () {
+    var box = document.getElementById('langPicker'); if (!box) return;
+    box.querySelectorAll('.lang-btn').forEach(function (b) {
+        if (b.getAttribute('data-lang') === LANG) b.classList.add('active');
+        b.addEventListener('click', function () {
+            var l = b.getAttribute('data-lang'); if (l === LANG) return;
+            I18N.set(l, function () { try { saveGame(); flushLocalSave(); flushCloudSave(true); } catch (e) {} });
+        });
+    });
 })();
 </script>
 </body>
