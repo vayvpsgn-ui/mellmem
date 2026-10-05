@@ -720,18 +720,20 @@
             return _pointInPoly(box.left, box.top, poly);
         }
 
+        function isMobUI() { try { return window.matchMedia('(pointer: coarse)').matches || Math.min(window.innerWidth, window.innerHeight) < 600; } catch (e) { return false; } }
         function drawSpeechBubble(x, y, text, tailX, tailY, options = {}) {
+            const k = isMobUI() ? 1.35 : 1;
             ctx.save();
-            ctx.font = options.font || '900 13px "Segoe UI", sans-serif';
+            ctx.font = options.font || ('900 ' + (13 * k) + 'px "Segoe UI", sans-serif');
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            let paddingX = 14;
-            let paddingY = 8;
+            let paddingX = 14 * k;
+            let paddingY = 8 * k;
             let metrics = ctx.measureText(text);
             let textW = metrics.width;
             let bubbleW = textW + paddingX * 2;
-            let bubbleH = 30;
+            let bubbleH = 30 * k;
             let bubbleX = x - bubbleW / 2;
             let bubbleY = y - bubbleH / 2;
 
@@ -3305,7 +3307,11 @@
         const STEP_MS = 1000 / 60;
         let _lastFrameT = 0, _stepAcc = 0;
 
+        let _csAcc = 0;
+        // На телефоне катсцены идут медленнее, чтобы успевать читать реплики
+        function csGate() { if (!isMobUI()) return true; _csAcc += 0.5; if (_csAcc >= 1) { _csAcc -= 1; return true; } return false; }
         function stepGame(st) {
+            if ((st === 'cutscene_l1' || st === 'cutscene_l2' || st === 'cutscene_l2_end') && !csGate()) return;
             if (st === 'cutscene_l1') updateCutsceneLevel1();
             else if (st === 'playing_l1' || st === 'cornered_l1') updateGameplayLevel1();
             else if (st === 'cutscene_l2') updateCutsceneLevel2();
