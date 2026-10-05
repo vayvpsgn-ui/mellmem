@@ -493,7 +493,7 @@
             outline: none;
             padding: 0;
             overflow: visible;
-            z-index: 10;
+            z-index: 59; /* Меллстрой поверх всех мини-персонажей (у них 40–58) */
             touch-action: none;
             transition: transform 0.05s ease, width 0.3s ease, height 0.3s ease;
         }
@@ -3147,6 +3147,33 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         const SAVE_KEY = 'mello_clicker_save';
         const LB_SENT_KEY = 'mello_jump_cloud_sent';
         const LB_CLOUD_NAME = 'jumpleaderboard';
+        // ===== Supabase (глобальный лидерборд зайца) =====
+        const SB_URL = 'https://pxwjcmnrdlndyppefstu.supabase.co/rest/v1';
+        const SB_KEY = 'sb_publishable_ENaHWyPyWgI2NNnUXDs6mg_DOdIXnqs';
+        const SB_TABLE = 'leaderboard';   // public.leaderboard: id, username, score, created_at
+        const SB_PLAYER_KEY = 'mello_jump_player_id';
+        function sbPlayerId() {
+            try {
+                let id = localStorage.getItem(SB_PLAYER_KEY);
+                if (id && id.length >= 8) return id;
+                id = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID()
+                    : ('p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 12));
+                localStorage.setItem(SB_PLAYER_KEY, id);
+                return id;
+            } catch (e) {
+                return 'guest_' + Math.random().toString(36).slice(2, 12);
+            }
+        }
+        function sbHeaders(extra) {
+            const h = {
+                'apikey': SB_KEY,
+                'Authorization': 'Bearer ' + SB_KEY,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            if (extra) Object.assign(h, extra);
+            return h;
+        }
         const IS_LOCAL_DEV = location.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
 
         let ysdk = null, yaPlayer = null, yaPayments = null, yaLeaderboards = null;
@@ -3318,6 +3345,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 localStorage.removeItem('mello_promo_used');
                 localStorage.removeItem(SAVE_KEY);
                 localStorage.removeItem('mello_jumpleaderboard');
+                localStorage.removeItem('mello_endless_best');
+                localStorage.removeItem('mello_endless_cloud_sent');
                 localStorage.removeItem(LB_SENT_KEY);
             } catch (e) {}
             return true;
@@ -3351,7 +3380,9 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             if (!adActive) return;
             adActive = false;
             const inJumpModal = (typeof jumpModal !== 'undefined' && jumpModal && jumpModal.classList.contains('active'));
-            if (musicEnabled && !jumpGameActive && !inJumpModal && !isDrunInvasionActive && hasStartedMainBgMusic) {
+            const sm = document.getElementById('storyModal');
+            const inStory = !!(sm && sm.classList.contains('active'));
+            if (musicEnabled && !jumpGameActive && !inJumpModal && !inStory && !isDrunInvasionActive && hasStartedMainBgMusic) {
                 mainBgMusic.play().catch(() => {});
             }
         }
@@ -3375,24 +3406,27 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         // ---------- РЕКЛАМА ЗА ВОЗНАГРАЖДЕНИЕ ----------
         // onRewarded вызывается строго из колбэка SDK. Без SDK — локальная заглушка (награда сразу).
-        function showRewardedAd(onRewarded) {
+        function showRewardedAd(onRewarded, onFail) {
+            const fail = () => { try { if (onFail) onFail(); } catch (e) { console.error(e); } };
             if (!sdkReady || !ysdk || !ysdk.adv) { try { onRewarded(); } catch (e) { console.error(e); } return; }
-            if (adActive || adPending) return;
+            if (adActive || adPending) { fail(); return; }
             adPending = true;
+            let rewarded = false;
             try {
                 ysdk.adv.showRewardedVideo({
                     callbacks: {
                         onOpen: () => { adBegin(); },
-                        onRewarded: () => { try { onRewarded(); } catch (e) { console.error(e); } },
-                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); },
+                        onRewarded: () => { rewarded = true; try { onRewarded(); } catch (e) { console.error(e); } },
+                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); if (!rewarded) fail(); },
                         onError: (err) => {
                             console.warn('[YSDK] rewarded ad error', err);
                             adEnd();
-                            alert(('' + T(263) + ''), ('' + T(264) + ''));
+                            fail();
+                            if (!onFail) alert(('' + T(263) + ''), ('' + T(264) + ''));
                         }
                     }
                 });
-            } catch (e) { console.warn(e); adEnd(); }
+            } catch (e) { console.warn(e); adEnd(); fail(); }
         }
 
         // ---------- ПОКУПКИ ----------
@@ -3493,26 +3527,174 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         async function lbCloudSubmit(score) {
             score = Math.floor(score || 0);
-            if (!yaLeaderboards || !playerAuthorized || score <= 0 || score <= lbCloudSent) return false;
+            if (score <= 0 || score <= lbCloudSent) return false;
+            const displayName = (lbData && lbData.name) ? String(lbData.name).trim().slice(0, 16) : ('' + T(271) + '');
+            const player_id = sbPlayerId();
+            // username = "Имя · a1b2c3d4" — так можно найти свои записи без отдельной колонки player_id
+            const shortId = String(player_id).replace(/-/g, '').slice(0, 8);
+            const username = (displayName || ('' + T(271) + '')) + ' · ' + shortId;
             try {
-                await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
+                // удаляем старые результаты этого игрока (по суффиксу id), затем вставляем новый
+                const delUrl = SB_URL + '/' + SB_TABLE + '?username=like.*' + encodeURIComponent(' · ' + shortId);
+                await withTimeout(fetch(delUrl, {
+                    method: 'DELETE',
+                    headers: sbHeaders({ 'Prefer': 'return=minimal' })
+                }), 8000).catch(() => null);
+
+                const res = await withTimeout(fetch(SB_URL + '/' + SB_TABLE, {
+                    method: 'POST',
+                    headers: sbHeaders({ 'Prefer': 'return=minimal' }),
+                    body: JSON.stringify({ username, score })
+                }), 8000);
+                if (!res.ok) {
+                    const t = await res.text().catch(() => '');
+                    console.warn('[SB] insert failed', res.status, t);
+                    if (yaLeaderboards && playerAuthorized) {
+                        try {
+                            await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
+                            lbCloudSent = score;
+                            try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
+                            return true;
+                        } catch (e2) { console.warn('[YSDK] setLeaderboardScore failed', e2); }
+                    }
+                    return false;
+                }
                 lbCloudSent = score;
                 try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
                 return true;
-            } catch (e) { console.warn('[YSDK] setLeaderboardScore failed', e); return false; }
+            } catch (e) {
+                console.warn('[SB] lbCloudSubmit failed', e);
+                if (yaLeaderboards && playerAuthorized) {
+                    try {
+                        await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
+                        lbCloudSent = score;
+                        try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e2) {}
+                        return true;
+                    } catch (e3) { console.warn('[YSDK] setLeaderboardScore failed', e3); }
+                }
+                return false;
+            }
         }
 
         async function syncBestScoreToCloud() {
-            if (!yaLeaderboards || !playerAuthorized) return;
             try {
-                const e = await withTimeout(yaLeaderboards.getLeaderboardPlayerEntry(LB_CLOUD_NAME), 6000);
-                if (e && e.score > lbCloudSent) lbCloudSent = e.score;
-            } catch (e) { /* записи ещё нет или сеть недоступна */ }
+                const player_id = sbPlayerId();
+                const shortId = String(player_id).replace(/-/g, '').slice(0, 8);
+                const res = await withTimeout(fetch(
+                    SB_URL + '/' + SB_TABLE + '?username=like.*' + encodeURIComponent(' · ' + shortId) + '&select=score&order=score.desc&limit=1',
+                    { headers: sbHeaders() }
+                ), 6000);
+                if (res.ok) {
+                    const arr = await res.json();
+                    if (Array.isArray(arr) && arr[0] && Number(arr[0].score) > lbCloudSent) {
+                        lbCloudSent = Math.floor(Number(arr[0].score));
+                        try { localStorage.setItem(LB_SENT_KEY, String(lbCloudSent)); } catch (e) {}
+                    }
+                }
+            } catch (e) { /* сеть */ }
+            if (yaLeaderboards && playerAuthorized) {
+                try {
+                    const e = await withTimeout(yaLeaderboards.getLeaderboardPlayerEntry(LB_CLOUD_NAME), 6000);
+                    if (e && e.score > lbCloudSent) lbCloudSent = e.score;
+                } catch (e) { /* нет записи */ }
+            }
             if (maxHeight > lbCloudSent) await lbCloudSubmit(maxHeight);
         }
 
+        // ---------- ЛИДЕРБОРД БЕСКОНЕЧНОГО РЕЖИМА (runner.html) ----------
+        const ENDLESS_LB_NAME = 'endlessleaderboard';
+        let endlessBest = 0, endlessCloudSent = 0;
+        try { endlessBest = Math.floor(Number(localStorage.getItem('mello_endless_best')) || 0); endlessCloudSent = Math.floor(Number(localStorage.getItem('mello_endless_cloud_sent')) || 0); } catch (e) {}
+        async function endlessSubmit(score) {
+            score = Math.floor(score || 0);
+            if (score <= 0) return;
+            if (score > endlessBest) { endlessBest = score; try { localStorage.setItem('mello_endless_best', String(score)); } catch (e) {} }
+            if (!yaLeaderboards || !playerAuthorized || endlessBest <= endlessCloudSent) return;
+            try {
+                await withTimeout(yaLeaderboards.setLeaderboardScore(ENDLESS_LB_NAME, endlessBest), 6000);
+                endlessCloudSent = endlessBest;
+                try { localStorage.setItem('mello_endless_cloud_sent', String(endlessBest)); } catch (e) {}
+            } catch (e) { console.warn('[YSDK] endless setLeaderboardScore failed', e); }
+        }
+        async function endlessLbRows() {
+            const needAuth = !!(yaPlayer && !playerAuthorized);
+            if (yaLeaderboards) {
+                if (playerAuthorized && endlessBest > endlessCloudSent) await endlessSubmit(endlessBest);
+                let res = null;
+                try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(ENDLESS_LB_NAME, { quantityTop: 10, includeUser: true }), 7000); }
+                catch (e) {
+                    try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(ENDLESS_LB_NAME, { quantityTop: 10, includeUser: false }), 7000); }
+                    catch (e2) { console.warn('[YSDK] endless getLeaderboardEntries failed', e2); res = null; }
+                }
+                if (res) {
+                    let myId = null;
+                    try { myId = yaPlayer && yaPlayer.getUniqueID && yaPlayer.getUniqueID(); } catch (e) {}
+                    const ur = res.userRank || 0;
+                    const entries = Array.isArray(res.entries) ? res.entries : [];
+                    return { rows: entries.slice().sort((a, b) => a.rank - b.rank).slice(0, 20).map(en => {
+                        const pl = en.player || {};
+                        return { rank: en.rank, name: (pl.publicName && String(pl.publicName).trim()) || ('' + T(271) + ''), score: en.score,
+                                 mine: !!(myId && pl.uniqueID === myId) || (ur > 0 && en.rank === ur) };
+                    }), needAuth };
+                }
+            }
+            // без облака — только личный рекорд
+            return { rows: endlessBest > 0 ? [{ rank: 1, name: lbData.name, score: endlessBest, mine: true }] : [], needAuth };
+        }
+
         async function loadCloudLeaderboard() {
-            if (!yaLeaderboards) return;
+            const myPid = sbPlayerId();
+            const shortId = String(myPid).replace(/-/g, '').slice(0, 8);
+            // 1) Supabase — основной источник
+            try {
+                const res = await withTimeout(fetch(
+                    SB_URL + '/' + SB_TABLE + '?select=username,score&order=score.desc&limit=30',
+                    { headers: sbHeaders() }
+                ), 8000);
+                if (res.ok) {
+                    const rows = await res.json();
+                    if (Array.isArray(rows) && rows.length) {
+                        // один лучший результат на игрока (по суффиксу · id)
+                        const bestByPlayer = new Map();
+                        rows.forEach(r => {
+                            const u = String(r.username || '');
+                            const m = u.match(/ · ([a-z0-9]{6,12})$/i);
+                            const key = m ? m[1] : u;
+                            const sc = Math.floor(Number(r.score) || 0);
+                            const prev = bestByPlayer.get(key);
+                            if (!prev || sc > prev.score) {
+                                const display = m ? u.slice(0, m.index).trim() : u;
+                                bestByPlayer.set(key, {
+                                    name: display || ('' + T(271) + ''),
+                                    score: sc,
+                                    mine: key === shortId
+                                });
+                            }
+                        });
+                        const ranked = Array.from(bestByPlayer.values())
+                            .sort((a, b) => b.score - a.score)
+                            .slice(0, 20)
+                            .map((e, i) => ({ rank: i + 1, name: e.name, score: e.score, mine: e.mine }));
+                        lbCloudRows = ranked;
+                        const me = ranked.find(e => e.mine);
+                        lbCloudUserRank = me ? me.rank : 0;
+                        renderLeaderboard(lbLastPlace);
+                        return;
+                    }
+                    lbCloudRows = null;
+                    renderLeaderboard(lbLastPlace);
+                    return;
+                }
+                console.warn('[SB] load leaderboard status', res.status);
+            } catch (e) {
+                console.warn('[SB] loadCloudLeaderboard failed', e);
+            }
+            // 2) Yandex fallback
+            if (!yaLeaderboards) {
+                lbCloudRows = null;
+                renderLeaderboard(lbLastPlace);
+                return;
+            }
             let res = null;
             try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(LB_CLOUD_NAME, { quantityTop: 10, includeUser: true }), 7000); }
             catch (e) {
@@ -4012,7 +4194,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const input = document.getElementById('lbNameInput');
             if (input && document.activeElement !== input) input.value = lbData.name;
             const nameRow = document.querySelector('.lb-name-row');
-            if (nameRow) nameRow.style.display = (lbCloudRows !== null) ? 'none' : '';
+            // имя всегда можно задать (Supabase хранит его с player_id)
+            if (nameRow) nameRow.style.display = '';
             lbLastPlace = newPlace || 0;
             const rows = (lbCloudRows !== null) ? lbCloudRows : lbSorted();
             const medals = ['🥇', '🥈', '🥉'];
@@ -4023,8 +4206,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }).join('') || ('<div style="text-align:center; color:#7a8a84; font-size:13px;">' + T(329) + '</div>');
             const shownPlace = (lbCloudRows !== null) ? (newPlace ? lbCloudUserRank : 0) : newPlace;
             if (shownPlace) { note.style.display = 'block'; note.textContent = `${T(330)} ${shownPlace}${T(331)}`; }
-            else if (lbCloudRows !== null && yaPlayer && !playerAuthorized) { note.style.display = 'block'; note.textContent = ('' + T(332) + ''); }
-            else note.style.display = 'none';
+            else note.style.display = 'none';  // Supabase не требует авторизации Яндекса
         }
         const leaderboardScreen = document.getElementById('leaderboardScreen');
         document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; loadCloudLeaderboard(); });
@@ -4034,6 +4216,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             lbData.name = v;
             lbData.entries.forEach(e => { if (e.mine) e.name = v; });
             lbSave(); renderLeaderboard();
+            // обновить имя в Supabase, если уже есть отправленный скор
+            if (lbCloudSent > 0) {
+                const prev = lbCloudSent;
+                lbCloudSent = 0;
+                lbCloudSubmit(prev).then(() => loadCloudLeaderboard()).catch(() => {});
+            }
         }
         document.getElementById('lbSaveNameBtn').addEventListener('click', lbApplyName);
         document.getElementById('lbNameInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); lbApplyName(); } });
@@ -5495,7 +5683,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 nextDrunScheduledTime = data.nextDrunScheduledTime || 0;
                 { const soon = Date.now() + 30000;
                   if (nextBossScheduledTime > 0 && nextBossScheduledTime < Date.now()) nextBossScheduledTime = soon;
-                  if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < Date.now()) nextDrunScheduledTime = soon + 20000; }
+                  if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < Date.now()) nextDrunScheduledTime = soon + 120000; }
                 // старые сохранения: если расписание уже было — «первый раз» уже прошёл
                 bossIntroDone = data.bossIntroDone !== undefined ? !!data.bossIntroDone : (nextBossScheduledTime > 0 || rebirths > 0);
                 drunIntroDone = data.drunIntroDone !== undefined ? !!data.drunIntroDone : (nextDrunScheduledTime > 0 || rebirths > 0);
@@ -6558,6 +6746,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             playerSoul.y = Math.max(0, Math.min(utCanvas.height - playerSoul.h, ty));
         }
 
+        // После окончания одного события второе не может стартовать раньше, чем через 2 минуты — события не копятся
+        function rescheduleEventsAfter(which) {
+            const minT = Date.now() + 120000;
+            if (which === 'boss') { if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < minT) nextDrunScheduledTime = minT; }
+            else { if (nextBossScheduledTime > 0 && nextBossScheduledTime < minT) nextBossScheduledTime = minT; }
+        }
         function bossGapMs() { return (360 + Math.floor(Math.random() * 180)) * 1000; }   // 6–9 мин
         function drunGapMs() { return (540 + Math.floor(Math.random() * 180)) * 1000; }   // 9–12 мин
         async function startBossBattle() {
@@ -6750,6 +6944,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         function finishBossFightClean() {
             nextBossScheduledTime = Date.now() + bossGapMs();
+            rescheduleEventsAfter('boss');
             isMysteryTimerVisible = false;
             mysteryTimerBadge.style.display = 'none';
             bullets = [];
@@ -7369,6 +7564,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             await alert(`${T(524)}\n${T(525)} ${dodgedCount}/${totalDrunsInWave}` + (waveSurvived ? (' ' + T(526) + '') : ` ${T(527)} ${needDodged}.`) + `\n${T(528)}${drunDiamondsCollected} 💎!`, ('' + T(501) + ''));
 
             nextDrunScheduledTime = Date.now() + drunGapMs();
+            rescheduleEventsAfter('drun');
             updateUI();
             saveGame();
             showFullscreenAd();   // естественная пауза: волна Друнов завершена
@@ -8687,6 +8883,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             let isAnyMinigameOpen = jumpModal.classList.contains('active') || storyModal.classList.contains('active') || document.getElementById('offlineModal').classList.contains('active');
 
+            // Таймеры событий стоят, пока идёт любое событие/мини-игра/окно/реклама: расписание сдвигается на прошедшее время
+            const _nowT = Date.now();
+            const _dtT = _nowT - (window.__evLastTick || _nowT);
+            window.__evLastTick = _nowT;
+            const _busyT = inBattle || isDrunInvasionActive || isAnyMinigameOpen || eventIntroOpen || jumpGameActive || adActive ||
+                customAlertOverlay.classList.contains('active');
+            if (_busyT && _dtT > 0 && _dtT < 3600000) {
+                if (nextBossScheduledTime > 0) nextBossScheduledTime += _dtT;
+                if (nextDrunScheduledTime > 0) nextDrunScheduledTime += _dtT;
+            }
+            let _eventFiredThisTick = false;
+
             // Первое появление: событие стартует сразу, как только игрок дошёл до его уровня
             const introBlocked = inBattle || isDrunInvasionActive || jumpGameActive || isAnyMinigameOpen || eventIntroOpen ||
                 customAlertOverlay.classList.contains('active');
@@ -8710,6 +8918,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                         mysteryTimerBadge.textContent = `⏳ 00:${s < 10 ? '0' : ''}${s}`;
                     } else if (timeLeftMs <= 0) {
                         mysteryTimerBadge.style.display = 'none';
+                        _eventFiredThisTick = true;
                         startBossBattle();
                     } else {
                         mysteryTimerBadge.style.display = 'none';
@@ -8719,7 +8928,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 mysteryTimerBadge.style.display = 'none';
             }
 
-            if ((activeLvlIdx >= 7 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !isAnyMinigameOpen && !eventIntroOpen && nextDrunScheduledTime > 0) {
+            if (!_eventFiredThisTick && (activeLvlIdx >= 7 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !isAnyMinigameOpen && !eventIntroOpen && !customAlertOverlay.classList.contains('active') && nextDrunScheduledTime > 0) {
                 if (Date.now() >= nextDrunScheduledTime) {
                     startDrunInvasion();
                 }
@@ -8916,6 +9125,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                             alert(('' + T(554) + '') + (firstL4 ? ('\n' + T(555) + '') : '') + ('\n' + T(552) + ''), ('' + T(553) + ''));
                         }, 400);
                     }
+                } else if (d.type === 'story-ad-request') {
+                    const reply = (ok) => { try { storyFrame.contentWindow.postMessage({ type: 'story-ad-result', id: d.id, ok: !!ok }, '*'); } catch (e2) {} };
+                    if (noAdsPurchased) reply(true);
+                    else showRewardedAd(() => reply(true), () => reply(false));
+                } else if (d.type === 'endless-score') {
+                    endlessSubmit(d.score);
+                } else if (d.type === 'endless-lb-request') {
+                    endlessLbRows().then(r => {
+                        try { storyFrame.contentWindow.postMessage({ type: 'endless-lb-data', id: d.id, rows: r.rows, needAuth: r.needAuth }, '*'); } catch (e2) {}
+                    }).catch(() => {
+                        try { storyFrame.contentWindow.postMessage({ type: 'endless-lb-data', id: d.id, rows: [], needAuth: false }, '*'); } catch (e2) {}
+                    });
                 } else if (d.type === 'story-exit') {
                     goBackToStoryMenuSafe();
                 } else if (d.type === 'story-goto') {
@@ -9360,6 +9581,49 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         });
         if (best) best.classList.add('best-buy');
     }, 1500);
+})();
+</script>
+<script>
+// Меллстрой лежит поверх мини-персонажей, но его прозрачная рамка не должна блокировать клики по ним:
+// если нажатие пришлось на прозрачный пиксель Меллстроя — пересылаем его персонажу/элементу под ним.
+(function () {
+    var stage = document.getElementById('clickStage'), mello = document.getElementById('melloBtn');
+    var melloImg = document.getElementById('melloImg');
+    if (!stage || !mello || !melloImg) return;
+    var busy = false;
+    function findUnder(x, y) {
+        var els = document.elementsFromPoint(x, y);
+        for (var i = 0; i < els.length; i++) {
+            var el = els[i];
+            if (el === mello || mello.contains(el)) continue;
+            var wrap = el.closest ? el.closest('.desktop-decoration') : null;
+            if (!wrap) return null;                       // сверху что-то другое — Меллстрой не трогаем
+            if (el.closest('.deco-controls')) return el;  // ползунок/кнопка удаления
+            var img = wrap.querySelector('img');
+            if (img && isPixelHitOnElement(img, x, y)) return wrap;
+        }
+        return null;
+    }
+    function forward(e) {
+        if (busy || e.target !== mello) return;
+        var pt = e.changedTouches ? e.changedTouches[0] : e;
+        if (!pt || pt.clientX === undefined) return;
+        if (isPixelHitOnElement(melloImg, pt.clientX, pt.clientY)) return;   // попали в самого Меллстроя
+        var target = findUnder(pt.clientX, pt.clientY);
+        if (!target) return;
+        e.stopImmediatePropagation();
+        busy = true;
+        try {
+            if (e.changedTouches && typeof Touch === 'function' && typeof TouchEvent === 'function') {
+                var t = new Touch({ identifier: pt.identifier, target: target, clientX: pt.clientX, clientY: pt.clientY, pageX: pt.pageX, pageY: pt.pageY, screenX: pt.screenX, screenY: pt.screenY });
+                target.dispatchEvent(new TouchEvent(e.type, { bubbles: true, cancelable: true, touches: e.type === 'touchend' ? [] : [t], targetTouches: e.type === 'touchend' ? [] : [t], changedTouches: [t] }));
+            } else {
+                target.dispatchEvent(new MouseEvent(e.type, { bubbles: true, cancelable: true, view: window, clientX: pt.clientX, clientY: pt.clientY, screenX: pt.screenX, screenY: pt.screenY, button: e.button || 0, buttons: e.buttons || 0 }));
+            }
+        } catch (err) { console.warn('mello forward', err); }
+        busy = false;
+    }
+    ['mousedown', 'touchstart', 'click'].forEach(function (t) { stage.addEventListener(t, forward, true); });
 })();
 </script>
 <script>
