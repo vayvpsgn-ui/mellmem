@@ -78,7 +78,49 @@
     window.IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if (window.IS_IOS) document.documentElement.classList.add('ios');
 </script>
-    <script src="/sdk.js"></script>
+    <script>
+    /* ===== Платформа: Яндекс Games vs Telegram Mini App ===== */
+    (function () {
+        function detectGamePlatform() {
+            try {
+                var q = new URLSearchParams(location.search).get('platform');
+                if (q === 'telegram' || q === 'tg') return 'telegram';
+                if (q === 'yandex' || q === 'ya') return 'yandex';
+            } catch (e) {}
+            try {
+                if (window.Telegram && window.Telegram.WebApp &&
+                    (window.Telegram.WebApp.initData || window.Telegram.WebApp.platform)) {
+                    return 'telegram';
+                }
+            } catch (e) {}
+            try {
+                var h = String(location.hash || '') + '&' + String(location.search || '');
+                if (/tgWebApp(Data|Version|Platform|ThemeParams)/i.test(h)) return 'telegram';
+            } catch (e) {}
+            try {
+                if (/Telegram/i.test(String(navigator.userAgent || ''))) return 'telegram';
+            } catch (e) {}
+            try {
+                if (/t\.me|telegram\.org|telegram\.me/i.test(String(document.referrer || ''))) return 'telegram';
+            } catch (e) {}
+            try {
+                var blob = String(location.hostname || '') + ' ' + String(location.href || '') + ' ' + String(document.referrer || '');
+                if (/yandex\.(ru|net|com|by|kz)|yandex-net|yagames|app-id-\d+/i.test(blob)) return 'yandex';
+            } catch (e) {}
+            if (typeof YaGames !== 'undefined') return 'yandex';
+            // Яндекс-игра на своём домене часто без referrer — по умолчанию Yandex.
+            // Telegram всегда даёт WebApp / hash / UA. Для явного TG: ?platform=telegram
+            return 'yandex';
+        }
+        window.GAME_PLATFORM = detectGamePlatform();
+        try { document.documentElement.setAttribute('data-platform', window.GAME_PLATFORM); } catch (e) {}
+        if (window.GAME_PLATFORM === 'yandex') {
+            document.write('<script src="/sdk.js"><\/script>');
+        } else {
+            document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');
+        }
+    })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
@@ -3176,6 +3218,39 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         }
         const IS_LOCAL_DEV = location.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
 
+        function refreshGamePlatform() {
+            try {
+                if (window.Telegram && window.Telegram.WebApp &&
+                    (window.Telegram.WebApp.initData || window.Telegram.WebApp.initDataUnsafe)) {
+                    window.GAME_PLATFORM = 'telegram';
+                }
+            } catch (e) {}
+            if (!window.GAME_PLATFORM) window.GAME_PLATFORM = 'yandex';
+            try { document.documentElement.setAttribute('data-platform', window.GAME_PLATFORM); } catch (e) {}
+            return window.GAME_PLATFORM;
+        }
+        function isYandexPlatform() { return (window.GAME_PLATFORM || refreshGamePlatform()) === 'yandex'; }
+        function isTelegramPlatform() { return (window.GAME_PLATFORM || refreshGamePlatform()) === 'telegram'; }
+
+        function initTelegramApp() {
+            try {
+                const tw = window.Telegram && window.Telegram.WebApp;
+                if (!tw) return;
+                try { if (typeof tw.ready === 'function') tw.ready(); } catch (e) {}
+                try { if (typeof tw.expand === 'function') tw.expand(); } catch (e) {}
+                try { if (typeof tw.disableVerticalSwipes === 'function') tw.disableVerticalSwipes(); } catch (e) {}
+                try {
+                    const u = tw.initDataUnsafe && tw.initDataUnsafe.user;
+                    if (u) {
+                        const nm = String(u.username || u.first_name || '').trim().slice(0, 16);
+                        if (nm && typeof lbData === 'object' && lbData && (!lbData.name || lbData.name === T(271))) {
+                            lbData.name = nm;
+                        }
+                    }
+                } catch (e) {}
+            } catch (e) { console.warn('[TG] init failed', e); }
+        }
+
         let ysdk = null, yaPlayer = null, yaPayments = null, yaLeaderboards = null;
         let sdkReady = false;
         let playerAuthorized = false;
@@ -3231,6 +3306,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         async function initYandexSDK() {
+            if (!isYandexPlatform()) return false;
             if (typeof YaGames === 'undefined') { console.warn(('' + T(259) + '')); return false; }
             try {
                 ysdk = await withTimeout(YaGames.init(), 6000);
@@ -3525,16 +3601,65 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let lbCloudUserRank = 0;
         let lbLastPlace = 0;
 
-        async function lbCloudSubmit(score) {
-            score = Math.floor(score || 0);
-            if (score <= 0 || score <= lbCloudSent) return false;
-            const displayName = (lbData && lbData.name) ? String(lbData.name).trim().slice(0, 16) : ('' + T(271) + '');
-            const player_id = sbPlayerId();
-            // username = "Имя · a1b2c3d4" — так можно найти свои записи без отдельной колонки player_id
-            const shortId = String(player_id).replace(/-/g, '').slice(0, 8);
-            const username = (displayName || ('' + T(271) + '')) + ' · ' + shortId;
+        function lbMarkSent(score) {
+            lbCloudSent = score;
+            try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
+        }
+
+        /* ---------- ветка Яндекс: Yandex SDK leaderboards ---------- */
+        async function lbSubmitYandex(score) {
+            if (!yaLeaderboards || !playerAuthorized || score <= 0 || score <= lbCloudSent) return false;
             try {
-                // удаляем старые результаты этого игрока (по суффиксу id), затем вставляем новый
+                await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
+                lbMarkSent(score);
+                return true;
+            } catch (e) { console.warn('[YSDK] setLeaderboardScore failed', e); return false; }
+        }
+        async function loadYandexLeaderboard() {
+            if (!yaLeaderboards) { lbCloudRows = null; renderLeaderboard(lbLastPlace); return; }
+            let res = null;
+            try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(LB_CLOUD_NAME, { quantityTop: 10, includeUser: true }), 7000); }
+            catch (e) {
+                try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(LB_CLOUD_NAME, { quantityTop: 10, includeUser: false }), 7000); }
+                catch (e2) { console.warn('[YSDK] getLeaderboardEntries failed', e2); lbCloudRows = null; renderLeaderboard(lbLastPlace); return; }
+            }
+            let myId = null;
+            try { myId = yaPlayer && yaPlayer.getUniqueID && yaPlayer.getUniqueID(); } catch (e) {}
+            const entries = (res && Array.isArray(res.entries)) ? res.entries : [];
+            lbCloudUserRank = (res && res.userRank) || 0;
+            lbCloudRows = entries.slice().sort((a, b) => a.rank - b.rank).slice(0, 20).map(en => {
+                const pl = en.player || {};
+                return {
+                    rank: en.rank,
+                    name: (pl.publicName && String(pl.publicName).trim()) || ('' + T(271) + ''),
+                    score: en.score,
+                    mine: !!(myId && pl.uniqueID === myId) || (lbCloudUserRank > 0 && en.rank === lbCloudUserRank)
+                };
+            });
+            renderLeaderboard(lbLastPlace);
+        }
+        async function syncYandexBest() {
+            if (!yaLeaderboards || !playerAuthorized) return;
+            try {
+                const e = await withTimeout(yaLeaderboards.getLeaderboardPlayerEntry(LB_CLOUD_NAME), 6000);
+                if (e && e.score > lbCloudSent) lbCloudSent = e.score;
+            } catch (e) { /* нет записи */ }
+            if (maxHeight > lbCloudSent) await lbSubmitYandex(maxHeight);
+        }
+
+        /* ---------- ветка Telegram: Supabase ---------- */
+        function sbShortId() {
+            return String(sbPlayerId()).replace(/-/g, '').slice(0, 8);
+        }
+        function sbUsername() {
+            const displayName = (lbData && lbData.name) ? String(lbData.name).trim().slice(0, 16) : ('' + T(271) + '');
+            return (displayName || ('' + T(271) + '')) + ' · ' + sbShortId();
+        }
+        async function lbSubmitSupabase(score) {
+            if (score <= 0 || score <= lbCloudSent) return false;
+            const username = sbUsername();
+            const shortId = sbShortId();
+            try {
                 const delUrl = SB_URL + '/' + SB_TABLE + '?username=like.*' + encodeURIComponent(' · ' + shortId);
                 await withTimeout(fetch(delUrl, {
                     method: 'DELETE',
@@ -3549,37 +3674,67 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                 if (!res.ok) {
                     const t = await res.text().catch(() => '');
                     console.warn('[SB] insert failed', res.status, t);
-                    if (yaLeaderboards && playerAuthorized) {
-                        try {
-                            await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
-                            lbCloudSent = score;
-                            try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
-                            return true;
-                        } catch (e2) { console.warn('[YSDK] setLeaderboardScore failed', e2); }
-                    }
                     return false;
                 }
-                lbCloudSent = score;
-                try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e) {}
+                lbMarkSent(score);
                 return true;
             } catch (e) {
-                console.warn('[SB] lbCloudSubmit failed', e);
-                if (yaLeaderboards && playerAuthorized) {
-                    try {
-                        await withTimeout(yaLeaderboards.setLeaderboardScore(LB_CLOUD_NAME, score), 6000);
-                        lbCloudSent = score;
-                        try { localStorage.setItem(LB_SENT_KEY, String(score)); } catch (e2) {}
-                        return true;
-                    } catch (e3) { console.warn('[YSDK] setLeaderboardScore failed', e3); }
-                }
+                console.warn('[SB] lbSubmitSupabase failed', e);
                 return false;
             }
         }
-
-        async function syncBestScoreToCloud() {
+        async function loadSupabaseLeaderboard() {
+            const shortId = sbShortId();
             try {
-                const player_id = sbPlayerId();
-                const shortId = String(player_id).replace(/-/g, '').slice(0, 8);
+                const res = await withTimeout(fetch(
+                    SB_URL + '/' + SB_TABLE + '?select=username,score&order=score.desc&limit=30',
+                    { headers: sbHeaders() }
+                ), 8000);
+                if (!res.ok) {
+                    console.warn('[SB] load leaderboard status', res.status);
+                    lbCloudRows = null;
+                    renderLeaderboard(lbLastPlace);
+                    return;
+                }
+                const rows = await res.json();
+                if (!Array.isArray(rows) || !rows.length) {
+                    lbCloudRows = null;
+                    renderLeaderboard(lbLastPlace);
+                    return;
+                }
+                const bestByPlayer = new Map();
+                rows.forEach(r => {
+                    const u = String(r.username || '');
+                    const m = u.match(/ · ([a-z0-9]{6,12})$/i);
+                    const key = m ? m[1] : u;
+                    const sc = Math.floor(Number(r.score) || 0);
+                    const prev = bestByPlayer.get(key);
+                    if (!prev || sc > prev.score) {
+                        const display = m ? u.slice(0, m.index).trim() : u;
+                        bestByPlayer.set(key, {
+                            name: display || ('' + T(271) + ''),
+                            score: sc,
+                            mine: key === shortId
+                        });
+                    }
+                });
+                const ranked = Array.from(bestByPlayer.values())
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 20)
+                    .map((e, i) => ({ rank: i + 1, name: e.name, score: e.score, mine: e.mine }));
+                lbCloudRows = ranked;
+                const me = ranked.find(e => e.mine);
+                lbCloudUserRank = me ? me.rank : 0;
+                renderLeaderboard(lbLastPlace);
+            } catch (e) {
+                console.warn('[SB] loadSupabaseLeaderboard failed', e);
+                lbCloudRows = null;
+                renderLeaderboard(lbLastPlace);
+            }
+        }
+        async function syncSupabaseBest() {
+            try {
+                const shortId = sbShortId();
                 const res = await withTimeout(fetch(
                     SB_URL + '/' + SB_TABLE + '?username=like.*' + encodeURIComponent(' · ' + shortId) + '&select=score&order=score.desc&limit=1',
                     { headers: sbHeaders() }
@@ -3592,13 +3747,25 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                     }
                 }
             } catch (e) { /* сеть */ }
-            if (yaLeaderboards && playerAuthorized) {
-                try {
-                    const e = await withTimeout(yaLeaderboards.getLeaderboardPlayerEntry(LB_CLOUD_NAME), 6000);
-                    if (e && e.score > lbCloudSent) lbCloudSent = e.score;
-                } catch (e) { /* нет записи */ }
-            }
-            if (maxHeight > lbCloudSent) await lbCloudSubmit(maxHeight);
+            if (maxHeight > lbCloudSent) await lbSubmitSupabase(maxHeight);
+        }
+
+        /* ---------- диспетчер: Яндекс → YSDK, Telegram → Supabase ---------- */
+        async function lbCloudSubmit(score) {
+            score = Math.floor(score || 0);
+            if (isYandexPlatform()) return lbSubmitYandex(score);
+            if (isTelegramPlatform()) return lbSubmitSupabase(score);
+            return false;
+        }
+        async function loadCloudLeaderboard() {
+            if (isYandexPlatform()) return loadYandexLeaderboard();
+            if (isTelegramPlatform()) return loadSupabaseLeaderboard();
+            lbCloudRows = null;
+            renderLeaderboard(lbLastPlace);
+        }
+        async function syncBestScoreToCloud() {
+            if (isYandexPlatform()) return syncYandexBest();
+            if (isTelegramPlatform()) return syncSupabaseBest();
         }
 
         // ---------- ЛИДЕРБОРД БЕСКОНЕЧНОГО РЕЖИМА (runner.html) ----------
@@ -3609,7 +3776,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
             score = Math.floor(score || 0);
             if (score <= 0) return;
             if (score > endlessBest) { endlessBest = score; try { localStorage.setItem('mello_endless_best', String(score)); } catch (e) {} }
-            if (!yaLeaderboards || !playerAuthorized || endlessBest <= endlessCloudSent) return;
+            if (!isYandexPlatform() || !yaLeaderboards || !playerAuthorized || endlessBest <= endlessCloudSent) return;
             try {
                 await withTimeout(yaLeaderboards.setLeaderboardScore(ENDLESS_LB_NAME, endlessBest), 6000);
                 endlessCloudSent = endlessBest;
@@ -3618,7 +3785,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         }
         async function endlessLbRows() {
             const needAuth = !!(yaPlayer && !playerAuthorized);
-            if (yaLeaderboards) {
+            if (isYandexPlatform() && yaLeaderboards) {
                 if (playerAuthorized && endlessBest > endlessCloudSent) await endlessSubmit(endlessBest);
                 let res = null;
                 try { res = await withTimeout(yaLeaderboards.getLeaderboardEntries(ENDLESS_LB_NAME, { quantityTop: 10, includeUser: true }), 7000); }
@@ -4194,8 +4361,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const input = document.getElementById('lbNameInput');
             if (input && document.activeElement !== input) input.value = lbData.name;
             const nameRow = document.querySelector('.lb-name-row');
-            // имя всегда можно задать (Supabase хранит его с player_id)
-            if (nameRow) nameRow.style.display = '';
+            // Telegram: имя вводим сами. Яндекс: имя из аккаунта.
+            if (nameRow) nameRow.style.display = isTelegramPlatform() ? '' : 'none';
             lbLastPlace = newPlace || 0;
             const rows = (lbCloudRows !== null) ? lbCloudRows : lbSorted();
             const medals = ['🥇', '🥈', '🥉'];
@@ -4206,7 +4373,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }).join('') || ('<div style="text-align:center; color:#7a8a84; font-size:13px;">' + T(329) + '</div>');
             const shownPlace = (lbCloudRows !== null) ? (newPlace ? lbCloudUserRank : 0) : newPlace;
             if (shownPlace) { note.style.display = 'block'; note.textContent = `${T(330)} ${shownPlace}${T(331)}`; }
-            else note.style.display = 'none';  // Supabase не требует авторизации Яндекса
+            else if (isYandexPlatform() && lbCloudRows !== null && yaPlayer && !playerAuthorized) {
+                note.style.display = 'block'; note.textContent = ('' + T(332) + '');
+            }
+            else note.style.display = 'none';
         }
         const leaderboardScreen = document.getElementById('leaderboardScreen');
         document.getElementById('openLeaderboardBtn').addEventListener('click', () => { renderLeaderboard(); leaderboardScreen.style.display = 'flex'; loadCloudLeaderboard(); });
@@ -4216,11 +4386,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             lbData.name = v;
             lbData.entries.forEach(e => { if (e.mine) e.name = v; });
             lbSave(); renderLeaderboard();
-            // обновить имя в Supabase, если уже есть отправленный скор
-            if (lbCloudSent > 0) {
+            if (isTelegramPlatform() && lbCloudSent > 0) {
                 const prev = lbCloudSent;
                 lbCloudSent = 0;
-                lbCloudSubmit(prev).then(() => loadCloudLeaderboard()).catch(() => {});
+                lbSubmitSupabase(prev).then(() => loadCloudLeaderboard()).catch(() => {});
             }
         }
         document.getElementById('lbSaveNameBtn').addEventListener('click', lbApplyName);
@@ -9160,7 +9329,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             const loaderEl = document.getElementById('sdkLoader');
             const hideLoader = () => { if (loaderEl) loaderEl.remove(); };
             setTimeout(hideLoader, 12000);   // страховка
-            try { await initYandexSDK(); } catch (e) { console.warn('[YSDK] init error', e); }
+            refreshGamePlatform();
+            if (isYandexPlatform()) {
+                try { await initYandexSDK(); } catch (e) { console.warn('[YSDK] init error', e); }
+            } else {
+                try { initTelegramApp(); } catch (e) { console.warn('[TG] init error', e); }
+            }
 
             // Облако -> localStorage (если в облаке пусто, loadGame возьмёт локальное)
             try {
