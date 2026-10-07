@@ -2034,7 +2034,7 @@
 
             .sheet-grab {
                 position: sticky; top: 0; z-index: 3; flex: none; display: flex; justify-content: center;
-                padding: 10px 0 8px; margin: 0 -12px; cursor: pointer; touch-action: manipulation;
+                padding: 16px 0 14px; margin: 0 -12px; cursor: pointer; touch-action: none;
                 background: linear-gradient(180deg, #101a15 70%, rgba(16,26,21,0));
             }
             .sheet-grab::before { content: ""; width: 48px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.3); }
@@ -2219,6 +2219,17 @@ input[type="range"].modern-range { flex: 1 1 auto; min-width: 0; width: 100%; }
     .battle-card .undertale-btn-group { grid-template-columns: repeat(3, 1fr); }
     .battle-card .ut-btn.ad-btn { grid-column: auto; }
 }
+
+/* --- Паук из села Молочного + кнопка полного HP за рекламу --- */
+.boss-modal-overlay.spider-mode { background: radial-gradient(100% 55% at 50% 0%, #2a1d4a 0%, #07060d 70%) !important; }
+.spider-mode .battle-card { background: linear-gradient(160deg, rgba(30,22,48,.94), rgba(10,8,16,.96)); border-color: rgba(176,140,255,.45);
+    box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 40px rgba(150,110,255,.16), inset 0 1px 0 rgba(255,255,255,.07); }
+.spider-mode .battle-card .boss-header-wrap { border-color: rgba(176,140,255,.35); }
+.spider-mode .battle-card .boss-name-title { font-size: clamp(10px, 1.7dvh, 12px); letter-spacing: .6px; line-height: 1.25; }
+.spider-mode .battle-card .boss-hp-bar-fill { background: linear-gradient(90deg, #8f6bff, #e9e0ff); }
+.battle-card .ut-btn.ad-btn { grid-column: auto !important; }
+.battle-card .ut-btn.heal-ad-btn { background: rgba(61,255,160,.1); color: #3dffa0; border-color: rgba(61,255,160,.55); min-height: 40px; }
+.battle-card .ut-btn.heal-ad-btn:hover { background: #3dffa0; color: #000; }
 </style>
 <script>
 /* Универсальное «закрыть перетаскиванием»: тянем в любую сторону > 60px (или резкий свайп) — окно улетает.
@@ -2328,7 +2339,7 @@ document.addEventListener('click', function (e) {
                 <div class="boss-header-wrap">
                     <img src="man.png" class="boss-avatar-img" id="bossImg" alt="Маньяк">
                     <div class="boss-info">
-                        <div class="boss-name-title">МАНЬЯК</div>
+                        <div class="boss-name-title" id="bossNameTitle">МАНЬЯК</div>
                         <div class="boss-hp-bar-bg">
                             <div class="boss-hp-bar-fill" id="bossHpFill"></div>
                         </div>
@@ -2366,6 +2377,7 @@ document.addEventListener('click', function (e) {
                         <button class="ut-btn" id="btnFlee">СБЕЖАТЬ (<span id="fleeChanceText">33</span>%)</button>
                         <button class="ut-btn pay-btn" id="btnBribe">ОТКУП (20 💎)</button>
                         <button class="ut-btn heal-btn" id="btnHeal">ХИЛЛ (+5 HP) (3 💎)</button>
+                        <button class="ut-btn ad-btn heal-ad-btn" id="btnHealAd">ПОЛНОЕ HP 📺</button>
                         <button class="ut-btn ad-btn" id="btnSkipAd">ПРОПУСК 📺</button>
                     </div>
                 </div>
@@ -2485,6 +2497,7 @@ document.addEventListener('click', function (e) {
                     <div class="info-row"><span>Всего зубов собрано:</span><span id="infoTotalTeeth" style="color: #ff3366;">0 🦷</span></div>
                     <div class="info-row"><span>Потрачено зубов:</span><span id="infoTotalTeethSpent" style="color: #ff3366;">0 🦷</span></div>
                     <div class="info-row"><span>Побеждено боссов (Маньяк):</span><span id="infoBossKills" style="color: #ff3366;">0</span></div>
+                    <div class="info-row"><span id="infoSpiderLabel">Побеждено боссов (Паук):</span><span id="infoSpiderKills" style="color: #ff3366;">0</span></div>
                     <div class="info-row"><span>Перерождений (Престиж):</span><span id="infoTotalRebirths" style="color: #ffd700;">0</span></div>
                     <div class="info-row"><span>Меллкоины:</span><span id="infoMellCoins" style="color: #ffd700;">0 🪙</span></div>
                     <div class="info-row"><span>Билеты (мини-игра):</span><span id="infoTickets" style="color: #ffd700;">0 🎫</span></div>
@@ -2526,6 +2539,13 @@ document.addEventListener('click', function (e) {
                     <div class="pause-title" style="color: #00ff88;">⏸️ ИГРА НА ПАУЗЕ</div>
                     <div class="pause-subtitle">Вкладка была неактивна</div>
                     <button class="jump-start-btn" id="resumeJumpBtn">ПРОДОЛЖИТЬ</button>
+                </div>
+
+                <div class="game-pause-overlay" id="jumpReviveOverlay" style="z-index:55; padding:0 18px;">
+                    <div class="pause-title" id="reviveTitle" style="color:#00e5ff;">🚀 Ещё один шанс!</div>
+                    <div class="pause-subtitle" id="reviveText" style="max-width:300px; line-height:1.4;"></div>
+                    <button class="jump-start-btn" id="reviveYesBtn">▶ Продолжить на ракете</button>
+                    <button id="reviveNoBtn" style="background:none; border:none; color:#6f7f78; font-size:11px; text-decoration:underline; cursor:pointer; padding:6px 10px; margin-top:16px;">Нет, спасибо</button>
                 </div>
 
                 <div class="minigame-header-title">Космический Бурмалдаец</div>
@@ -2584,7 +2604,7 @@ document.addEventListener('click', function (e) {
                     <div class="lb-list" id="lbList"></div>
                 </div>
 
-                <button class="modal-close-btn" id="closeJumpBtn" style="width: 100%;">Закрыть</button>
+                <button class="modal-close-btn" id="closeJumpBtn" style="display:none !important;" tabindex="-1" aria-hidden="true">Закрыть</button>
             </div>
         </div>
 
@@ -3402,6 +3422,85 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         let nextBossScheduledTime = 0;
         let bossKillsCount = 0;
 
+        let spiderKillsCount = 0;
+        let nextSpiderScheduledTime = 0;
+        let spiderIntroDone = false, spiderTutorialSeen = false;
+        let bossType = 'maniac';   // 'maniac' | 'spider'
+        const SPIDER_TXT = {
+            ru: {
+                name: "ПАУК ИЗ СЕЛА МОЛОЧНОГО", nameShort: "ПАУК",
+                attackHint: "Бей паука или выбери действие внизу!",
+                dodge: ["🔴 Красные круги скоро лопнут — не стой в них, двигайся!", "🥛 Молочные полосы! Уходи с красных — встань в просвет!", "🟢 Беги в зелёный круг и стой в нём — остальное накроет!", "🕸️ Паутина замедляет — не залипай, уходи от красных кругов!"],
+                hpSuf: "HP пауку!",
+                tutorial: ["🕷️ НА ТЕБЯ НАПАЛ ПАУК ИЗ СЕЛА МОЛОЧНОГО!", "⚔️ Атака: полоска бегает туда-сюда — жми, когда она на зелёной зоне (КРИТ), жёлтая — обычный удар, фиолетовый центр — мега-удар.", "🛡️ Защита: паук бьёт ЗОНАМИ. Красная зона лопнет через секунду — не стой в ней, двигайся. Зелёный круг — наоборот: стой внутри, всё остальное накроет. Липкая паутина замедляет.", "🥺 Можно умолять о пощаде, сбежать (потеряешь 15% денег) или откупиться за 20 💎. А ещё можно вернуть всё HP за рекламу.", "💀 Проиграешь — Меллстрой уйдёт в тильт: доход упадёт на 80%."],
+                begOk: "🥺 Паук пожалел тебя и уполз обратно в Молочное!", begFail: "Паук только шипит в ответ! Защищайся!",
+                fleeOk: "🏃 Вы смогли сбежать от Паука!", fleeFail: "Побег не удался — паук оплёл дорогу паутиной!",
+                bribeAsk: "Откупиться от Паука за 20 💎 алмазов?", bribeOk: "💎 Паук взял 20 алмазов и убежал в Молочное!",
+                skipOk: "📺 Реклама просмотрена! Паук уполз.", win: "🏆 ПОБЕДА НАД ПАУКОМ (", lose: "💀 ПАУК ИЗ СЕЛА МОЛОЧНОГО ПОБЕДИЛ ВАС!",
+                ward: "🧿 Оберег защитил вас от Паука из села Молочного (",
+                fullHeal: "ПОЛНОЕ HP 📺", fullHealAsk: "Посмотреть короткую рекламу и полностью восстановить HP?", fullHealOk: "❤️ HP восстановлено полностью!",
+                statSpider: "Побеждено боссов (Паук):"
+            },
+            en: {
+                name: "SPIDER FROM MOLOCHNOYE VILLAGE", nameShort: "SPIDER",
+                attackHint: "Hit the spider or pick an action below!",
+                dodge: ["🔴 Red circles are about to burst — don't stand in them, keep moving!", "🥛 Milk stripes! Leave the red ones — stand in the gap!", "🟢 Run into the green circle and stay there — the rest gets hit!", "🕸️ Webs slow you down — don't get stuck, avoid the red circles!"],
+                hpSuf: "HP to the Spider!",
+                tutorial: ["🕷️ THE SPIDER FROM MOLOCHNOYE VILLAGE ATTACKED YOU!", "⚔️ Attack: the bar slides back and forth — press when it's on the green zone (CRIT); yellow is a normal hit, the purple center is a mega-hit.", "🛡️ Defense: the spider attacks with ZONES. A red zone bursts in a second — don't stand in it, move. A green circle is the opposite: stay inside, everything else gets hit. Sticky webs slow you down.", "🥺 You can beg for mercy, flee (you'll lose 15% of your money) or buy him off for 20 💎. You can also restore full HP by watching an ad.", "💀 If you lose, Mellstroy goes on tilt: income drops by 80%."],
+                begOk: "🥺 The Spider took pity on you and crawled back to Molochnoye!", begFail: "The Spider just hissed back! Defend yourself!",
+                fleeOk: "🏃 You managed to escape the Spider!", fleeFail: "Escape failed — the spider wrapped the road in webs!",
+                bribeAsk: "Buy off the Spider for 20 💎 diamonds?", bribeOk: "💎 The Spider took 20 diamonds and scuttled off to Molochnoye!",
+                skipOk: "📺 Ad watched! The Spider crawled away.", win: "🏆 VICTORY OVER THE SPIDER (", lose: "💀 THE SPIDER FROM MOLOCHNOYE DEFEATED YOU!",
+                ward: "🧿 The charm protected you from the Spider from Molochnoye (",
+                fullHeal: "FULL HP 📺", fullHealAsk: "Watch a short ad to fully restore your HP?", fullHealOk: "❤️ HP fully restored!",
+                statSpider: "Bosses defeated (Spider):"
+            },
+            tr: {
+                name: "MOLOÇNOYE KÖYÜNDEN ÖRÜMCEK", nameShort: "ÖRÜMCEK",
+                attackHint: "Örümceğe vur ya da aşağıdan bir hareket seç!",
+                dodge: ["🔴 Kırmızı daireler birazdan patlayacak — içinde durma, hareket et!", "🥛 Süt şeritleri! Kırmızılardan çık — boşluğa geç!", "🟢 Yeşil daireye koş ve içinde kal — gerisi vurulacak!", "🕸️ Ağ yavaşlatır — takılma, kırmızı dairelerden kaç!"],
+                hpSuf: "HP Örümceğe!",
+                tutorial: ["🕷️ MOLOÇNOYE KÖYÜNDEN ÖRÜMCEK SANA SALDIRDI!", "⚔️ Saldırı: çubuk ileri geri gider — yeşil bölgedeyken bas (KRİTİK), sarı normal vuruş, mor merkez mega vuruştur.", "🛡️ Savunma: örümcek BÖLGELERLE saldırır. Kırmızı bölge bir saniye sonra patlar — içinde durma, hareket et. Yeşil daire tam tersi: içinde kal, gerisi vurulur. Yapışkan ağ yavaşlatır.", "🥺 Merhamet dileyebilir, kaçabilir (paranın %15'ini kaybedersin) ya da 20 💎'e rüşvet verebilirsin. Reklam izleyerek tüm canını da yenileyebilirsin.", "💀 Kaybedersen Mellstroy tilte girer: gelir %80 düşer."],
+                begOk: "🥺 Örümcek sana acıdı ve Moloçnoye'ye geri sürünerek gitti!", begFail: "Örümcek sadece tısladı! Kendini savun!",
+                fleeOk: "🏃 Örümcekten kaçmayı başardın!", fleeFail: "Kaçış başarısız — örümcek yolu ağla kapladı!",
+                bribeAsk: "Örümceğe 20 💎 elmas rüşvet verilsin mi?", bribeOk: "💎 Örümcek 20 elması alıp Moloçnoye'ye kaçtı!",
+                skipOk: "📺 Reklam izlendi! Örümcek gitti.", win: "🏆 ÖRÜMCEĞE KARŞI ZAFER (", lose: "💀 MOLOÇNOYE'NİN ÖRÜMCEĞİ SENİ YENDİ!",
+                ward: "🧿 Tılsım seni Moloçnoye'nin Örümceğinden korudu (",
+                fullHeal: "TAM CAN 📺", fullHealAsk: "Canını tamamen yenilemek için kısa bir reklam izle?", fullHealOk: "❤️ Can tamamen yenilendi!",
+                statSpider: "Yenilen patronlar (Örümcek):"
+            },
+            es: {
+                name: "ARAÑA DEL PUEBLO DE MOLOCHNOYE", nameShort: "ARAÑA",
+                attackHint: "¡Golpea a la araña o elige una acción abajo!",
+                dodge: ["🔴 Los círculos rojos van a estallar: ¡no te quedes dentro, muévete!", "🥛 ¡Franjas de leche! Sal de las rojas: ¡ponte en el hueco!", "🟢 ¡Corre al círculo verde y quédate dentro: lo demás recibe el golpe!", "🕸️ La telaraña te frena: ¡no te quedes pegado, esquiva los círculos rojos!"],
+                hpSuf: "¡HP a la Araña!",
+                tutorial: ["🕷️ ¡LA ARAÑA DEL PUEBLO DE MOLOCHNOYE TE HA ATACADO!", "⚔️ Ataque: la barra va y viene — pulsa cuando esté en la zona verde (CRÍTICO); la amarilla es un golpe normal y el centro morado, un mega-golpe.", "🛡️ Defensa: la araña ataca con ZONAS. Una zona roja estalla en un segundo: no te quedes en ella, muévete. El círculo verde es lo contrario: quédate dentro, todo lo demás recibe el golpe. La telaraña pegajosa te frena.", "🥺 Puedes suplicar clemencia, huir (perderás el 15% del dinero) o sobornarla por 20 💎. También puedes recuperar todo el HP viendo un anuncio.", "💀 Si pierdes, Mellstroy entra en tilt: los ingresos caen un 80%."],
+                begOk: "🥺 ¡La Araña se compadeció de ti y volvió arrastrándose a Molochnoye!", begFail: "¡La Araña solo bufó! ¡Defiéndete!",
+                fleeOk: "🏃 ¡Lograste escapar de la Araña!", fleeFail: "¡La huida falló: la araña cubrió el camino de telarañas!",
+                bribeAsk: "¿Sobornar a la Araña por 20 💎 diamantes?", bribeOk: "💎 ¡La Araña se llevó 20 diamantes y corrió a Molochnoye!",
+                skipOk: "📺 ¡Anuncio visto! La Araña se fue.", win: "🏆 VICTORIA SOBRE LA ARAÑA (", lose: "💀 ¡LA ARAÑA DE MOLOCHNOYE TE HA VENCIDO!",
+                ward: "🧿 El amuleto te protegió de la Araña de Molochnoye (",
+                fullHeal: "HP COMPLETO 📺", fullHealAsk: "¿Ver un anuncio corto para recuperar todo el HP?", fullHealOk: "❤️ ¡HP restaurado por completo!",
+                statSpider: "Jefes derrotados (Araña):"
+            },
+            pt: {
+                name: "ARANHA DA VILA DE MOLOCHNOYE", nameShort: "ARANHA",
+                attackHint: "Acerte a aranha ou escolha uma ação lá embaixo!",
+                dodge: ["🔴 Os círculos vermelhos vão estourar — não fique dentro, mexa-se!", "🥛 Faixas de leite! Saia das vermelhas — fique no vão!", "🟢 Corra para o círculo verde e fique nele — o resto leva o golpe!", "🕸️ A teia deixa você lento — não grude, fuja dos círculos vermelhos!"],
+                hpSuf: "HP na Aranha!",
+                tutorial: ["🕷️ A ARANHA DA VILA DE MOLOCHNOYE ATACOU VOCÊ!", "⚔️ Ataque: a barrinha vai e volta — aperte quando estiver na zona verde (CRÍTICO); amarelo é um golpe normal, o centro roxo é um mega golpe.", "🛡️ Defesa: a aranha ataca com ZONAS. A zona vermelha estoura em um segundo — não fique nela, mexa-se. O círculo verde é o oposto: fique dentro, o resto leva o golpe. A teia pegajosa deixa você lento.", "🥺 Dá pra implorar por piedade, fugir (você perde 15% do dinheiro) ou subornar por 20 💎. Também dá pra recuperar todo o HP assistindo a um anúncio.", "💀 Se perder, o Mellstroy entra em tilt: a renda cai 80%."],
+                begOk: "🥺 A Aranha teve pena de você e voltou rastejando para Molochnoye!", begFail: "A Aranha só chiou! Defenda-se!",
+                fleeOk: "🏃 Você conseguiu fugir da Aranha!", fleeFail: "A fuga falhou — a aranha cobriu o caminho de teias!",
+                bribeAsk: "Subornar a Aranha por 20 💎 diamantes?", bribeOk: "💎 A Aranha pegou 20 diamantes e correu para Molochnoye!",
+                skipOk: "📺 Anúncio assistido! A Aranha foi embora.", win: "🏆 VITÓRIA SOBRE A ARANHA (", lose: "💀 A ARANHA DE MOLOCHNOYE DERROTOU VOCÊ!",
+                ward: "🧿 O amuleto protegeu você da Aranha de Molochnoye (",
+                fullHeal: "HP TOTAL 📺", fullHealAsk: "Assistir a um anúncio curto para recuperar todo o HP?", fullHealOk: "❤️ HP totalmente restaurado!",
+                statSpider: "Chefes derrotados (Aranha):"
+            }
+        };
+        function ST() { return SPIDER_TXT[window.LANG] || SPIDER_TXT.en; }
+        let spiderZones = [], spiderFrame = 0, spiderPrev = null;
+
         let baseBegChance = 20;
         let baseFleeChance = 33;
         let currentBegChance = 20;
@@ -3715,9 +3814,9 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
 
         // ---------- РЕКЛАМА ЗА ВОЗНАГРАЖДЕНИЕ ----------
         // onRewarded вызывается строго из колбэка SDK. Без SDK — локальная заглушка (награда сразу).
-        function showRewardedAd(onRewarded, onFail) {
+        function showRewardedAd(onRewarded, onFail, onAfterClose) {
             const fail = () => { try { if (onFail) onFail(); } catch (e) { console.error(e); } };
-            if (!sdkReady || !ysdk || !ysdk.adv) { try { onRewarded(); } catch (e) { console.error(e); } return; }
+            if (!sdkReady || !ysdk || !ysdk.adv) { try { onRewarded(); } catch (e) { console.error(e); } try { if (onAfterClose) onAfterClose(); } catch (e) { console.error(e); } return; }
             if (adActive || adPending) { fail(); return; }
             adPending = true;
             let rewarded = false;
@@ -3726,7 +3825,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
                     callbacks: {
                         onOpen: () => { adBegin(); },
                         onRewarded: () => { rewarded = true; try { onRewarded(); } catch (e) { console.error(e); } },
-                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); if (!rewarded) fail(); },
+                        onClose: () => { adEnd(); lastFullscreenAdTime = Date.now(); if (!rewarded) fail(); else if (onAfterClose) { try { onAfterClose(); } catch (e) { console.error(e); } } },
                         onError: (err) => {
                             console.warn('[YSDK] rewarded ad error', err);
                             adEnd();
@@ -4307,6 +4406,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         const infoTotalTeeth = document.getElementById('infoTotalTeeth');
         const infoTotalTeethSpent = document.getElementById('infoTotalTeethSpent');
         const infoBossKills = document.getElementById('infoBossKills');
+        const infoSpiderKills = document.getElementById('infoSpiderKills');
         const infoTotalRebirths = document.getElementById('infoTotalRebirths');
         const infoTotalTime = document.getElementById('infoTotalTime');
         const infoCpc = document.getElementById('infoCpc');
@@ -4444,7 +4544,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         doPrestigeBtn.addEventListener('click', async () => {
             rebirths++;
             postRebirthLvl10 = false;
-            bossIntroDone = true; drunIntroDone = true;
+            bossIntroDone = true; drunIntroDone = true; spiderIntroDone = true;
             balance = 0;
             totalEarned = 0;
             baseCpc = 1;
@@ -4464,6 +4564,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             melloImg.src = 'skinpres.png';
 
             nextBossScheduledTime = Date.now() + bossGapMs();
+            nextSpiderScheduledTime = Date.now() + spiderGapMs() + 60000;
             nextDrunScheduledTime = Date.now() + (360 + Math.floor(Math.random() * 300)) * 1000;
 
             prestigeModal.classList.remove('active');
@@ -4596,6 +4697,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         document.getElementById('lbNameInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); lbApplyName(); } });
 
         function closeMinigame() {
+            if (typeof reviveOfferOpen !== 'undefined' && reviveOfferOpen) declineRevive();
             forcePortrait();
             jumpModal.classList.remove('active');
             jumpGameActive = false;
@@ -6007,7 +6109,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 pendingOffline,
                 noAdsPurchased, bossWardPurchased, bossWardEnabled, drunShieldPurchased, drunShieldEnabled, totalTeethEarned, totalTeethSpent, maxHeight, perfectGoldenRains, dogClicksCount, cheremshaClicksCount, mamabirdClicksCount, postRebirthLvl10, selectedBgLevel, maxBgLevelReached, storyProgress,
                 lastFreeTicketTime, totalDiamondsEarned, totalDiamondsSpent, totalEarned, totalSpent, totalClicks,
-                melloScale, selectedBunnySkinId, bossKillsCount, mellTiltCooldown, bossIntroDone, drunIntroDone, bossTutorialSeen, drunTutorialSeen, nextBossScheduledTime, nextDrunScheduledTime, survivedDrunInvasionsCount, perfectDrunInvasionsCount, halfDodgedDrunWaves,
+                melloScale, selectedBunnySkinId, bossKillsCount, mellTiltCooldown, bossIntroDone, drunIntroDone, bossTutorialSeen, drunTutorialSeen, nextBossScheduledTime, nextDrunScheduledTime, spiderKillsCount, nextSpiderScheduledTime, spiderIntroDone, spiderTutorialSeen, survivedDrunInvasionsCount, perfectDrunInvasionsCount, halfDodgedDrunWaves,
                 bunnySkinsUnlocked: bunnySkinsConfig.map(s => ({ id: s.id, unlocked: s.unlocked })),
                 baseCpc, upgrades, claimedLevelBonuses, grantedPurchaseTokens,
                 sfxEnabled, sfxVolume, musicEnabled, musicVolume, selectedSkinIndex, userManuallySelectedSkin,
@@ -6050,6 +6152,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 mellTiltCooldown = data.mellTiltCooldown || 0;
                 nextBossScheduledTime = data.nextBossScheduledTime || 0;
                 nextDrunScheduledTime = data.nextDrunScheduledTime || 0;
+                spiderKillsCount = data.spiderKillsCount || 0;
+                nextSpiderScheduledTime = data.nextSpiderScheduledTime || 0;
+                if (nextSpiderScheduledTime > 0 && nextSpiderScheduledTime < Date.now()) nextSpiderScheduledTime = Date.now() + 150000;
                 { const soon = Date.now() + 30000;
                   if (nextBossScheduledTime > 0 && nextBossScheduledTime < Date.now()) nextBossScheduledTime = soon;
                   if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < Date.now()) nextDrunScheduledTime = soon + 120000; }
@@ -6057,6 +6162,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 bossIntroDone = data.bossIntroDone !== undefined ? !!data.bossIntroDone : (nextBossScheduledTime > 0 || rebirths > 0);
                 drunIntroDone = data.drunIntroDone !== undefined ? !!data.drunIntroDone : (nextDrunScheduledTime > 0 || rebirths > 0);
                 bossTutorialSeen = !!data.bossTutorialSeen;
+                spiderIntroDone = data.spiderIntroDone !== undefined ? !!data.spiderIntroDone : (nextSpiderScheduledTime > 0 || rebirths > 0);
+                spiderTutorialSeen = !!data.spiderTutorialSeen;
                 drunTutorialSeen = !!data.drunTutorialSeen;
                 survivedDrunInvasionsCount = data.survivedDrunInvasionsCount || 0;
                 perfectDrunInvasionsCount = data.perfectDrunInvasionsCount || 0;
@@ -6320,6 +6427,10 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
             if ((activeLvlIdx >= 5 || rebirths > 0) && nextBossScheduledTime === 0 && !inBattle) {
                 nextBossScheduledTime = Date.now() + bossGapMs();
+            }
+
+            if ((activeLvlIdx >= 9 || rebirths > 0) && nextSpiderScheduledTime === 0 && !inBattle) {
+                nextSpiderScheduledTime = Date.now() + spiderGapMs();
             }
 
             if ((activeLvlIdx >= 7 || rebirths > 0) && nextDrunScheduledTime === 0 && !isDrunInvasionActive) {
@@ -6704,6 +6815,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             infoTotalTeeth.textContent = `${totalTeethEarned.toLocaleString()} 🦷`;
             infoTotalTeethSpent.textContent = `${totalTeethSpent.toLocaleString()} 🦷`;
             infoBossKills.textContent = bossKillsCount.toLocaleString();
+            if (infoSpiderKills) infoSpiderKills.textContent = spiderKillsCount.toLocaleString();
+            { const _sl = document.getElementById('infoSpiderLabel'); if (_sl && _sl.textContent !== ST().statSpider) _sl.textContent = ST().statSpider; }
             infoTotalRebirths.textContent = rebirths;
             infoTotalTime.textContent = formatGameTime(totalPlayTimeSeconds);
             infoCpc.textContent = '$' + formatCompactNumber(getCpc());
@@ -7122,17 +7235,34 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         // После окончания одного события второе не может стартовать раньше, чем через 2 минуты — события не копятся
         function rescheduleEventsAfter(which) {
             const minT = Date.now() + 120000;
-            if (which === 'boss') { if (nextDrunScheduledTime > 0 && nextDrunScheduledTime < minT) nextDrunScheduledTime = minT; }
-            else { if (nextBossScheduledTime > 0 && nextBossScheduledTime < minT) nextBossScheduledTime = minT; }
+            if (which !== 'boss'   && nextBossScheduledTime   > 0 && nextBossScheduledTime   < minT) nextBossScheduledTime   = minT;
+            if (which !== 'spider' && nextSpiderScheduledTime > 0 && nextSpiderScheduledTime < minT) nextSpiderScheduledTime = minT;
+            if (which !== 'drun'   && nextDrunScheduledTime   > 0 && nextDrunScheduledTime   < minT) nextDrunScheduledTime   = minT;
         }
         function bossGapMs() { return (420 + Math.floor(Math.random() * 180)) * 1000; }   // 7–10 мин
-        function drunGapMs() { return (540 + Math.floor(Math.random() * 180)) * 1000; }   // 9–12 мин
-        async function startBossBattle() {
+        function spiderGapMs() { return (420 + Math.floor(Math.random() * 180)) * 1000; } // 7–10 мин (как у маньяка)
+        function drunGapMs() { return (450 + Math.floor(Math.random() * 180)) * 1000; }   // 7.5–10.5 мин (было 9–12)
+        function setNextEventTime(type) {
+            if (type === 'spider') nextSpiderScheduledTime = Date.now() + spiderGapMs();
+            else nextBossScheduledTime = Date.now() + bossGapMs();
+        }
+        function applyBossSkin() {
+            const SP = bossType === 'spider';
+            bossModal.classList.toggle('spider-mode', SP);
+            const nm = document.getElementById('bossNameTitle');
+            if (nm) nm.textContent = SP ? ST().name : ('' + T(11) + '');
+            const hb = document.getElementById('btnHealAd');
+            if (hb) hb.textContent = ST().fullHeal;
+        }
+        async function startBossBattle(type) {
+            if (type !== 'spider') type = 'maniac';
             if (inBattle || isDrunInvasionActive || eventIntroOpen) return;
+            bossType = type;
+            const SP = (type === 'spider');
             // переносим следующий запуск сразу, чтобы таймер не мог стартовать событие повторно
-            nextBossScheduledTime = Date.now() + bossGapMs();
+            setNextEventTime(type);
             if (bossWardPurchased && bossWardEnabled) {
-                nextBossScheduledTime = Date.now() + bossGapMs();
+                setNextEventTime(type);
                 isMysteryTimerVisible = false;
                 mysteryTimerBadge.style.display = 'none';
 
@@ -7140,21 +7270,25 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let singleReward = getSingleReward(phantomHp, true);
                 applySingleReward(singleReward);
 
-                await alert(`${T(460)}${phantomHp} HP)!\n${T(461)} ${singleReward.text}`, ('' + T(375) + ''));
+                await alert(`${SP ? ST().ward : T(460)}${phantomHp} HP)!\n${T(461)} ${singleReward.text}`, ('' + T(375) + ''));
                 finishBossFightClean();
                 return;
             }
 
-            if (!bossTutorialSeen) {
-                bossTutorialSeen = true;
+            if (SP ? !spiderTutorialSeen : !bossTutorialSeen) {
+                if (SP) spiderTutorialSeen = true; else bossTutorialSeen = true;
                 eventIntroOpen = true;
                 saveGame();
                 try {
-                    await alert(('' + T(462) + '\n\n') +
-                        ('' + T(463) + '\n') +
-                        ('' + T(464) + '\n') +
-                        ('' + T(465) + '\n') +
-                        ('' + T(466) + ''), ('' + T(11) + ''));
+                    if (SP) {
+                        await alert(ST().tutorial.join('\n\n'), ST().nameShort);
+                    } else {
+                        await alert(('' + T(462) + '\n\n') +
+                            ('' + T(463) + '\n') +
+                            ('' + T(464) + '\n') +
+                            ('' + T(465) + '\n') +
+                            ('' + T(466) + ''), ('' + T(11) + ''));
+                    }
                 } finally { eventIntroOpen = false; }
             }
 
@@ -7162,9 +7296,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             try { battleSoulImg.src = melloImg.getAttribute('src'); } catch (e) {}
             isMysteryTimerVisible = false;
             mysteryTimerBadge.style.display = 'none';
+            applyBossSkin();
             bossModal.classList.add('active');
 
             bullets = [];
+            spiderZones = []; spiderFrame = 0; spiderPrev = null;
+            if (SP) currentPattern = 4;   // первой будет атака №1
             utCtx.clearRect(0, 0, utCanvas.width, utCanvas.height);
 
             bossMaxHp = Math.floor(Math.random() * 26) + 15;
@@ -7205,6 +7342,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         function startAttackPhase() {
             battlePhase = 'attack';
+            spiderZones = [];
             setPadMode('attack');
             sliderActive = true;
             sliderX = 0;
@@ -7212,7 +7350,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             bullets = [];
 
             let hintExtra = bossMaxHp > 25 ? (' ' + T(467) + '') : '';
-            battleStatusHint.textContent = `${T(468)}${hintExtra}`;
+            battleStatusHint.textContent = `${bossType === 'spider' ? ST().attackHint : T(468)}${hintExtra}`;
             battleStatusHint.style.color = '#00ff88';
 
             document.getElementById('undertaleBtnGroup').style.pointerEvents = 'auto';
@@ -7236,6 +7374,28 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             battleStatusHint.style.color = '#00ff88';
         });
 
+
+        const btnHealAd = document.getElementById('btnHealAd');
+        if (btnHealAd) btnHealAd.addEventListener('click', async () => {
+            if (!inBattle) return;
+            if (playerHp >= playerMaxHp) {
+                await alert(('' + T(469) + ''), ('' + T(470) + ''));
+                return;
+            }
+            const grant = () => {
+                if (!inBattle) return;
+                playerHp = playerMaxHp;
+                updateBattleHUD();
+                battleStatusHint.textContent = ST().fullHealOk;
+                battleStatusHint.style.color = '#3dffa0';
+            };
+            if (noAdsPurchased) { grant(); return; }   // реклама отключена — восстанавливаем сразу
+            const ok = await confirm(ST().fullHealAsk, ('' + T(264) + ''));
+            if (!ok || !inBattle) return;
+            // Награда — строго внутри onRewarded
+            showRewardedAd(grant);
+        });
+
         btnBegMercy.addEventListener('click', async () => {
             if (!inBattle || battlePhase !== 'attack') return;
             sliderActive = false;
@@ -7247,13 +7407,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 balance += 1;
                 totalEarned += 1;
                 playJackpotSound();
-                await alert(('' + T(472) + '\n' + T(473) + ''), ('' + T(474) + ''));
+                await alert((bossType === 'spider' ? ST().begOk : ('' + T(472) + '')) + '\n' + T(473), ('' + T(474) + ''));
                 finishBossFightClean();
             } else {
                 currentBegChance *= 1.5;
                 updateChancesUI();
                 playLoseSound();
-                battleStatusHint.textContent = ('' + T(475) + '');
+                battleStatusHint.textContent = bossType === 'spider' ? ST().begFail : ('' + T(475) + '');
                 battleStatusHint.style.color = '#ff3366';
                 setTimeout(startDodgePhase, 800);
             }
@@ -7270,13 +7430,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let lostMoney = Math.floor(balance * 0.15);
                 balance = Math.max(0, balance - lostMoney);
                 playLoseSound();
-                await alert(`${T(476)}\n${T(477)}${formatCompactNumber(lostMoney)}).`, ('' + T(478) + ''));
+                await alert(`${bossType === 'spider' ? ST().fleeOk : T(476)}\n${T(477)}${formatCompactNumber(lostMoney)}).`, ('' + T(478) + ''));
                 finishBossFightClean();
             } else {
                 currentFleeChance *= 1.5;
                 updateChancesUI();
                 playLoseSound();
-                battleStatusHint.textContent = ('' + T(479) + '');
+                battleStatusHint.textContent = bossType === 'spider' ? ST().fleeFail : ('' + T(479) + '');
                 battleStatusHint.style.color = '#ff3366';
                 setTimeout(startDodgePhase, 800);
             }
@@ -7285,7 +7445,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         btnBribe.addEventListener('click', async () => {
             if (!inBattle || battlePhase !== 'attack') return;
             if (!(await requireResource('diamonds', 20))) return;
-            const ok = await confirm(('' + T(480) + '\n' + T(481) + ''), ('' + T(482) + ''));
+            const ok = await confirm((bossType === 'spider' ? ST().bribeAsk : ('' + T(480) + '')) + '\n' + T(481), ('' + T(482) + ''));
             if (ok) {
                 diamonds -= 20;
                 totalDiamondsSpent += 20;
@@ -7295,7 +7455,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let singleReward = getSingleReward(bossMaxHp, true);
                 applySingleReward(singleReward);
 
-                await alert(`${T(483)}\n${T(484)} ${singleReward.text}`, ('' + T(482) + ''));
+                await alert(`${bossType === 'spider' ? ST().bribeOk : T(483)}\n${T(484)} ${singleReward.text}`, ('' + T(482) + ''));
                 finishBossFightClean();
             }
         });
@@ -7316,15 +7476,15 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     isBossPaused = false;
                     if (bossPauseOverlay) bossPauseOverlay.style.display = 'none';
                     bossModal.classList.remove('active');
-                    await alert(('' + T(488) + ''), ('' + T(486) + ''));
+                    await alert(bossType === 'spider' ? ST().skipOk : ('' + T(488) + ''), ('' + T(486) + ''));
                     finishBossFightClean();
                 });
             }
         });
 
         function finishBossFightClean() {
-            nextBossScheduledTime = Date.now() + bossGapMs();
-            rescheduleEventsAfter('boss');
+            setNextEventTime(bossType);
+            rescheduleEventsAfter(bossType === 'spider' ? 'spider' : 'boss');
             isMysteryTimerVisible = false;
             mysteryTimerBadge.style.display = 'none';
             bullets = [];
@@ -7351,11 +7511,11 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             } else if (dist < 14) {
                 damage = 5;
                 playJackpotSound();
-                battleStatusHint.textContent = `${T(490)}${damage} ${T(491)}`;
+                battleStatusHint.textContent = `${T(490)}${damage} ${bossType === 'spider' ? ST().hpSuf : T(491)}`;
                 battleStatusHint.style.color = '#00ff88';
             } else if (dist < 43) {
                 damage = 2;
-                battleStatusHint.textContent = `${T(492)}${damage} ${T(491)}`;
+                battleStatusHint.textContent = `${T(492)}${damage} ${bossType === 'spider' ? ST().hpSuf : T(491)}`;
                 battleStatusHint.style.color = '#ffd700';
             } else {
                 damage = 0;
@@ -7382,9 +7542,16 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             bullets = [];
             dodgeTimer = 340;
 
-            currentPattern = (currentPattern % 3) + 1;
-            battleStatusHint.textContent = ('' + T(494) + '');
-            battleStatusHint.style.color = '#ff3366';
+            if (bossType === 'spider') {
+                currentPattern = (currentPattern % 4) + 1;
+                spiderZones = []; spiderFrame = 0; spiderPrev = null;
+                battleStatusHint.textContent = ST().dodge[currentPattern - 1];
+                battleStatusHint.style.color = '#c9b2ff';
+            } else {
+                currentPattern = (currentPattern % 3) + 1;
+                battleStatusHint.textContent = ('' + T(494) + '');
+                battleStatusHint.style.color = '#ff3366';
+            }
         }
 
         let lastBattleFrameTime = 0;
@@ -7413,7 +7580,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 }
 
                 if (battlePhase === 'dodge') {
-                    updateDodgePhysics();
+                    if (bossType === 'spider') updateSpiderPhysics(); else updateDodgePhysics();
                 }
                 battleTimeAcc -= BATTLE_STEP_60;
             }
@@ -7506,7 +7673,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         function drawBattleCanvas() {
             utCtx.clearRect(0, 0, utCanvas.width, utCanvas.height);
 
-            if (battleBossImg.complete && battleBossImg.naturalWidth) {
+            if (bossType === 'spider') {
+                drawSpiderBoss();
+            } else if (battleBossImg.complete && battleBossImg.naturalWidth) {
                 const bh = utCanvas.height * 0.94, bw = battleBossImg.naturalWidth * (bh / battleBossImg.naturalHeight);
                 const bob = Math.sin(performance.now() / 420) * 2;
                 utCtx.save();
@@ -7587,6 +7756,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 });
             }
 
+            if (bossType === 'spider' && battlePhase === 'dodge') drawSpiderZones();
+
             {
                 const sx = playerSoul.x + playerSoul.w / 2, sy = playerSoul.y + playerSoul.h / 2;
                 const im = (battleSoulImg.complete && battleSoulImg.naturalWidth) ? battleSoulImg
@@ -7602,6 +7773,225 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             }
         }
 
+
+        // ========================================================
+        // ПАУК ИЗ СЕЛА МОЛОЧНОГО: зоновые атаки
+        //  1) красные круги — лопнут, не стой внутри
+        //  2) молочные полосы — уйди с красных полос в просвет
+        //  3) зелёный круг — наоборот, стой внутри, остальное поле накроет
+        //  4) липкая паутина (замедляет) + красные круги
+        // ========================================================
+        const SPIDER_DMG = 3;
+        function spClamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+        function spCenter() { return { x: playerSoul.x + playerSoul.w / 2, y: playerSoul.y + playerSoul.h / 2 }; }
+        function spZone(z) { spiderZones.push(Object.assign({ t: 0, hit: false, warn: 55, active: 14 }, z)); }
+        function spAim(r, spread) {
+            const p = spCenter();
+            return {
+                cx: spClamp(p.x + (Math.random() - 0.5) * spread * 2, r * 0.6, utCanvas.width - r * 0.6),
+                cy: spClamp(p.y + (Math.random() - 0.5) * spread * 2, r * 0.6, utCanvas.height - r * 0.6)
+            };
+        }
+        function spiderInWebAt(x, y) {
+            for (let i = 0; i < spiderZones.length; i++) {
+                const z = spiderZones[i];
+                if (z.kind === 'web' && Math.hypot(x - z.cx, y - z.cy) < z.r) return true;
+            }
+            return false;
+        }
+        function spawnSpiderZones(f) {
+            const W = utCanvas.width, H = utCanvas.height;
+            if (currentPattern === 1) {
+                if (f % 40 === 6 && f < 270) {
+                    const a = spAim(27, 22);
+                    spZone({ kind: 'danger', shape: 'circle', cx: a.cx, cy: a.cy, r: 27, warn: 50 });
+                    if (f % 80 === 46) {
+                        const b = spAim(27, 90);
+                        spZone({ kind: 'danger', shape: 'circle', cx: b.cx, cy: b.cy, r: 27, warn: 50 });
+                    }
+                }
+            } else if (currentPattern === 2) {
+                if (f % 66 === 8 && f < 270) {
+                    if (Math.floor(f / 66) % 2 === 0) {
+                        // вертикальные молочные полосы: 3 из 6 опасны
+                        [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5).slice(0, 3).forEach(i =>
+                            spZone({ kind: 'danger', shape: 'rect', x: i * W / 6, y: 0, w: W / 6, h: H, warn: 56 }));
+                    } else {
+                        // горизонтальные: безопасна одна полоса из трёх
+                        const safe = Math.floor(Math.random() * 3);
+                        for (let i = 0; i < 3; i++) if (i !== safe)
+                            spZone({ kind: 'danger', shape: 'rect', x: 0, y: i * H / 3, w: W, h: H / 3, warn: 56 });
+                    }
+                }
+            } else if (currentPattern === 3) {
+                if (f % 84 === 0 && f < 270) {
+                    spZone({ kind: 'safe', shape: 'circle', cx: 34 + Math.random() * (W - 68), cy: 36 + Math.random() * (H - 72), r: 30, warn: 64, active: 14 });
+                }
+            } else {
+                if (f === 0 || f === 120) {
+                    const n = f === 0 ? 2 : 1;
+                    for (let k = 0; k < n; k++) {
+                        let cx = 0, cy = 0;
+                        for (let tries = 0; tries < 12; tries++) {
+                            cx = 40 + Math.random() * (W - 80); cy = 34 + Math.random() * (H - 68);
+                            if (Math.hypot(cx - W / 2, cy - H / 2) > 50 || f > 0) break;
+                        }
+                        spZone({ kind: 'web', shape: 'circle', cx, cy, r: 32, warn: 0, active: 0, life: 420 });
+                    }
+                }
+                if (f % 46 === 12 && f < 270) {
+                    const a = spAim(26, 26);
+                    spZone({ kind: 'danger', shape: 'circle', cx: a.cx, cy: a.cy, r: 26, warn: 50 });
+                }
+            }
+        }
+        function updateSpiderPhysics() {
+            const f = spiderFrame++;
+            // липкая паутина: ограничиваем смещение от пальца/мыши
+            if (spiderPrev && spiderInWebAt(spiderPrev.x + playerSoul.w / 2, spiderPrev.y + playerSoul.h / 2)) {
+                const dx = playerSoul.x - spiderPrev.x, dy = playerSoul.y - spiderPrev.y, d = Math.hypot(dx, dy), lim = playerSoul.speed * 0.4;
+                if (d > lim) { playerSoul.x = spiderPrev.x + dx / d * lim; playerSoul.y = spiderPrev.y + dy / d * lim; }
+            }
+            let c = spCenter();
+            const sp = playerSoul.speed * (spiderInWebAt(c.x, c.y) ? 0.4 : 1);
+            if (!isSoulDragging) {
+                if (battleKeys.left) playerSoul.x -= sp;
+                if (battleKeys.right) playerSoul.x += sp;
+                if (battleKeys.up) playerSoul.y -= sp;
+                if (battleKeys.down) playerSoul.y += sp;
+                playerSoul.x = Math.max(0, Math.min(utCanvas.width - playerSoul.w, playerSoul.x));
+                playerSoul.y = Math.max(0, Math.min(utCanvas.height - playerSoul.h, playerSoul.y));
+            }
+            spiderPrev = { x: playerSoul.x, y: playerSoul.y };
+
+            spawnSpiderZones(f);
+
+            c = spCenter();
+            for (let i = spiderZones.length - 1; i >= 0; i--) {
+                const z = spiderZones[i];
+                z.t++;
+                if (z.kind === 'web') { if (z.t > z.life) spiderZones.splice(i, 1); continue; }
+                if (z.t >= z.warn && z.t < z.warn + z.active) {
+                    if (z.hit) continue;
+                    const dc = z.shape === 'rect' ? 0 : Math.hypot(c.x - z.cx, c.y - z.cy);
+                    let harmed;
+                    if (z.kind === 'safe') harmed = dc > z.r;
+                    else if (z.shape === 'rect') harmed = c.x > z.x - 3 && c.x < z.x + z.w + 3 && c.y > z.y - 3 && c.y < z.y + z.h + 3;
+                    else harmed = dc < z.r + 3;
+                    if (harmed) {
+                        z.hit = true;
+                        playerHp -= SPIDER_DMG;
+                        playJumpNorm();
+                        updateBattleHUD();
+                        if (playerHp <= 0) { loseBossBattle(); return; }
+                    }
+                } else if (z.t >= z.warn + z.active) {
+                    spiderZones.splice(i, 1);
+                }
+            }
+
+            dodgeTimer--;
+            if (dodgeTimer <= 0) startAttackPhase();
+        }
+        function drawSpiderZones() {
+            const ctx = utCtx, W = utCanvas.width, H = utCanvas.height, now = performance.now();
+            const pulse = 0.5 + 0.5 * Math.sin(now / 90);
+            spiderZones.forEach(z => {
+                ctx.save();
+                if (z.kind === 'web') {
+                    ctx.globalAlpha = Math.min(1, z.t / 20);
+                    ctx.translate(z.cx, z.cy);
+                    ctx.beginPath(); ctx.arc(0, 0, z.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(210,205,255,.13)'; ctx.fill();
+                    ctx.strokeStyle = 'rgba(236,232,255,.65)'; ctx.lineWidth = 1.2;
+                    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * z.r, Math.sin(a) * z.r); ctx.stroke(); }
+                    [0.35, 0.65, 1].forEach(k => { ctx.beginPath(); ctx.arc(0, 0, z.r * k, 0, Math.PI * 2); ctx.stroke(); });
+                } else {
+                    const pend = z.t < z.warn;
+                    const p = Math.min(1, z.t / z.warn);
+                    const k = pend ? 1 : Math.max(0, 1 - (z.t - z.warn) / z.active);
+                    if (z.kind === 'safe') {
+                        ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(z.cx, z.cy, z.r, 0, Math.PI * 2);
+                        ctx.fillStyle = pend ? `rgba(255,30,60,${0.05 + 0.22 * p * (0.75 + 0.25 * pulse)})` : `rgba(255,236,226,${0.85 * k})`;
+                        ctx.fill('evenodd');
+                        ctx.beginPath(); ctx.arc(z.cx, z.cy, z.r, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(61,255,160,.17)'; ctx.fill();
+                        ctx.lineWidth = 2.5; ctx.strokeStyle = `rgba(61,255,160,${0.65 + 0.35 * pulse})`;
+                        ctx.setLineDash(pend ? [6, 4] : []); ctx.stroke();
+                        ctx.setLineDash([]);
+                        ctx.font = '20px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+                        ctx.fillText('🥛', z.cx, z.cy + 7);
+                    } else {
+                        const path = () => { ctx.beginPath(); if (z.shape === 'rect') ctx.rect(z.x, z.y, z.w, z.h); else ctx.arc(z.cx, z.cy, z.r, 0, Math.PI * 2); };
+                        if (pend) {
+                            path(); ctx.fillStyle = `rgba(255,40,70,${0.10 + 0.08 * pulse})`; ctx.fill();
+                            if (z.shape === 'rect') { path(); ctx.fillStyle = `rgba(255,60,90,${0.32 * p})`; ctx.fill(); }
+                            else { ctx.beginPath(); ctx.arc(z.cx, z.cy, z.r * p, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,60,90,.34)'; ctx.fill(); }
+                            path(); ctx.setLineDash([5, 4]); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,90,115,.95)'; ctx.stroke(); ctx.setLineDash([]);
+                        } else {
+                            path(); ctx.fillStyle = `rgba(255,246,236,${0.92 * k})`; ctx.fill();
+                            ctx.lineWidth = 3; ctx.strokeStyle = `rgba(255,40,70,${k})`; ctx.stroke();
+                        }
+                    }
+                }
+                ctx.restore();
+            });
+        }
+        function drawSpiderBoss() {
+            const ctx = utCtx, W = utCanvas.width, H = utCanvas.height, t = performance.now() / 1000;
+            ctx.save();
+            ctx.globalAlpha = battlePhase === 'dodge' ? 0.5 : 0.98;
+            ctx.translate(W / 2, H / 2 + Math.sin(t * 2.4) * 2);
+            const sc = H / 135 * 0.95;
+            ctx.scale(sc, sc);
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            if (!IS_IOS) { ctx.shadowColor = 'rgba(160,120,255,.6)'; ctx.shadowBlur = 12; }
+            // лапы (4 пары)
+            for (let side = -1; side <= 1; side += 2) {
+                for (let i = 0; i < 4; i++) {
+                    const wob = Math.sin(t * 3 + i * 0.9 + (side > 0 ? 0.6 : 0)) * 0.12;
+                    const sx = side * 12, sy = -8 + i * 6;
+                    const kx = side * (38 + i * 4), ky = -36 + i * 17 + wob * 30;
+                    const fx = side * (56 + i * 6), fy = -4 + i * 19 + wob * 40;
+                    [['#120d18', 6.5], ['#44305f', 3.6]].forEach(([col, w]) => {
+                        ctx.strokeStyle = col; ctx.lineWidth = w;
+                        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+                    });
+                }
+            }
+            ctx.shadowBlur = 0;
+            // брюшко — «коровье» (село Молочное)
+            ctx.fillStyle = '#f4efe2'; ctx.strokeStyle = '#120d18'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.ellipse(0, 20, 25, 30, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.save(); ctx.beginPath(); ctx.ellipse(0, 20, 24, 29, 0, 0, Math.PI * 2); ctx.clip();
+            ctx.fillStyle = '#1b1422';
+            [[-10, 8, 9, 6, 0.4], [11, 22, 8, 10, -0.3], [-8, 36, 7, 6, 0.2], [6, 4, 5, 4, 0]].forEach(([x, y, rx, ry, r]) => {
+                ctx.beginPath(); ctx.ellipse(x, y, rx, ry, r, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.restore();
+            // голова
+            ctx.fillStyle = '#4a3366'; ctx.strokeStyle = '#120d18'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(0, -12, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            // ушанка
+            ctx.fillStyle = '#8b7a68';
+            ctx.beginPath(); ctx.ellipse(0, -26, 19, 8, 0, Math.PI, 0); ctx.fill(); ctx.stroke();
+            ctx.fillRect(-19, -27, 6, 14); ctx.fillRect(13, -27, 6, 14);
+            ctx.strokeRect(-19, -27, 6, 14); ctx.strokeRect(13, -27, 6, 14);
+            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, -30, 3, 4, 0, 0, Math.PI * 2); ctx.fill();   // капелька молока на шапке
+            // глаза
+            [[-7, -13, 5], [7, -13, 5], [-3, -21, 2.6], [3, -21, 2.6]].forEach(([x, y, r]) => {
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#d4162f'; ctx.beginPath(); ctx.arc(x, y + 0.5, r * 0.55, 0, Math.PI * 2); ctx.fill();
+            });
+            // клыки + капли молока
+            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#120d18'; ctx.lineWidth = 1.5;
+            [-5, 5].forEach(x => { ctx.beginPath(); ctx.moveTo(x - 2.5, -1); ctx.lineTo(x + 2.5, -1); ctx.lineTo(x, 8); ctx.closePath(); ctx.fill(); ctx.stroke(); });
+            const drip = (t * 18) % 14;
+            ctx.beginPath(); ctx.arc(-5, 9 + drip, 1.8, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
+        const BOSS_REWARD_BONUS = 1.33;   // +33% к наградам за маньяка
         function getSingleReward(hp, isHalf = false) {
             let multRatio = isHalf ? 0.5 : 1.0;
             let currentCpcVal = getCpc();
@@ -7611,14 +8001,14 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let chosen = types[Math.floor(Math.random() * types.length)];
 
                 if (chosen === 'money') {
-                    let mult = Math.floor(Math.random() * 11) + 5;
+                    let mult = Math.round((Math.floor(Math.random() * 11) + 5) * BOSS_REWARD_BONUS);
                     let val = Math.max(1, Math.floor(currentCpcVal * mult * multRatio));
                     return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} ${T(495)}` };
                 } else if (chosen === 'diamonds') {
-                    let val = Math.max(1, Math.floor((Math.floor(Math.random() * 6) + 3) * multRatio));
+                    let val = Math.max(1, Math.round((Math.floor(Math.random() * 6) + 3) * multRatio * BOSS_REWARD_BONUS));
                     return { type: 'diamonds', val: val, text: `+${val} ${T(496)}` };
                 } else {
-                    let val = Math.max(1, Math.floor((Math.floor(Math.random() * 11) + 8) * multRatio));
+                    let val = Math.max(1, Math.round((Math.floor(Math.random() * 11) + 8) * multRatio * BOSS_REWARD_BONUS));
                     return { type: 'teeth', val: val, text: `+${val} ${T(497)}` };
                 }
             } else {
@@ -7626,17 +8016,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 let chosen = types[Math.floor(Math.random() * types.length)];
 
                 if (chosen === 'money') {
-                    let mult = Math.floor(Math.random() * 16) + 15;
+                    let mult = Math.round((Math.floor(Math.random() * 16) + 15) * BOSS_REWARD_BONUS);
                     let val = Math.max(1, Math.floor(currentCpcVal * mult * multRatio));
                     return { type: 'money', val: val, text: `+$${formatCompactNumber(val)} (x${mult} ${T(495)}` };
                 } else if (chosen === 'diamonds') {
-                    let val = Math.max(1, Math.floor((Math.floor(Math.random() * 11) + 10) * multRatio));
+                    let val = Math.max(1, Math.round((Math.floor(Math.random() * 11) + 10) * multRatio * BOSS_REWARD_BONUS));
                     return { type: 'diamonds', val: val, text: `+${val} ${T(496)}` };
                 } else if (chosen === 'teeth') {
-                    let val = Math.max(1, Math.floor((Math.floor(Math.random() * 36) + 25) * multRatio));
+                    let val = Math.max(1, Math.round((Math.floor(Math.random() * 36) + 25) * multRatio * BOSS_REWARD_BONUS));
                     return { type: 'teeth', val: val, text: `+${val} ${T(497)}` };
                 } else {
-                    return { type: 'tickets', val: 1, text: `${T(498)}` };
+                    const tv = Math.random() < (BOSS_REWARD_BONUS - 1) ? 2 : 1;   // 33% шанс на 2 билета вместо 1
+                    return { type: 'tickets', val: tv, text: tv === 1 ? `${T(498)}` : (RT().t2) };
                 }
             }
         }
@@ -7661,13 +8052,13 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         async function winBossBattle() {
             inBattle = false;
             bossModal.classList.remove('active');
-            bossKillsCount++;
+            if (bossType === 'spider') spiderKillsCount++; else bossKillsCount++;
 
             let reward = getSingleReward(bossMaxHp, false);
             applySingleReward(reward);
 
             playJackpotSound();
-            await alert(`${T(499)}${bossMaxHp} HP)!\n${T(500)} ${reward.text}`, ('' + T(501) + ''));
+            await alert(`${bossType === 'spider' ? ST().win : T(499)}${bossMaxHp} HP)!\n${T(500)} ${reward.text}`, ('' + T(501) + ''));
 
             finishBossFightClean();
         }
@@ -7682,7 +8073,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             mellTiltCooldown = Math.round(60 - ratio * 30);
 
             melloBtn.classList.add('disabled-cooldown');
-            await alert(`${T(502)}\n${T(503)} ${mellTiltCooldown} ${T(504)}`, ('' + T(505) + ''));
+            await alert(`${bossType === 'spider' ? ST().lose : T(502)}\n${T(503)} ${mellTiltCooldown} ${T(504)}`, ('' + T(505) + ''));
 
             finishBossFightClean();
         }
@@ -8004,6 +8395,28 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
 
         let bunnyRocketActive = false;
         let bunnyRocketTimer = 0;
+
+        // --- воскрешение за рекламу + неуязвимость после ракеты ---
+        // Ракета: за кадр заяц пролетает ≈31.6 px (≈3.16 м), 112 кадров ≈ 350 м
+        const REVIVE_TXT = {
+            ru: { title: '🚀 Ещё один шанс!', at: 'Ты на {n} м', near: ' — рекорд совсем рядом!', dot: '.', tail: ' Посмотри рекламу — заяц сразу взлетит на ракете и получит защиту на один прыжок.', yes: '▶ Продолжить на ракете', no: 'Нет, спасибо', t2: '+2 🎫 билета в мини-игру' },
+            en: { title: '🚀 One more chance!', at: 'You are at {n} m', near: ' — the record is close!', dot: '.', tail: ' Watch an ad — the bunny takes off on a rocket right away and gets a one-jump shield.', yes: '▶ Continue on a rocket', no: 'No thanks', t2: '+2 🎫 tickets for the mini-game' },
+            tr: { title: '🚀 Bir şans daha!', at: '{n} m seviyesindesin', near: ' — rekor çok yakın!', dot: '.', tail: ' Bir reklam izle — tavşan hemen roketle havalanır ve bir zıplayışlık koruma kazanır.', yes: '▶ Roketle devam et', no: 'Hayır, teşekkürler', t2: '+2 🎫 mini oyun bileti' },
+            es: { title: '🚀 ¡Una oportunidad más!', at: 'Estás en {n} m', near: ' — ¡el récord está cerca!', dot: '.', tail: ' Mira un anuncio: el conejo despega al instante en un cohete y recibe un escudo de un salto.', yes: '▶ Seguir en el cohete', no: 'No, gracias', t2: '+2 🎫 entradas para el minijuego' },
+            pt: { title: '🚀 Mais uma chance!', at: 'Você está em {n} m', near: ' — o recorde está perto!', dot: '.', tail: ' Assista a um anúncio: o coelho decola de foguete na hora e ganha um escudo de um pulo.', yes: '▶ Continuar no foguete', no: 'Não, obrigado', t2: '+2 🎫 bilhetes para o minijogo' }
+        };
+        function RT() { return REVIVE_TXT[window.LANG] || REVIVE_TXT.en; }
+        const REVIVE_ROCKET_FRAMES = 112;
+        const REVIVE_MIN_SCORE = 30;          // не предлагаем воскрешение на совсем коротких забегах
+        const REVIVE_NEAR_RECORD = 0.8;       // «близко к рекорду» = от 80% рекорда и выше
+        let reviveUsedThisRun = false;        // за забег — только одно воскрешение
+        let reviveOfferOpen = false;
+        let reviveBusy = false;
+        let reviveRocketRun = false;          // текущая ракета — воскрешающая
+        let runsSinceReviveOffer = 0;
+        let reviveOfferEvery = 3 + Math.floor(Math.random() * 2);   // каждые 3–4 игры
+        let bunnyShieldLandings = 0;          // сколько приземлений осталось у неуязвимости
+        let bunnyShieldFrames = 0;
 
         function skipRocketCutscene() {
             if (!cutsceneActive) return;
@@ -8358,6 +8771,9 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             isMouseDown = false;
             bunnyRocketActive = false;
             bunnyRocketTimer = 0;
+            reviveUsedThisRun = false; reviveOfferOpen = false; reviveBusy = false; reviveRocketRun = false;
+            bunnyShieldLandings = 0; bunnyShieldFrames = 0;
+            { const ro = document.getElementById('jumpReviveOverlay'); if (ro) ro.style.display = 'none'; }
 
             updateBunnySkinTexture();
 
@@ -8572,6 +8988,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         function stepJumpPhysics() {
             let prevBunnyY = bunny.y;
             stepFx();
+            if (bunnyShieldLandings > 0 && ++bunnyShieldFrames > 420) bunnyShieldLandings = 0;   // страховка по времени
             if (bunnyRocketActive) fxParts.push({ x: bunny.x + 32 + (Math.random() - 0.5) * 8, y: bunny.y + 60, vx: Math.random() - 0.5, vy: 2 + Math.random() * 2, life: 18, max: 18, r: 3 + Math.random() * 3, c: Math.random() < 0.5 ? '#ff5a1f' : '#ffd23f' });
             if ((bunny.isSpringJumping || bunnyRocketActive || bunny.vy < -9) && jumpFrameCount++ % 2 === 0) { bunnyTrail.push({ x: bunny.x, y: bunny.y }); if (bunnyTrail.length > 4) bunnyTrail.shift(); }
             else if (bunnyTrail.length && bunny.vy > -6) bunnyTrail.shift();
@@ -8624,6 +9041,12 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (bunnyRocketTimer <= 0) {
                     bunnyRocketActive = false;
                     bunny.vy = bunny.jumpForce;
+                    if (reviveRocketRun) {              // после воскрешающей ракеты — неуязвимость на один прыжок
+                        reviveRocketRun = false;
+                        bunnyShieldLandings = 2;        // прыжок с ракеты + ещё один полный прыжок
+                        bunnyShieldFrames = 0;
+                        burst(bunny.x + 32, bunny.y + 32, '#00e5ff', 18, 3.5, 30);
+                    }
                 }
             } else {
                 for (let i = 0; i < platforms.length; i++) {
@@ -8744,6 +9167,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                             bunny.vy = bunny.jumpForce;
                             bunny.isSpringJumping = false;
                             playJumpNorm();
+                            if (bunnyShieldLandings > 0) bunnyShieldLandings--;
                             burst(bunny.x + bunny.width / 2, bunny.y + bunny.height, p.type === 'moving' ? '#ffe27a' : p.type === 'once' ? '#9be7ff' : '#7dffc4', 7, 2.2, 20);
                             if (p.type === 'once') {
                                 p.active = false;
@@ -8811,7 +9235,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (b.x + b.r > bHitLeft && b.x - b.r < bHitRight &&
                     b.y + b.r > bHitTop && b.y - b.r < bHitBottom) {
                     
-                    if (bunny.isSpringJumping || bunnyRocketActive) {
+                    if (bunny.isSpringJumping || bunnyRocketActive || bunnyShieldLandings > 0) {
                         monsterBullets.splice(i, 1);
                         continue;
                     }
@@ -8864,8 +9288,8 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 if (bHitRight > mLeft && bHitLeft < mRight && bHitBottom > mTop && bHitTop < mBottom) {
                     let isFallingOnHead = (bunny.vy > 0 && prevBunnyY <= m.y + 18) || (bunny.y + bunny.height - 10 <= m.y + 24);
                     
-                    if (isFallingOnHead || bunny.isSpringJumping || bunnyRocketActive) {
-                        if (!bunny.isSpringJumping && !bunnyRocketActive) {
+                    if (isFallingOnHead || bunny.isSpringJumping || bunnyRocketActive || bunnyShieldLandings > 0) {
+                        if (isFallingOnHead && !bunny.isSpringJumping && !bunnyRocketActive) {
                             bunny.vy = bunny.jumpForce * 1.35;
                             playJumpSpring();
                         } else {
@@ -8893,18 +9317,107 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 cutsceneActive = false;
                 jumpBgMusic.pause();
                 playLoseSound();
-                if (scoreHeight > maxHeight) maxHeight = scoreHeight;
-                document.getElementById('jumpTicketsCount').textContent = tickets;
-                startScreen.style.display = 'flex';
-                const lbPlace = lbSubmit(scoreHeight);
-                if (lbPlace) { renderLeaderboard(lbPlace); leaderboardScreen.style.display = 'flex'; }
-                lbCloudSubmit(scoreHeight).then(() => {
-                    if (lbPlace || leaderboardScreen.style.display === 'flex') loadCloudLeaderboard();
-                });
-                saveGame();
-                showFullscreenAd();   // естественная пауза: заяц упал, экран старта
+                if (shouldOfferRevive()) { showReviveOffer(); return; }
+                finishJumpRun();
             }
         }
+
+        // ===== Конец забега (вынесено из stepJumpPhysics) =====
+        function finishJumpRun() {
+            jumpGameActive = false;
+            cutsceneActive = false;
+            reviveOfferOpen = false;
+            const ro = document.getElementById('jumpReviveOverlay'); if (ro) ro.style.display = 'none';
+            if (scoreHeight > maxHeight) maxHeight = scoreHeight;
+            document.getElementById('jumpTicketsCount').textContent = tickets;
+            startScreen.style.display = 'flex';
+            const lbPlace = lbSubmit(scoreHeight);
+            if (lbPlace) { renderLeaderboard(lbPlace); leaderboardScreen.style.display = 'flex'; }
+            lbCloudSubmit(scoreHeight).then(() => {
+                if (lbPlace || leaderboardScreen.style.display === 'flex') loadCloudLeaderboard();
+            });
+            saveGame();
+            showFullscreenAd();   // естественная пауза: заяц упал, экран старта
+        }
+
+        // ===== Воскрешение за рекламу =====
+        function shouldOfferRevive() {
+            if (reviveUsedThisRun) return false;                       // второй раз за забег — нет
+            runsSinceReviveOffer++;
+            if (!(sdkReady && ysdk && ysdk.adv && typeof ysdk.adv.showRewardedVideo === 'function')) return false;
+            if (adActive || adPending) return false;
+            if (scoreHeight < REVIVE_MIN_SCORE) return false;
+            const nearRecord = maxHeight > 0 && scoreHeight >= maxHeight * REVIVE_NEAR_RECORD;
+            const dueByCount = runsSinceReviveOffer >= reviveOfferEvery;
+            if (!nearRecord && !dueByCount) return false;
+            runsSinceReviveOffer = 0;
+            reviveOfferEvery = 3 + Math.floor(Math.random() * 2);      // следующий оффер через 3–4 игры
+            return true;
+        }
+
+        function showReviveOffer() {
+            const t = RT();
+            const nearRecord = maxHeight > 0 && scoreHeight >= maxHeight * REVIVE_NEAR_RECORD;
+            document.getElementById('reviveTitle').textContent = t.title;
+            document.getElementById('reviveText').textContent = t.at.replace('{n}', scoreHeight) + (nearRecord ? t.near : t.dot) + t.tail;
+            document.getElementById('reviveYesBtn').textContent = t.yes;
+            document.getElementById('reviveNoBtn').textContent = t.no;
+            reviveBusy = false;
+            reviveOfferOpen = true;
+            document.getElementById('jumpReviveOverlay').style.display = 'flex';
+        }
+
+        function declineRevive() {
+            if (!reviveOfferOpen) return;
+            reviveOfferOpen = false;
+            reviveBusy = false;
+            document.getElementById('jumpReviveOverlay').style.display = 'none';
+            finishJumpRun();
+        }
+
+        function startRevive() {
+            reviveBusy = false;
+            if (!reviveOfferOpen) return;
+            reviveOfferOpen = false;
+            document.getElementById('jumpReviveOverlay').style.display = 'none';
+            if (!jumpModal.classList.contains('active')) { finishJumpRun(); return; }   // окно закрыли во время рекламы
+
+            reviveUsedThisRun = true;
+            jumpGameActive = true;
+            isJumpPaused = false;
+            cutsceneActive = false;
+            if (jumpPauseOverlay) jumpPauseOverlay.style.display = 'none';
+
+            bunny.x = canvas.width / 2 - bunny.width / 2;
+            bunny.y = canvas.height - 150;
+            bunny.vx = 0;
+            bunny.vy = -16;
+            bunny.isSpringJumping = false;
+            bunnyRocketActive = true;
+            bunnyRocketTimer = REVIVE_ROCKET_FRAMES;
+            reviveRocketRun = true;
+            bunnyShieldLandings = 0;
+            monsterBullets = [];
+            bunnyTrail.length = 0;
+            mouseX = null; isMouseDown = false;
+
+            playJackpotSound();
+            if (musicEnabled) jumpBgMusic.play().catch(() => {});
+            lastJumpFrameTime = performance.now();
+            jumpTimeAccumulator = 0;
+            requestAnimationFrame(updateJumpGame);
+        }
+
+        document.getElementById('reviveYesBtn').addEventListener('click', () => {
+            if (!reviveOfferOpen || reviveBusy) return;
+            reviveBusy = true;
+            showRewardedAd(
+                () => { /* награда выдаётся в onAfterClose — когда реклама уже закрыта */ },
+                () => { reviveBusy = false; declineRevive(); },
+                () => { startRevive(); }
+            );
+        });
+        document.getElementById('reviveNoBtn').addEventListener('click', () => { if (!reviveBusy) declineRevive(); });
 
         function drawJumpGame() {
             ctx.save();
@@ -9048,6 +9561,18 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                     drawActiveRocketSprite();
                     ctx.restore();
                 } else {
+                    if (bunnyShieldLandings > 0) {
+                        const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.012);
+                        ctx.save();
+                        ctx.strokeStyle = `rgba(255, 226, 90, ${0.65 + 0.35 * pulse})`;
+                        ctx.lineWidth = 3;
+                        ctx.fillStyle = `rgba(255, 226, 90, ${0.12 + 0.10 * pulse})`;
+                        ctx.beginPath();
+                        ctx.arc(bunny.x + bunny.width / 2, bunny.y + bunny.height / 2, bunny.width * 0.66, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        ctx.restore();
+                    }
                     if (bunny.isSpringJumping) {
                         ctx.save();
                         ctx.strokeStyle = '#00e5ff';
@@ -9299,6 +9824,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
             if (_busyT && _dtT > 0 && _dtT < 3600000) {
                 if (nextBossScheduledTime > 0) nextBossScheduledTime += _dtT;
                 if (nextDrunScheduledTime > 0) nextDrunScheduledTime += _dtT;
+                if (nextSpiderScheduledTime > 0) nextSpiderScheduledTime += _dtT;
             }
             let _eventFiredThisTick = false;
 
@@ -9307,32 +9833,40 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
                 customAlertOverlay.classList.contains('active');
             if (!introBlocked) {
                 if (!bossIntroDone && activeLvlIdx >= 5) { bossIntroDone = true; startBossBattle(); return; }
+                if (!spiderIntroDone && activeLvlIdx >= 9) { spiderIntroDone = true; startBossBattle('spider'); return; }
                 if (!drunIntroDone && activeLvlIdx >= 7) { drunIntroDone = true; startDrunInvasion(); return; }
             }
 
-            if ((activeLvlIdx >= 5 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !eventIntroOpen && nextBossScheduledTime > 0) {
-                let timeLeftMs = nextBossScheduledTime - Date.now();
-                
-                if (isAnyMinigameOpen) {
-                    mysteryTimerBadge.style.display = 'none';
-                    if (timeLeftMs <= 0) {
-                        nextBossScheduledTime = Date.now() + 60000;
-                    }
-                } else {
-                    if (timeLeftMs <= 60000 && timeLeftMs > 0) {
+            {
+                const _cands = [];
+                if ((activeLvlIdx >= 5 || rebirths > 0) && nextBossScheduledTime > 0) _cands.push({ t: nextBossScheduledTime, type: 'maniac' });
+                if ((activeLvlIdx >= 9 || rebirths > 0) && nextSpiderScheduledTime > 0) _cands.push({ t: nextSpiderScheduledTime, type: 'spider' });
+                if (!inBattle && !isDrunInvasionActive && !eventIntroOpen && _cands.length) {
+                    _cands.sort((x, y) => x.t - y.t);
+                    const _nx = _cands[0];
+                    const timeLeftMs = _nx.t - Date.now();
+                    if (isAnyMinigameOpen) {
+                        mysteryTimerBadge.style.display = 'none';
+                        _cands.forEach(c => {
+                            if (c.t - Date.now() <= 0) {
+                                if (c.type === 'spider') nextSpiderScheduledTime = Date.now() + 60000;
+                                else nextBossScheduledTime = Date.now() + 60000;
+                            }
+                        });
+                    } else if (timeLeftMs <= 60000 && timeLeftMs > 0) {
                         mysteryTimerBadge.style.display = 'flex';
-                        let s = Math.ceil(timeLeftMs / 1000);
-                        mysteryTimerBadge.textContent = `⏳ 00:${s < 10 ? '0' : ''}${s}`;
+                        let s2 = Math.ceil(timeLeftMs / 1000);
+                        mysteryTimerBadge.textContent = `⏳ 00:${s2 < 10 ? '0' : ''}${s2}`;
                     } else if (timeLeftMs <= 0) {
                         mysteryTimerBadge.style.display = 'none';
                         _eventFiredThisTick = true;
-                        startBossBattle();
+                        startBossBattle(_nx.type === 'spider' ? 'spider' : undefined);
                     } else {
                         mysteryTimerBadge.style.display = 'none';
                     }
+                } else {
+                    mysteryTimerBadge.style.display = 'none';
                 }
-            } else {
-                mysteryTimerBadge.style.display = 'none';
             }
 
             if (!_eventFiredThisTick && (activeLvlIdx >= 7 || rebirths > 0) && !inBattle && !isDrunInvasionActive && !isAnyMinigameOpen && !eventIntroOpen && !customAlertOverlay.classList.contains('active') && nextDrunScheduledTime > 0) {
@@ -10154,6 +10688,48 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         g.className = 'sheet-grab'; g.setAttribute('role', 'button'); g.setAttribute('aria-label', 'Close');
         g.addEventListener('click', function () { setOpen(false); });
         tc.insertBefore(g, tc.firstChild);
+    });
+
+    // свайп: вниз (портрет) или вправо (ландшафт) — шторка едет за пальцем и закрывается
+    var mqLand = window.matchMedia('(orientation: landscape) and (max-height: 520px)');
+    document.querySelectorAll('.tab-content').forEach(function (tc) {
+        var sx = 0, sy = 0, d = 0, drag = false, decided = false, land = false;
+        function reset(animated) {
+            tc.style.transition = animated ? 'translate .18s ease' : '';
+            tc.style.translate = '';
+            if (animated) setTimeout(function () { tc.style.transition = ''; }, 200);
+        }
+        tc.addEventListener('touchstart', function (e) {
+            drag = false; decided = false;
+            if (!mq.matches || !isOpen() || e.touches.length !== 1) return;
+            var t = e.touches[0]; sx = t.clientX; sy = t.clientY; d = 0; land = mqLand.matches;
+            // с ручки — всегда; с содержимого — только если список прокручен в самый верх
+            drag = !!(e.target.closest && e.target.closest('.sheet-grab')) || tc.scrollTop <= 0;
+        }, { passive: true });
+        tc.addEventListener('touchmove', function (e) {
+            if (!drag || !e.touches[0]) return;
+            var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+            var along = land ? dx : dy, across = land ? Math.abs(dy) : Math.abs(dx);
+            if (!decided) {
+                if (Math.abs(dx) + Math.abs(dy) < 8) return;
+                decided = true;
+                if (along <= 0 || across > along) { drag = false; return; }
+                tc.style.transition = 'none';
+            }
+            d = Math.max(0, along);
+            tc.style.translate = land ? (d + 'px 0') : ('0 ' + d + 'px');
+        }, { passive: true });
+        function end(cancel) {
+            if (!drag || !decided) { drag = false; return; }
+            drag = false;
+            if (!cancel && d > 70) {
+                tc.style.transition = 'translate .16s ease';
+                tc.style.translate = land ? '110% 0' : '0 110%';
+                setTimeout(function () { setOpen(false); reset(false); }, 160);
+            } else reset(true);
+        }
+        tc.addEventListener('touchend', function () { end(false); }, { passive: true });
+        tc.addEventListener('touchcancel', function () { end(true); }, { passive: true });
     });
 
     // нажатие на кнопку вкладки (capture — раньше основного обработчика)

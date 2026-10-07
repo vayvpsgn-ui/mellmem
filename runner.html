@@ -3,6 +3,7 @@
 <head>
     <script>
         if (location.search.indexOf('embed=1') !== -1 && window.parent !== window) document.documentElement.classList.add('embed-mode');
+        else document.write('<script src="/sdk.js"><\/script>');   // Yandex Games SDK (автономный запуск)
     </script>
     <meta charset="UTF-8">
     
@@ -1365,8 +1366,46 @@
                 const r = _reqWait[d.id]; delete _reqWait[d.id]; r(d);
             }
         });
+        // --- Яндекс SDK для автономного запуска (в составе index.html рекламу показывает родитель) ---
+        let _ysdk = null, _ysdkPromise = null;
+        function initStandaloneSdk() {
+            if (EMBED || typeof YaGames === 'undefined') return Promise.resolve(null);
+            if (!_ysdkPromise) {
+                _ysdkPromise = Promise.race([
+                    YaGames.init(),
+                    new Promise(res => setTimeout(() => res(null), 6000))
+                ]).then(sdk => {
+                    _ysdk = sdk || null;
+                    try { if (_ysdk && _ysdk.features && _ysdk.features.LoadingAPI) _ysdk.features.LoadingAPI.ready(); } catch (e) {}
+                    return _ysdk;
+                }).catch(err => { console.warn('[YSDK] init failed', err); _ysdk = null; return null; });
+            }
+            return _ysdkPromise;
+        }
+        function showStandaloneRewarded(sdk) {
+            return new Promise(resolve => {
+                let rewarded = false, done = false;
+                const fin = v => { if (!done) { done = true; resolve(v); } };
+                try {
+                    sdk.adv.showRewardedVideo({
+                        callbacks: {
+                            onOpen: () => { try { bgMusic.pause(); } catch (e) {} },
+                            onRewarded: () => { rewarded = true; },
+                            onClose: () => fin(rewarded),
+                            onError: (err) => { console.warn('[YSDK] rewarded error', err); fin(false); }
+                        }
+                    });
+                } catch (e) { console.warn(e); fin(false); }
+            });
+        }
+        initStandaloneSdk();
         async function requestRewardedAd() {
-            if (!EMBED) return true; // вне основной игры рекламы нет
+            if (!EMBED) {
+                const sdk = await initStandaloneSdk();
+                if (!sdk || !sdk.adv) return true;   // без SDK (локальная отладка) — награда сразу
+                try { bgMusic.pause(); } catch (e) {}
+                return await showStandaloneRewarded(sdk);
+            }
             try { bgMusic.pause(); } catch (e) {}
             const r = await parentRequest({ type: 'story-ad-request' }, 180000, { ok: false });
             return !!(r && r.ok);
