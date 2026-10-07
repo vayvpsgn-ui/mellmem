@@ -2104,9 +2104,6 @@
 input[type="range"].modern-range { flex: 1 1 auto; min-width: 0; width: 100%; }
 .settings-label-title { flex-wrap: wrap; min-width: 0; }
 
-/* --- Telegram: без магазина --- */
-html[data-platform="telegram"] #donateTabBtn,
-html[data-platform="telegram"] #tab-donate { display: none !important; }
 
 /* --- размер Меллстроя (только в обычном режиме) --- */
 .mello-button img { transform: scale(var(--ms, 1)); }
@@ -2170,6 +2167,119 @@ html[data-platform="telegram"] #tab-donate { display: none !important; }
 .battle-card .attack-target-bar { height: 40px; }
 @media (max-height: 640px) { .battle-card .battle-pad { height: 90px; } .settings-card .bg-picker img, .settings-card .bg-picker > * { max-height: 44px; } }
 </style>
+<style id="v9-fixes">
+/* ===== v9 ===== */
+/* --- настройки: ничего не налезает, при нехватке места внутри — скролл --- */
+.settings-card { display: flex; flex-direction: column; box-sizing: border-box; width: min(400px, 100%); height: auto; max-height: min(96dvh, 100%); overflow: hidden; }
+.settings-card > .modal-title, .settings-card > .settings-tabs, .settings-card > .settings-actions { flex: 0 0 auto; }
+.settings-card .settings-pane.active { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.settings-card .settings-pane > * { flex-shrink: 0; }
+.settings-card .settings-group { flex-shrink: 0; }
+.settings-card .bg-picker { flex-shrink: 0; }
+@media (max-height: 460px) { .settings-card .modal-title { display: none; } .settings-card { padding: 10px; gap: 6px; } }
+
+/* --- всплывашки уровня: тянем пальцем/мышью, чтобы закрыть --- */
+.level-banner { pointer-events: auto; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+    animation: lvlPop .35s var(--ease) forwards; }
+.level-banner:active { cursor: grabbing; }
+@keyframes lvlPop { from { opacity: 0; transform: translate(-50%, -30%) scale(.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.prestige-card { touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.prestige-card.scrollable { touch-action: pan-y; }
+.prestige-card button { cursor: pointer; }
+
+/* --- бой с маньяком: один экран, без прокрутки --- */
+.boss-modal-overlay { overflow: hidden !important; height: 100%; justify-content: center; align-items: center;
+    padding: max(8px, env(safe-area-inset-top)) 10px max(8px, env(safe-area-inset-bottom)); box-sizing: border-box; }
+.battle-card { box-sizing: border-box; width: min(420px, 100%); height: 100%; max-height: 780px; min-height: 0; overflow: hidden;
+    gap: clamp(4px, 1.1dvh, 10px); padding: clamp(6px, 1.3dvh, 12px); }
+.battle-card > * { flex-shrink: 0; min-width: 0; }
+.battle-card .boss-header-wrap { padding: clamp(4px, .9dvh, 8px) 12px; }
+.battle-card .boss-name-title { font-size: clamp(12px, 2dvh, 14px); }
+.battle-card .arena-wrap { width: 100%; aspect-ratio: 280 / 135; flex: 0 1 auto; min-height: 56px; padding: 3px; border: 0; background: transparent;
+    box-sizing: border-box; container-type: size; display: grid; place-items: center; }
+.battle-card .arena-wrap #undertaleCanvas { width: min(100cqw, calc(100cqh * 280 / 135)); height: auto; aspect-ratio: 280 / 135; max-width: none;
+    outline: 2px solid rgba(255,255,255,.85); outline-offset: 0; border-radius: 10px; }
+@supports not (width: 1cqw) { .battle-card .arena-wrap #undertaleCanvas { width: 100%; max-height: 100%; } }
+.battle-card .battle-footer-ui { width: 100%; flex: 1 1 auto; display: flex; flex-direction: column; gap: clamp(4px, 1dvh, 8px); }
+.battle-card .battle-footer-ui > * { flex-shrink: 0; }
+.battle-card .attack-target-bar { height: clamp(28px, 5dvh, 40px); }
+.battle-card .battle-hint { min-height: 0; max-height: 4.1em; overflow: hidden; padding: 4px 8px; font-size: clamp(10.5px, 1.7dvh, 12px); line-height: 1.25; }
+.battle-card .battle-pad { flex: 1 1 0; height: auto; min-height: 44px; max-height: 260px; font-size: clamp(16px, 3dvh, 22px); }
+.battle-card .undertale-btn-group { gap: clamp(4px, .9dvh, 8px); }
+.battle-card .ut-btn { min-height: clamp(32px, 5.2dvh, 44px); padding: 4px 6px; font-size: clamp(10.5px, 1.7dvh, 11.5px); }
+.battle-card .ut-btn.ad-btn { grid-column: 1 / -1; min-height: clamp(30px, 4.8dvh, 40px); }
+/* низкий горизонтальный экран (телефон боком): две колонки */
+@media (orientation: landscape) and (max-height: 560px) {
+    .battle-card { width: min(940px, 100%); max-height: 100%; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr); column-gap: 12px; row-gap: 6px; }
+    .battle-card .boss-header-wrap { grid-column: 1 / -1; }
+    .battle-card .arena-wrap { grid-column: 1; grid-row: 2; aspect-ratio: auto; width: 100%; height: 100%; min-height: 0; }
+    .battle-card .battle-footer-ui { grid-column: 2; grid-row: 2; min-height: 0; }
+    .battle-card .battle-pad { min-height: 34px; }
+    .battle-card .undertale-btn-group { grid-template-columns: repeat(3, 1fr); }
+    .battle-card .ut-btn.ad-btn { grid-column: auto; }
+}
+</style>
+<script>
+/* Универсальное «закрыть перетаскиванием»: тянем в любую сторону > 60px (или резкий свайп) — окно улетает.
+   Тап по окну закрывает его только при tapClose. */
+window.__dismissable = function (el, o) {
+    o = o || {};
+    var base = o.base || '', dx = 0, dy = 0, sx = 0, sy = 0, t0 = 0, pid = null, moved = false, closed = false, timer = null;
+    function paint(op) { el.style.transform = (base + ' translate(' + dx + 'px,' + dy + 'px)').trim(); if (op != null) el.style.opacity = op; }
+    function arm(ms) { clearTimeout(timer); if (o.life) timer = setTimeout(function () { close(0, -60); }, ms || o.life); }
+    function close(fx, fy) {
+        if (closed) return; closed = true; clearTimeout(timer);
+        el.style.animation = 'none'; el.style.transition = 'transform .22s ease-out, opacity .22s ease-out';
+        dx = fx; dy = fy; paint(0);
+        setTimeout(function () {
+            if (o.onClose) o.onClose(); else if (el.parentNode) el.remove();
+            if (o.reset) { el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.style.animation = ''; dx = dy = 0; closed = false; }
+        }, 230);
+    }
+    el.addEventListener('animationend', function () { if (!closed && !moved) { el.style.animation = 'none'; paint(1); } });
+    el.addEventListener('pointerdown', function (e) {
+        if (closed || pid !== null) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (!o.allowButtons && e.target.closest && e.target.closest('button, input, textarea, select, a')) return;
+        pid = e.pointerId; sx = e.clientX; sy = e.clientY; t0 = Date.now(); moved = false;
+        el.style.animation = 'none'; el.style.transition = 'none'; paint(1);
+        try { el.setPointerCapture(pid); } catch (_) {}
+        clearTimeout(timer);
+    });
+    el.addEventListener('pointermove', function (e) {
+        if (e.pointerId !== pid) return;
+        dx = e.clientX - sx; dy = e.clientY - sy;
+        var d = Math.hypot(dx, dy); if (d > 6) moved = true;
+        paint(Math.max(.25, 1 - d / 260)); e.preventDefault();
+    });
+    function end(e) {
+        if (e.pointerId !== pid) return;
+        try { el.releasePointerCapture(pid); } catch (_) {}
+        pid = null;
+        var d = Math.hypot(dx, dy), dt = Math.max(1, Date.now() - t0), v = d / dt;
+        if (e.type !== 'pointercancel' && d > 60 || v > .6 && d > 25) { var k = 3.2; close(dx * k, dy * k); return; }
+        if (!moved && o.tapClose && Date.now() - t0 < 350) { close(0, -40); return; }
+        el.style.transition = 'transform .2s ease-out, opacity .2s ease-out'; dx = dy = 0; paint(1); arm(2500);
+    }
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+    arm(o.life);
+};
+document.addEventListener('DOMContentLoaded', function () {
+    /* окно перерождения — тоже закрывается перетаскиванием */
+    var pm = document.getElementById('prestigeModal'); if (!pm) return;
+    var card = pm.querySelector('.prestige-card'), cancel = document.getElementById('cancelPrestigeBtn');
+    if (card) {
+        window.__dismissable(card, { reset: true, onClose: function () { if (cancel) cancel.click(); else pm.classList.remove('active'); } });
+        new MutationObserver(function () {
+            if (pm.classList.contains('active')) card.classList.toggle('scrollable', card.scrollHeight > card.clientHeight + 2);
+        }).observe(pm, { attributes: true, attributeFilter: ['class'] });
+    }
+    /* клавиатура на телефоне: поле промокода не должно прятаться */
+    var pi = document.getElementById('promoInput');
+    if (pi) pi.addEventListener('focus', function () { setTimeout(function () { try { pi.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) {} }, 320); });
+});
+</script>
 <script>
 document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('.settings-tab'); if (!t) return;
@@ -3184,7 +3294,7 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         });
 
         async function requireResource(type, amount) {
-            const noShop = isTelegramPlatform();
+            const noShop = false; // магазин доступен и в Telegram
             if (type === 'diamonds' && diamonds < amount) {
                 await alert(noShop ? `${T(233)} ${amount}.` : `${T(233)} ${amount} ${T(234)}`, ('' + T(235) + ''));
                 if (!noShop) switchTab('tab-donate');
@@ -3640,6 +3750,8 @@ const customAlertOverlay = document.getElementById('customAlertOverlay');
         };
 
         async function runPurchase(productId, mockText) {
+            // Telegram: платёжного сервера нет — «покупка» просто выдаёт награду бесплатно
+            if (isTelegramPlatform()) return { ok: true, purchase: null };
             if (yaPayments) {
                 try { return { ok: true, purchase: await yaPayments.purchase({ id: productId }) }; }
                 catch (e) { console.warn('[YSDK] purchase cancelled/failed', e); return { ok: false }; }
@@ -4537,7 +4649,6 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         let activeTabId = 'tab-clicks';
 
         function switchTab(targetTab) {
-            if (targetTab === 'tab-donate' && isTelegramPlatform()) return;
             if (targetTab === activeTabId) return;
 
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -8206,7 +8317,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         startJumpBtn.addEventListener('click', async () => {
             if (!(await requireResource('tickets', 1))) {
                 closeMinigame();
-                if (!isTelegramPlatform()) switchTab('tab-donate');
+                switchTab('tab-donate');
                 return;
             }
 
@@ -9939,7 +10050,7 @@ const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
         if (prev && cur > prev) {
             var b = document.createElement('div'); b.className = 'level-banner';
             b.innerHTML = ('<small>' + T(587) + ' ') + cur + '</small><b></b>'; b.lastChild.textContent = m[2];
-            stage.appendChild(b); setTimeout(function () { b.remove(); }, 2700);
+            stage.appendChild(b); window.__dismissable(b, { base: 'translate(-50%, -50%)', life: 4500, tapClose: true });
         }
         prev = cur;
     }).observe(lvl, { childList: true, characterData: true, subtree: true });
